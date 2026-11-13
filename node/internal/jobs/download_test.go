@@ -152,3 +152,47 @@ func TestRefusesHTTPRedirect(t *testing.T) {
 		t.Fatal("plain http accepted")
 	}
 }
+
+func TestFetchResumingReportsReread(t *testing.T) {
+	data, sum := payload(3 << 20)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.ServeContent(w, r, "f", time.Time{}, bytes.NewReader(data))
+	}))
+	defer srv.Close()
+	part := filepath.Join(t.TempDir(), "f.part")
+	// Two thirds of the file are already on disk.
+	if err := os.WriteFile(part, data[:2<<20], 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var reread, rereadTotal, got int64
+	err := newDL().FetchResuming(context.Background(), srv.URL, part, sum, int64(len(data)),
+		func(d, _ int64) { got = d },
+		func(d, total int64) { reread, rereadTotal = d, total })
+	if err != nil {
+		t.Fatal(err)
+	}
+	if reread != 2<<20 || rereadTotal != 2<<20 {
+		t.Fatalf("reread reported %d of %d, want all %d bytes that were on disk", reread, rereadTotal, 2<<20)
+	}
+	if got != int64(len(data)) {
+		t.Fatalf("download progress ended at %d, want %d", got, len(data))
+	}
+	if b, _ := os.ReadFile(part); !bytes.Equal(b, data) {
+		t.Fatal("resumed file differs from the original")
+	}
+}
+
+func TestFetchResumingStopsWhenCancelled(t *testing.T) {
+	data, sum := payload(1 << 20)
+	part := filepath.Join(t.TempDir(), "f.part")
+	if err := os.WriteFile(part, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	// No server is needed: a cancelled job must stop before it reads the file back.
+	err := newDL().FetchResuming(ctx, "https://example.invalid/f", part, sum, int64(len(data)), nil, nil)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("got %v, want context.Canceled", err)
+	}
+}

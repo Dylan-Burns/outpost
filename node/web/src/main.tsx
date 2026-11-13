@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "preact/hooks";
 import "./styles.css";
 import { api, setCSRF, type Status } from "./api";
 import { Logo } from "./icons";
-import { Assistant, Content, Downloads, Home, Library, Search, Settings } from "./pages";
+import { Downloads } from "./downloads";
+import { Assistant, Content, Home, Library, Search, Settings } from "./pages";
 import { Link, navigate, usePath } from "./router";
 import { Claim, Login, Wizard } from "./wizard";
 
@@ -35,10 +36,10 @@ function App() {
     };
   }, []);
 
-  if (!status) return <main>{err ? <p class="alert warn">Cannot reach this node: {err}</p> : <p class="empty"><span class="spinner" /></p>}</main>;
+  if (!status) return <main>{err ? <p class="alert warn">Cannot reach Outpost: {err}</p> : <p class="empty"><span class="spinner" /></p>}</main>;
 
   if (!status.claimed) {
-    // A new node, or one whose admin was reset with "outpost reset-admin".
+    // A new install, or one whose owner was reset with "outpost reset-admin".
     return <main><Claim onDone={refresh} /></main>;
   }
 
@@ -78,7 +79,7 @@ function App() {
       case "/maps": page = <Suspense fallback={<p class="empty"><span class="spinner" /></p>}><Maps status={status} /></Suspense>; break;
       case "/assistant": page = <Assistant status={status} />; break;
       case "/content": page = <Content status={status} refresh={refresh} />; break;
-      case "/downloads": page = <Downloads />; break;
+      case "/downloads": page = <Downloads status={status} />; break;
       case "/settings": page = <Settings status={status} refresh={refresh} />; break;
       default: page = <Home status={status} />;
     }

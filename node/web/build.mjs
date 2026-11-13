@@ -22,6 +22,8 @@ const result = await esbuild.build({
   jsxImportSource: "preact",
   metafile: true,
   legalComments: "linked",
+  // The two typefaces travel inside the program: an Outpost has no internet to fetch them from.
+  loader: { ".woff2": "file" },
   define: { "process.env.NODE_ENV": '"production"' },
   logLevel: "warning",
 });

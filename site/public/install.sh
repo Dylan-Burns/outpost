@@ -13,6 +13,7 @@
 #   --library-port N     library port (default 8081)
 #   --version V          install a specific release instead of the latest
 #   --no-firewall        do not open the ports in the firewall
+#   --no-open            on a Mac, do not open the setup page in the browser
 #   --uninstall          remove Outpost (keeps content unless --purge)
 #   --purge              with --uninstall, also delete the data directory
 #   -y, --yes            do not ask questions
@@ -38,7 +39,7 @@ LOG="/var/log/outpost.log"                       # macOS
 MAC_FIREWALL="/usr/libexec/ApplicationFirewall/socketfilterfw"
 [ "$OS" != "Darwin" ] || SERVICE_USER="_outpost"
 
-WITH_AI=0; DATA_DIR=""; PORT=""; LIB_PORT=""; VERSION=""; FIREWALL=1; UNINSTALL=0; PURGE=0; YES=0
+WITH_AI=0; DATA_DIR=""; PORT=""; LIB_PORT=""; VERSION=""; FIREWALL=1; UNINSTALL=0; PURGE=0; YES=0; OPEN=1
 
 c_bold=$'\e[1m'; c_dim=$'\e[2m'; c_green=$'\e[32m'; c_red=$'\e[31m'; c_off=$'\e[0m'
 [ -t 1 ] || { c_bold=""; c_dim=""; c_green=""; c_red=""; c_off=""; }
@@ -55,6 +56,7 @@ while [ $# -gt 0 ]; do
     --library-port) LIB_PORT="${2:?--library-port needs a value}"; shift ;;
     --version) VERSION="${2:?--version needs a value}"; shift ;;
     --no-firewall) FIREWALL=0 ;;
+    --no-open) OPEN=0 ;;
     --uninstall) UNINSTALL=1 ;;
     --purge) PURGE=1 ;;
     -y|--yes) YES=1 ;;
@@ -216,6 +218,21 @@ unlink_cli() { # take away only the links and files this installer put in place
     [ "$target" != "$CLI_DIR/outpost" ] || unlink /usr/local/bin/outpost
   elif [ -f /usr/local/bin/outpost ] && grep -q '^exec /opt/outpost/bin/outpost "\$@"$' /usr/local/bin/outpost 2>/dev/null; then
     unlink /usr/local/bin/outpost # the wrapper file that releases before 1.1.0 wrote
+  fi
+}
+
+open_setup_page() { # carry the person at this Mac straight into setup
+  # Only when someone is sitting at it: asked not to, answering for a script,
+  # or run by someone who does not own the screen, and nothing is opened.
+  local who="${SUDO_USER:-}" url="http://localhost:$PORT/"
+  [ "$OS" = "Darwin" ] && [ "$OPEN" -eq 1 ] && [ "$YES" -eq 0 ] || return 0
+  [ -r /dev/tty ] && [ -n "$who" ] && [ "$who" != "root" ] || return 0
+  [ "$(stat -f %Su /dev/console 2>/dev/null || true)" = "$who" ] || return 0
+  # The setup code rides after the "#", which a browser keeps to itself: the
+  # page fills it in, so it does not have to be copied by hand.
+  [ -z "$CODE" ] || url="${url}#code=$CODE"
+  if sudo -u "$who" open "$url" >/dev/null 2>&1; then
+    printf '  %sThe setup page is opening in your browser.%s\n\n' "$c_bold" "$c_off"
   fi
 }
 
@@ -672,6 +689,7 @@ if [ -n "$CODE" ]; then
 fi
 printf '\n  Content is stored in %s\n' "$DATA_DIR"
 printf '  Logs: %s    Update: re-run this installer\n\n' "$LOGS_HINT"
+open_setup_page
 }
 
 main "$@"

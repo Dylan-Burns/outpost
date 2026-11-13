@@ -12,9 +12,9 @@ await step("claim", async () => {
   await p.goto(base);
   await p.getByRole("heading", { name: "Welcome to Outpost" }).waitFor();
   await p.getByLabel("Setup code").fill(code);
-  await p.getByLabel("Choose an admin password").fill("vm browser password");
+  await p.getByLabel("Choose a password").fill("vm browser password");
   await p.getByLabel("Repeat the password").fill("vm browser password");
-  await p.getByRole("button", { name: "Claim this node" }).click();
+  await p.getByRole("button", { name: "Start setup" }).click();
   await p.getByRole("heading", { name: "VM node" }).waitFor();
 });
 await step("library", async () => {

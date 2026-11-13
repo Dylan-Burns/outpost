@@ -4,8 +4,21 @@ import { bytes } from "./format";
 import { Logo } from "./icons";
 import { AppsEditor, CollectionsEditor, ModelsEditor, RegionsEditor, StorageBar, WikipediaEditor, defaultSelection, plan } from "./selection";
 
+const CLI = "sudo /opt/outpost/cli/outpost";
+
+/** The installer opens this page with the setup code after the "#", so the
+ *  person who just ran it does not have to copy twelve characters across.
+ *  It is read once and taken out of the address bar. */
+function codeFromAddress(): string {
+  const m = location.hash.match(/^#code=([A-Za-z0-9]{4}(?:-[A-Za-z0-9]{4}){2})$/);
+  if (!m) return "";
+  history.replaceState(null, "", location.pathname + location.search);
+  return m[1].toUpperCase();
+}
+
 export function Claim({ onDone }: { onDone: () => void }) {
-  const [code, setCode] = useState("");
+  const [given] = useState(codeFromAddress);
+  const [code, setCode] = useState(given);
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [err, setErr] = useState("");
@@ -27,26 +40,28 @@ export function Claim({ onDone }: { onDone: () => void }) {
     }
   };
   return (
-    <div class="center-card card">
-      <div class="row" style={{ marginBottom: "1rem" }}>
-        <span style={{ width: 44, height: 44 }}><Logo /></span>
-        <div>
-          <h1 style={{ margin: 0 }}>Welcome to Outpost</h1>
-          <p class="muted" style={{ margin: 0 }}>Let's set up this node.</p>
-        </div>
-      </div>
+    <div class="center-card">
+      <span class="mark"><Logo /></span>
+      <h1>Welcome to Outpost</h1>
+      <p class="muted" style={{ marginBottom: "1.5rem" }}>Two things make this Outpost yours: the setup code, and a password you choose.</p>
       <form onSubmit={submit}>
         <label class="field">
           <span>Setup code</span>
           <input type="text" autocomplete="one-time-code" placeholder="XXXX-XXXX-XXXX" value={code} onInput={(e) => setCode((e.target as HTMLInputElement).value)} required />
           <div class="hint">
-            The installer printed it. To see it again, run <code>sudo /opt/outpost/cli/outpost setup-code</code> on the computer where Outpost is installed.
+            {given && code === given ? (
+              "Filled in for you by the installer."
+            ) : (
+              <>
+                The installer showed it when it finished. To see it again, run <code>{CLI} setup-code</code> on the computer where Outpost is installed.
+              </>
+            )}
           </div>
         </label>
         <label class="field">
-          <span>Choose an admin password</span>
-          <input type="password" autocomplete="new-password" value={pw} onInput={(e) => setPw((e.target as HTMLInputElement).value)} required minLength={10} />
-          <div class="hint">At least 10 characters. You need it to change content and settings.</div>
+          <span>Choose a password</span>
+          <input type="password" autocomplete="new-password" value={pw} onInput={(e) => setPw((e.target as HTMLInputElement).value)} required minLength={10} autofocus={!!given} />
+          <div class="hint">At least 10 characters. You will need it to change what is installed.</div>
         </label>
         <label class="field">
           <span>Repeat the password</span>
@@ -54,7 +69,7 @@ export function Claim({ onDone }: { onDone: () => void }) {
         </label>
         {err && <p class="alert warn" role="alert">{err}</p>}
         <button class="btn primary" disabled={busy} style={{ width: "100%", justifyContent: "center" }}>
-          {busy ? <span class="spinner" /> : "Claim this node"}
+          {busy ? <span class="spinner" /> : "Start setup"}
         </button>
       </form>
     </div>
@@ -80,9 +95,9 @@ export function Login({ onDone, title }: { onDone: () => void; title?: string })
     }
   };
   return (
-    <div class="center-card card">
+    <div class="center-card">
       <h1>{title || "Sign in"}</h1>
-      <p class="muted">Enter the admin password of this node.</p>
+      <p class="muted" style={{ marginBottom: "1.5rem" }}>Enter the password for this Outpost.</p>
       <form onSubmit={submit}>
         <label class="field">
           <span>Password</span>
@@ -92,13 +107,15 @@ export function Login({ onDone, title }: { onDone: () => void; title?: string })
         <button class="btn primary" disabled={busy} style={{ width: "100%", justifyContent: "center" }}>
           {busy ? <span class="spinner" /> : "Sign in"}
         </button>
-        <p class="hint" style={{ marginTop: "1rem" }}>Forgot it? On the computer where Outpost is installed, run <code>sudo /opt/outpost/cli/outpost reset-admin</code>. Your content stays.</p>
+        <p class="hint" style={{ marginTop: "1rem" }}>
+          Forgot it? On the computer where Outpost is installed, run <code>{CLI} reset-admin</code>. Everything you downloaded stays.
+        </p>
       </form>
     </div>
   );
 }
 
-const STEPS = ["Apps", "Wikipedia", "Collections", "Maps", "AI models", "Review"];
+const STEPS = ["What it does", "Wikipedia", "Subjects", "Maps", "AI models", "Review"];
 
 export function Wizard({ status, onDone }: { status: Status; onDone: () => void }) {
   const [data, setData] = useState<CatalogResponse | null>(null);
@@ -123,12 +140,12 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
 
   const p = useMemo(() => (data && sel ? plan(data, sel, apps) : null), [data, sel, apps]);
   if (err) return <p class="alert warn">{err}</p>;
-  if (!data || !sel || !p) return <p class="empty"><span class="spinner" /> Loading the catalog…</p>;
+  if (!data || !sel || !p) return <p class="empty"><span class="spinner" /> Loading the list of things you can keep…</p>;
 
-  const visible = STEPS.map((s, i) => ({ s, i })).filter(({ s }) => !(s === "Wikipedia" || s === "Collections" ? !apps.library : s === "Maps" ? !apps.maps : s === "AI models" ? !apps.assistant : false));
+  const visible = STEPS.map((s, i) => ({ s, i })).filter(({ s }) => !(s === "Wikipedia" || s === "Subjects" ? !apps.library : s === "Maps" ? !apps.maps : s === "AI models" ? !apps.assistant : false));
   const pos = visible.findIndex((v) => v.i === step);
-  const next = () => setStep(visible[Math.min(pos + 1, visible.length - 1)].i);
-  const back = () => setStep(visible[Math.max(pos - 1, 0)].i);
+  const next = () => (setStep(visible[Math.min(pos + 1, visible.length - 1)].i), window.scrollTo(0, 0));
+  const back = () => (setStep(visible[Math.max(pos - 1, 0)].i), window.scrollTo(0, 0));
   const over = (data.disk.total - data.disk.free) + p.addBytes - data.disk.partial > data.disk.total * 0.98;
 
   const finish = async () => {
@@ -148,7 +165,7 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
       <ol class="steps" aria-label="Setup steps">
         {visible.map((v, k) => (
           <li key={v.s} class={v.i === step ? "current" : k < pos ? "done" : ""} aria-current={v.i === step ? "step" : undefined}>
-            {k + 1}. {v.s}
+            {v.s}
           </li>
         ))}
       </ol>
@@ -157,19 +174,20 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
       {step === 0 && (
         <section class="stack">
           <div>
-            <h1>What should this node do?</h1>
-            <p class="muted">Pick the apps you want. You can change everything later from the dashboard.</p>
+            <h1>What should your Outpost do?</h1>
+            <p class="muted">Pick what you want it to be. Nothing here is final: you can change all of it later.</p>
           </div>
           <label class="field" style={{ maxWidth: 420 }}>
-            <span>Name of this node</span>
+            <span>Give it a name</span>
             <input type="text" value={name} maxLength={60} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
-            <div class="hint">Shown at the top of every page, e.g. “Cabin library”.</div>
+            <div class="hint">Shown at the top of every page, for example “Cabin library”.</div>
           </label>
           <AppsEditor apps={apps} setApps={setApps} aiAvailable={status.aiAvailable} />
-          <div class="alert small">
-            <strong>{data.system.cpu || data.system.arch}</strong> · {data.system.cores} cores · {bytes(data.system.memBytes)} memory · {bytes(data.disk.free)} free of {bytes(data.disk.total)}
-            {data.system.gpu ? ` · ${data.system.gpu}` : ""}
-          </div>
+          <p class="small muted">
+            This computer: {data.system.cpu || data.system.arch}, {bytes(data.system.memBytes)} of memory, {bytes(data.disk.free)} free of{" "}
+            {bytes(data.disk.total)}
+            {data.system.gpu ? `, ${data.system.gpu}` : ""}.
+          </p>
         </section>
       )}
       {step === 1 && (
@@ -184,8 +202,8 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
       {step === 2 && (
         <section class="stack">
           <div>
-            <h1>Choose your collections</h1>
-            <p class="muted">Each collection has three sizes. Essential is small and practical; Comprehensive takes everything we curate.</p>
+            <h1>Choose your subjects</h1>
+            <p class="muted">Each subject comes in three sizes. Essential is small and practical. Comprehensive is everything we have picked.</p>
           </div>
           <CollectionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} />
         </section>
@@ -194,7 +212,7 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
         <section class="stack">
           <div>
             <h1>Which maps?</h1>
-            <p class="muted">Pick the places you need. States and provinces are smaller than whole countries.</p>
+            <p class="muted">Pick the places you need. A state or province is much smaller than a whole country.</p>
           </div>
           <RegionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} />
         </section>
@@ -203,7 +221,7 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
         <section class="stack">
           <div>
             <h1>AI models</h1>
-            <p class="muted">Models run on this machine. Bigger ones are smarter but slower; pick at least one.</p>
+            <p class="muted">A model is the brain of the assistant, and it runs on this computer. Bigger ones answer better but slower. Pick at least one.</p>
           </div>
           <ModelsEditor c={data.catalog} sel={sel} setSel={setSel} memBytes={data.system.memBytes} installed={data.installed} />
         </section>
@@ -212,21 +230,24 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
         <section class="stack">
           <div>
             <h1>Ready to download</h1>
-            <p class="muted">Outpost downloads everything in the background, smallest first, and checks each file against its published checksum. Keep this machine online until it finishes; interrupted downloads resume.</p>
+            <p class="muted">
+              Outpost fetches everything by itself, smallest first, so there is something to read within minutes, and it checks every file. Keep this
+              computer on and connected until it finishes. If the connection drops, it carries on from where it stopped.
+            </p>
           </div>
           <div class="card">
             <table class="facts">
               <tbody>
-                <tr><td>Node name</td><td>{name}</td></tr>
-                <tr><td>Apps</td><td>{[apps.library && "Library", apps.maps && "Maps", apps.assistant && "AI assistant"].filter(Boolean).join(", ") || "None"}</td></tr>
-                <tr><td>Items</td><td>{p.want.size} ({p.add.length} to download)</td></tr>
-                <tr><td>Download size</td><td class="mono">{bytes(p.addBytes)}</td></tr>
+                <tr><td>Name</td><td>{name}</td></tr>
+                <tr><td>It will be</td><td>{[apps.library && "A library", apps.maps && "Maps", apps.assistant && "An AI assistant"].filter(Boolean).join(", ") || "Nothing yet"}</td></tr>
+                <tr><td>Downloads</td><td>{p.add.length}</td></tr>
+                <tr><td>Total size</td><td class="mono">{bytes(p.addBytes)}</td></tr>
                 <tr><td>Free space now</td><td class="mono">{bytes(data.disk.free)}</td></tr>
               </tbody>
             </table>
           </div>
-          {over && <p class="alert warn">This selection does not fit on the disk. Go back and choose smaller tiers or fewer regions.</p>}
-          {p.add.length === 0 && <p class="alert">Nothing selected yet. That's fine: you can add content later from Content.</p>}
+          {over && <p class="alert warn">This is more than the disk can hold. Go back and choose smaller sizes or fewer maps.</p>}
+          {p.add.length === 0 && <p class="alert">Nothing is selected yet. That is fine: you can add things later under Content.</p>}
         </section>
       )}
       {err && <p class="alert warn" role="alert">{err}</p>}
@@ -236,7 +257,7 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
           <button class="btn primary" onClick={next}>Continue</button>
         ) : (
           <button class="btn primary" onClick={finish} disabled={busy || over}>
-            {busy ? <span class="spinner" /> : "Complete setup"}
+            {busy ? <span class="spinner" /> : p.add.length ? "Start downloading" : "Finish setup"}
           </button>
         )}
       </div>

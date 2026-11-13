@@ -59,7 +59,14 @@ node "$ROOT/tests/e2e/serve-site.mjs" "$ROOT/site/public" "$SITE_PORT" "$WORK/ke
 SERVER=$!
 sleep 2
 curl -fs --cacert "$WORK/bundle.pem" -o /dev/null "https://localhost:$SITE_PORT/releases/latest.json" || fail "the local site is not answering"
-run_installer() { sudo env OUTPOST_SITE="https://localhost:$SITE_PORT" CURL_CA_BUNDLE="$WORK/bundle.pem" bash "$ROOT/install/install.sh" --yes "$@"; }
+run_installer() {
+  if [ "${AT_KEYBOARD:-0}" = "1" ]; then
+    # As a person would run it on a Mac: with a terminal, and without --yes.
+    script -q /dev/null sudo env OUTPOST_SITE="https://localhost:$SITE_PORT" CURL_CA_BUNDLE="$WORK/bundle.pem" bash "$ROOT/install/install.sh" "$@"
+  else
+    sudo env OUTPOST_SITE="https://localhost:$SITE_PORT" CURL_CA_BUNDLE="$WORK/bundle.pem" bash "$ROOT/install/install.sh" --yes "$@"
+  fi
+}
 # This test installs three times in a few minutes, and each install fetches
 # kiwix-tools from download.kiwix.org, which answers 429 ("too many requests")
 # to callers that come too fast, CI machines above all. That is the server
@@ -67,7 +74,12 @@ run_installer() { sudo env OUTPOST_SITE="https://localhost:$SITE_PORT" CURL_CA_B
 installer() {
   local try
   for try in 1 2 3 4; do
-    if run_installer "$@" > "$WORK/attempt.log" 2>&1; then cat "$WORK/attempt.log"; return 0; fi
+    # `script` does not always pass on how its command ended, so an install
+    # run through it also has to say that it finished.
+    if run_installer "$@" > "$WORK/attempt.log" 2>&1 && { [ "${AT_KEYBOARD:-0}" != "1" ] || grep -q "is running" "$WORK/attempt.log"; }; then
+      cat "$WORK/attempt.log"
+      return 0
+    fi
     if [ "$try" -lt 4 ] && grep -q "error: 429" "$WORK/attempt.log"; then
       echo "note: download.kiwix.org asked us to slow down; waiting $((try * 90)) seconds" >&2
       sleep $((try * 90))
@@ -84,7 +96,18 @@ if [ "$OS" = "Darwin" ]; then
 fi
 
 step "Install Outpost $VERSION"
-installer 2>&1 | tee "$WORK/install.log"
+if [ "$OS" = "Darwin" ]; then
+  AT_KEYBOARD=1 installer 2>&1 | tee "$WORK/install.log"
+  # Someone at the Mac's own screen is taken straight to the setup page.
+  if [ "$(stat -f %Su /dev/console 2>/dev/null)" = "$(id -un)" ]; then
+    grep -q "The setup page is opening in your browser" "$WORK/install.log" || fail "the installer did not open the setup page for the person at the screen"
+    ok "opened the setup page in the browser"
+  else
+    echo "note: nobody is signed in at this Mac's screen, so no browser was opened"
+  fi
+else
+  installer 2>&1 | tee "$WORK/install.log"
+fi
 grep -q "Outpost $VERSION is running" "$WORK/install.log" || fail "the installer did not report a running node"
 grep -q "release signature verified" "$WORK/install.log" || fail "the installer did not verify the release signature"
 grep -q "Setup code:" "$WORK/install.log" || fail "the installer did not print a setup code"

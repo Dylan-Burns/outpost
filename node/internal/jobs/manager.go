@@ -555,7 +555,33 @@ func (m *Manager) progress(id string) func(done, total int64) {
 	}
 }
 
-func (m *Manager) phase(id, p string) { m.setLive(id, func(l *Live) { l.Phase = p }) }
+// phase names what a job is doing now. The speed starts again from nothing:
+// reading a disk back and pulling from the network are not the same race.
+func (m *Manager) phase(id, p string) {
+	m.setLive(id, func(l *Live) {
+		if l.Phase == p {
+			return
+		}
+		l.Phase = p
+		l.Speed = 0
+		l.t, l.last = time.Now(), l.Done
+	})
+}
+
+// fetch downloads a catalog file, reporting "checking" while the part of it
+// already on disk is read back and "downloading" once the transfer is running.
+func (m *Manager) fetch(ctx context.Context, jobID string, it *catalog.Item, part string) error {
+	report := m.progress(jobID)
+	return m.DL.FetchResuming(ctx, it.URL, part, it.SHA256, it.Size,
+		func(done, total int64) {
+			m.phase(jobID, "downloading")
+			report(done, total)
+		},
+		func(done, _ int64) {
+			m.phase(jobID, "checking")
+			report(done, it.Size)
+		})
+}
 
 func (m *Manager) checkSpace(need int64) error {
 	free, _, err := fsutil.DiskSpace(m.Paths.Downloads)
@@ -636,8 +662,8 @@ func (m *Manager) installZim(ctx context.Context, job state.Job, it *catalog.Ite
 	if err := m.checkSpace(it.Size - have); err != nil {
 		return err
 	}
-	m.phase(job.ID, "downloading")
-	if err := m.DL.Fetch(ctx, it.URL, part, it.SHA256, it.Size, m.progress(job.ID)); err != nil {
+	// The job reads "starting" until fetch reports what it is really doing.
+	if err := m.fetch(ctx, job.ID, it, part); err != nil {
 		return err
 	}
 	m.phase(job.ID, "installing")
@@ -669,8 +695,8 @@ func (m *Manager) installAssets(ctx context.Context, job state.Job, it *catalog.
 	if err := m.checkSpace(it.Size * 3); err != nil {
 		return err
 	}
-	m.phase(job.ID, "downloading")
-	if err := m.DL.Fetch(ctx, it.URL, part, it.SHA256, it.Size, m.progress(job.ID)); err != nil {
+	// The job reads "starting" until fetch reports what it is really doing.
+	if err := m.fetch(ctx, job.ID, it, part); err != nil {
 		return err
 	}
 	m.phase(job.ID, "unpacking")

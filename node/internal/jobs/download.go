@@ -68,6 +68,14 @@ type Progress func(done, total int64)
 // and checks the SHA-256 of the whole file when wantSHA is not empty. On a
 // checksum mismatch partPath is removed so the next attempt starts over.
 func (d *Downloader) Fetch(ctx context.Context, url, partPath, wantSHA string, size int64, progress Progress) error {
+	return d.FetchResuming(ctx, url, partPath, wantSHA, size, progress, nil)
+}
+
+// FetchResuming is Fetch with a second callback. Before a transfer resumes,
+// the bytes already on disk are read back and hashed, which takes minutes for
+// a large file; rereading receives how far that has got, so the person
+// waiting can be shown that work is being done.
+func (d *Downloader) FetchResuming(ctx context.Context, url, partPath, wantSHA string, size int64, progress, rereading Progress) error {
 	if !strings.HasPrefix(url, "https://") && !(d.AllowHTTP && strings.HasPrefix(url, "http://")) {
 		return errPermanent{fmt.Errorf("refusing non-https URL")}
 	}
@@ -80,7 +88,7 @@ func (d *Downloader) Fetch(ctx context.Context, url, partPath, wantSHA string, s
 	// Hash whatever is already on disk so a resumed file is still verified
 	// end to end.
 	h := sha256.New()
-	have, err := io.Copy(h, f)
+	have, err := rehash(ctx, h, f, rereading)
 	if err != nil {
 		return err
 	}
@@ -187,6 +195,42 @@ func (d *Downloader) Fetch(ctx context.Context, url, partPath, wantSHA string, s
 		}
 	}
 	return nil
+}
+
+// rehash feeds everything in f to h and returns how much there was. It stops
+// when ctx ends, so cancelling does not have to wait for a long read.
+func rehash(ctx context.Context, h io.Writer, f *os.File, report Progress) (int64, error) {
+	var existing int64
+	if st, err := f.Stat(); err == nil {
+		existing = st.Size()
+	}
+	buf := make([]byte, 1<<20)
+	var read int64
+	last := time.Now()
+	for {
+		if err := ctx.Err(); err != nil {
+			return read, err
+		}
+		n, err := f.Read(buf)
+		if n > 0 {
+			h.Write(buf[:n])
+			read += int64(n)
+			if report != nil && time.Since(last) > 250*time.Millisecond {
+				report(read, existing)
+				last = time.Now()
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return read, err
+		}
+	}
+	if report != nil && read > 0 {
+		report(read, existing)
+	}
+	return read, nil
 }
 
 func rangeStartsAt(cr string, off int64) bool {

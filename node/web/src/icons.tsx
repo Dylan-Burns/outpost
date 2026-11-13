@@ -24,10 +24,9 @@ export const icons: Record<string, () => preact.JSX.Element> = {
 
 export function Logo() {
   return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <rect width="64" height="64" rx="14" fill="var(--accent)" />
-      <path d="M32 12 50 46H14Z" fill="none" stroke="var(--bg)" stroke-width="5" stroke-linejoin="round" />
-      <path d="M32 30v16" stroke="var(--bg)" stroke-width="5" stroke-linecap="round" />
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16 3 31 29H1Z" fill="currentColor" />
+      <path d="M16 15v14" stroke="var(--bg)" stroke-width="2.6" />
     </svg>
   );
 }

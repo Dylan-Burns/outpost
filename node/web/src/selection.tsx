@@ -67,10 +67,10 @@ export function StorageBar({ data, p }: { data: CatalogResponse; p: Plan }) {
     <div class="storage" aria-live="polite">
       <div class="spread small">
         <strong>
-          {bytes(p.totalBytes)} selected · {bytes(Math.max(0, p.addBytes))} to download
+          {bytes(p.totalBytes)} chosen, {bytes(Math.max(0, p.addBytes))} still to download
         </strong>
         <span class={over ? "badge warn" : "muted"}>
-          {over ? "Not enough space" : `${bytes(Math.max(0, capacity - after))} free after`}
+          {over ? "Does not fit on the drive" : `${bytes(Math.max(0, capacity - after))} left free afterwards`}
         </span>
       </div>
       <div class="bar" role="img" aria-label={`Disk: ${bytes(usedNow)} used, ${bytes(p.addBytes)} to add, ${bytes(capacity)} total`}>
@@ -78,9 +78,9 @@ export function StorageBar({ data, p }: { data: CatalogResponse; p: Plan }) {
         <div class={over ? "over" : "new"} style={{ width: pct(Math.min(p.addBytes, capacity - usedNow)) }} />
       </div>
       <div class="legend">
-        <span><i style={{ background: "color-mix(in srgb, var(--muted) 55%, transparent)" }} />Used {bytes(usedNow)}</span>
-        <span><i style={{ background: "var(--accent)" }} />New {bytes(p.addBytes)}</span>
-        <span>Disk {bytes(capacity)}</span>
+        <span><i style={{ background: "#6e6e6e" }} />In use {bytes(usedNow)}</span>
+        <span><i style={{ background: "var(--fg)" }} />To add {bytes(p.addBytes)}</span>
+        <span>Drive {bytes(capacity)}</span>
       </div>
     </div>
   );
@@ -88,9 +88,16 @@ export function StorageBar({ data, p }: { data: CatalogResponse; p: Plan }) {
 
 export function AppsEditor({ apps, setApps, aiAvailable }: { apps: Apps; setApps: (a: Apps) => void; aiAvailable: boolean }) {
   const rows: [keyof Apps, string, string, boolean][] = [
-    ["library", "Library", "Encyclopedias, manuals, books and courses you can read and search from any browser on your network.", true],
-    ["maps", "Offline maps", "Street-level maps of the regions you choose, with search-free browsing and zoom.", true],
-    ["assistant", "AI assistant", aiAvailable ? "A local AI model that answers questions and cites your library. Runs entirely on this machine." : "Not installed on this machine. Re-run the installer with --with-ai to add it.", aiAvailable],
+    ["library", "Library", "Encyclopedias, manuals, books and lessons that anyone on your Wi-Fi can read and search in a browser.", true],
+    ["maps", "Maps", "Street maps of the places you choose. They work with no internet.", true],
+    [
+      "assistant",
+      "AI assistant",
+      aiAvailable
+        ? "Answers questions in plain words from your library, and shows where each answer came from. Runs on this computer only."
+        : "Needs a free program called Ollama, which is not on this computer yet. On a Mac, install the Ollama app and open it once. On Linux, run the installer again with --with-ai.",
+      aiAvailable,
+    ],
   ];
   return (
     <div class="grid">
@@ -139,16 +146,14 @@ function CategoryCard({ cat, items, tier, setTier, installed }: { cat: Category;
   const current = tier ? cat.tiers?.[tier] || [] : [];
   return (
     <div class="card">
-      <div class="row">
-        <span class="tile" style={{ minHeight: 0 }}>
-          <span class="icon"><Icon name={cat.icon} /></span>
-        </span>
+      <div class="tile-head">
+        <span class="icon"><Icon name={cat.icon} /></span>
         <div style={{ flex: 1 }}>
           <h3 style={{ margin: 0 }}>{cat.name}</h3>
-          <p class="muted small" style={{ margin: 0 }}>{cat.description}</p>
+          <p class="muted small" style={{ margin: "0.2rem 0 0" }}>{cat.description}</p>
         </div>
       </div>
-      <div class="tiers" role="group" aria-label={`${cat.name} tier`}>
+      <div class="tiers" role="group" aria-label={`${cat.name}: size`}>
         {["", ...TIERS].map((t) => (
           <button type="button" key={t} aria-pressed={tier === t} onClick={() => setTier(t)}>
             {TIER_LABEL[t || "none"]}
@@ -158,7 +163,7 @@ function CategoryCard({ cat, items, tier, setTier, installed }: { cat: Category;
       </div>
       {current.length > 0 && (
         <details>
-          <summary>{current.length} archive{current.length === 1 ? "" : "s"}</summary>
+          <summary>See the {current.length} title{current.length === 1 ? "" : "s"} in this size</summary>
           <ul class="itemlist">
             {current.map((id) => {
               const it = items.get(id);
@@ -238,8 +243,8 @@ export function RegionsEditor({ c, sel, setSel, installed }: { c: Catalog; sel: 
         {names.length === 0 && <p class="empty">No region matches “{q}”.</p>}
       </div>
       <p class="hint">
-        Regions are cut from the latest OpenStreetMap-based planet build at street-level detail. A {bytes(world?.size)} world overview is always
-        included so you can find your way between regions. Map data © OpenStreetMap contributors.
+        Each region is cut from the latest OpenStreetMap-based map of the world, down to individual streets. A {bytes(world?.size)} map of the
+        whole world always comes along, so you can find your way between regions. Map data © OpenStreetMap contributors.
       </p>
     </div>
   );
@@ -266,7 +271,7 @@ export function ModelsEditor({ c, sel, setSel, memBytes, installed }: { c: Catal
             <p class="muted small" style={{ margin: "0.3rem 0 0.3rem 1.6rem" }}>{m.description}</p>
             <div class="row" style={{ marginLeft: "1.6rem" }}>
               {fit && <span class={cls}>{fit}</span>}
-              <span class="small muted">needs ~{m.ramGB} GB memory</span>
+              <span class="small muted">needs about {m.ramGB} GB of memory</span>
               {installed[m.id] ? <span class="badge">Installed</span> : null}
             </div>
           </label>

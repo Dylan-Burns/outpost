@@ -13,7 +13,8 @@ let protocolAdded = false;
 
 function buildStyle(info: MapsInfo, region: Region | null, dark: boolean): maplibregl.StyleSpecification {
   const origin = location.origin;
-  const flavor = namedFlavor(dark ? "dark" : "light");
+  // The dashboard is black and white, and so is its map.
+  const flavor = namedFlavor(dark ? "black" : "white");
   const sources: maplibregl.StyleSpecification["sources"] = {};
   const all: maplibregl.LayerSpecification[] = [];
   const add = (name: string, file: string, maxLabelZoom?: number) => {
@@ -46,7 +47,7 @@ export default function Maps({ status }: { status: Status }) {
   const [info, setInfo] = useState<MapsInfo | null>(null);
   const [err, setErr] = useState("");
   const [current, setCurrent] = useState<Region | null>(null);
-  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = true;
 
   useEffect(() => {
     api.get<MapsInfo>("/api/maps").then((d) => {
@@ -92,27 +93,27 @@ export default function Maps({ status }: { status: Status }) {
     return (
       <div class="card empty">
         <h1>Maps</h1>
-        <p>No map regions on this node yet.</p>
-        {status.signedIn ? <Link class="btn primary" href="/content">Choose regions</Link> : <p class="small">The administrator can add them.</p>}
+        <p>No maps here yet.</p>
+        {status.signedIn ? <Link class="btn primary" href="/content">Choose regions</Link> : <p class="small">The owner can add them.</p>}
       </div>
     );
-  if (!info.assets) return <p class="alert">Map data is still downloading. Come back when the map fonts and icons have arrived.</p>;
+  if (!info.assets) return <p class="alert">The maps are still downloading. Come back in a moment.</p>;
   return (
     <div class="mapwrap">
       <div class="side">
-        <h1 style={{ fontSize: "1.3rem" }}>Maps</h1>
+        <h1 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>Maps</h1>
         {info.regions.map((r) => (
           <button key={r.id} class={`btn small ${current?.id === r.id ? "primary" : ""}`} onClick={() => setCurrent(r)}>
             <span>{r.name}</span>
-            <span class="small" style={{ opacity: 0.7 }}>{r.group}</span>
+            <span style={{ opacity: 0.6 }}>{r.group}</span>
           </button>
         ))}
         {info.world && (
           <button class={`btn small ${!current ? "primary" : ""}`} onClick={() => setCurrent(null)}>
-            <span>World overview</span>
+            <span>The whole world</span>
           </button>
         )}
-        <p class="hint">Maps work fully offline. Data © OpenStreetMap contributors (ODbL), styled by Protomaps.</p>
+        <p class="hint" style={{ marginTop: "1rem" }}>These maps need no internet. Data © OpenStreetMap contributors (ODbL), drawn with Protomaps.</p>
       </div>
       <div id="map" ref={el} role="region" aria-label="Map" />
     </div>

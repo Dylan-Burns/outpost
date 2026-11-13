@@ -1,80 +1,41 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
-import { api, streamChat, type Apps, type CatalogResponse, type Job, type Selection, type Status } from "./api";
-import { bytes, duration, libraryBase } from "./format";
+import { api, streamChat, type Apps, type CatalogResponse, type Selection, type Status } from "./api";
+import { JobSummary } from "./downloads";
+import { bytes, copyText, count, duration, libraryBase, newer } from "./format";
+import { usePoll } from "./poll";
 import { Icon } from "./icons";
 import { CollectionsEditor, ModelsEditor, RegionsEditor, StorageBar, WikipediaEditor, plan, AppsEditor } from "./selection";
 import { navigate, Link } from "./router";
 
-function usePoll<T>(path: string | null, ms: number): [T | null, string, () => void] {
-  const [data, setData] = useState<T | null>(null);
-  const [err, setErr] = useState("");
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    if (!path) return;
-    let alive = true;
-    const load = () =>
-      api.get<T>(path).then(
-        (d) => alive && (setData(d), setErr("")),
-        (e) => alive && setErr(e.message),
-      );
-    load();
-    const t = ms ? setInterval(load, ms) : 0;
-    return () => {
-      alive = false;
-      if (t) clearInterval(t);
-    };
-  }, [path, ms, tick]);
-  return [data, err, () => setTick((t) => t + 1)];
-}
+const UPDATE = "curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash";
 
 type Book = { id: string; title: string; description: string; path: string; size: number; date: string; category: string; notice?: string };
-
-function JobSummary({ status }: { status: Status }) {
-  const [data] = usePoll<{ jobs: Job[] }>(status.signedIn ? "/api/jobs" : null, 3000);
-  if (!data) return null;
-  const active = data.jobs.filter((j) => j.state === "running" || j.state === "queued" || j.state === "waiting");
-  const failed = data.jobs.filter((j) => j.state === "failed");
-  if (!active.length && !failed.length) return null;
-  const remaining = active.reduce((n, j) => n + Math.max(0, (j.live?.total || j.size) - (j.live?.done || 0)), 0);
-  const speed = active.reduce((n, j) => n + (j.live?.speed || 0), 0);
-  return (
-    <Link href="/downloads" class={`alert ${failed.length ? "warn" : "ok"}`} style={{ display: "block", textDecoration: "none", color: "inherit", marginBottom: "1.25rem" }}>
-      <div class="spread">
-        <strong>
-          {active.length ? `Downloading ${active.length} item${active.length > 1 ? "s" : ""} · ${bytes(remaining)} left` : ""}
-          {failed.length ? ` ${failed.length} failed` : ""}
-        </strong>
-        <span class="small muted">{speed > 0 ? `${bytes(speed)}/s · about ${duration(remaining / speed)}` : "View downloads →"}</span>
-      </div>
-    </Link>
-  );
-}
 
 export function Home({ status }: { status: Status }) {
   const [q, setQ] = useState("");
   const [lib] = usePoll<{ books: Book[] }>("/api/library", 0);
   const [maps] = usePoll<{ regions: unknown[] }>("/api/maps", 0);
-  const update = status.latestVersion && status.version !== "dev" && status.latestVersion !== status.version;
+  const update = !!status.latestVersion && newer(status.latestVersion, status.version);
   const tiles = [
-    { href: "/library", icon: "book", title: "Library", text: `${lib?.books.length ?? "…"} archives: encyclopedias, manuals and courses.`, show: status.apps.library },
-    { href: "/search", icon: "search", title: "Search", text: "Full-text search across everything at once.", show: status.apps.library },
-    { href: "/maps", icon: "map", title: "Maps", text: `${maps?.regions.length ?? "…"} regions available offline.`, show: status.apps.maps },
-    { href: "/assistant", icon: "chat", title: "Assistant", text: "Ask questions; answers cite your library.", show: status.apps.assistant },
-    { href: "/content", icon: "sliders", title: "Content", text: "Add or remove collections, maps and models.", show: status.signedIn },
-    { href: "/settings", icon: "gear", title: "Settings", text: "Access, password, system and updates.", show: status.signedIn },
+    { href: "/library", icon: "book", title: "Library", text: lib ? `${count(lib.books.length, "title")}: encyclopedias, manuals and lessons.` : "Encyclopedias, manuals and lessons.", show: status.apps.library },
+    { href: "/search", icon: "search", title: "Search", text: "One search box for everything in the library.", show: status.apps.library },
+    { href: "/maps", icon: "map", title: "Maps", text: maps ? `${count(maps.regions.length, "region")}, no internet needed.` : "Street maps, no internet needed.", show: status.apps.maps },
+    { href: "/assistant", icon: "chat", title: "Assistant", text: "Ask a question; the answer shows its sources.", show: status.apps.assistant },
+    { href: "/content", icon: "sliders", title: "Content", text: "Add or remove subjects, maps and AI models.", show: status.signedIn },
+    { href: "/settings", icon: "gear", title: "Settings", text: "Who can read, your password, updates.", show: status.signedIn },
   ];
   return (
     <div>
       {status.signedIn && update && (
         <div class="alert ok" style={{ marginBottom: "1rem" }}>
-          Outpost {status.latestVersion} is available (you have {status.version}). Update from <Link href="/settings">Settings</Link>.
+          A newer Outpost is out: {status.latestVersion} (this one is {status.version}). <Link href="/settings">Settings</Link> shows how to update.
         </div>
       )}
       {status.signedIn && <JobSummary status={status} />}
       <div class="hero">
         <div>
           <h1>{status.nodeName}</h1>
-          <p class="muted" style={{ margin: 0 }}>Offline knowledge, maps and tools, served from this machine.</p>
+          <p class="muted" style={{ margin: 0 }}>A library, maps and tools on your own network. No internet needed.</p>
         </div>
       </div>
       {status.apps.library && (
@@ -94,7 +55,7 @@ export function Home({ status }: { status: Status }) {
       </div>
       {!status.signedIn && (
         <p class="small muted" style={{ marginTop: "2rem" }}>
-          Administrator? <Link href="/login">Sign in</Link> to manage content.
+          Is this your Outpost? <Link href="/login">Sign in</Link> to change what it keeps.
         </p>
       )}
     </div>
@@ -119,26 +80,26 @@ export function Library({ status }: { status: Status }) {
       <div class="spread">
         <div>
           <h1>Library</h1>
-          <p class="muted" style={{ margin: 0 }}>{data.books.length} archives on this node.</p>
+          <p class="muted" style={{ margin: 0 }}>{count(data.books.length, "title")} on this Outpost.</p>
         </div>
-        <a class="btn" href={base + "/"} target="_blank" rel="noopener">Open the library browser ↗</a>
+        <a class="btn" href={base + "/"} target="_blank" rel="noopener">Browse the whole library</a>
       </div>
-      {!data.running && data.books.length > 0 && <p class="alert warn">The library server is starting or stopped. Archives open again within a few seconds.</p>}
+      {!data.running && data.books.length > 0 && <p class="alert warn">The library is starting up. Titles open again within a few seconds.</p>}
       {data.books.length === 0 ? (
         <div class="card empty">
-          <p>No archives yet.</p>
-          {status.signedIn ? <Link class="btn primary" href="/content">Choose content</Link> : <p class="small">The administrator can add content.</p>}
+          <p>Nothing here yet.</p>
+          {status.signedIn ? <Link class="btn primary" href="/content">Choose what to keep</Link> : <p class="small">The owner of this Outpost can add things.</p>}
         </div>
       ) : (
         <>
-          <input type="search" placeholder="Filter archives…" value={filter} onInput={(e) => setFilter((e.target as HTMLInputElement).value)} aria-label="Filter archives" style={{ maxWidth: 420 }} />
+          <input type="search" placeholder="Filter titles…" value={filter} onInput={(e) => setFilter((e.target as HTMLInputElement).value)} aria-label="Filter titles" style={{ maxWidth: 420 }} />
           {[...groups.entries()].sort().map(([g, list]) => (
             <section key={g}>
               <h2>{g}</h2>
               <div class="grid cols-3">
                 {list.map((b) => (
                   <a key={b.id} class="card book" href={base + b.path + "/"} target="_blank" rel="noopener" style={{ textDecoration: "none", color: "inherit" }}>
-                    <strong style={{ color: "var(--accent)" }}>{b.title}</strong>
+                    <strong>{b.title}</strong>
                     <span class="small muted">{b.description}</span>
                     <span class="meta">
                       <span class="mono">{bytes(b.size)}</span>
@@ -150,7 +111,7 @@ export function Library({ status }: { status: Status }) {
               </div>
             </section>
           ))}
-          <p class="small muted">Medical archives are references, not a substitute for a clinician. Archives keep their publishers' licences.</p>
+          <p class="small muted">Medical titles are references, not a substitute for a doctor or nurse. Each title keeps its publisher's licence.</p>
         </>
       )}
     </div>
@@ -197,7 +158,7 @@ export function Search({ status }: { status: Status }) {
       {res && !busy && (
         <div>
           <p class="muted small">{res.total.toLocaleString()} results{res.total > 0 && ` · showing ${start + 1}–${start + res.results.length}`}</p>
-          {res.results.length === 0 && <p class="empty">Nothing found. Try fewer or simpler words. Archives without a full-text index (some PDF collections) are browsed from the Library.</p>}
+          {res.results.length === 0 && <p class="empty">Nothing found. Try fewer or simpler words. A few titles (some collections of PDFs) cannot be searched this way; open them from the Library.</p>}
           {res.results.map((r) => (
             <div class="result" key={r.path}>
               <a class="title" href={base + r.path} target="_blank" rel="noopener">{r.title}</a>
@@ -256,8 +217,8 @@ export function Assistant({ status }: { status: Status }) {
     return (
       <div class="card empty">
         <h1>Assistant</h1>
-        <p>{!info.available ? "The AI service is not running on this node." : "No AI model is installed yet."}</p>
-        {status.signedIn ? <Link class="btn primary" href="/content">Add a model</Link> : <p class="small">The administrator can add one.</p>}
+        <p>{!info.available ? "The AI program (Ollama) is not running on this computer." : "No AI model is installed yet."}</p>
+        {status.signedIn ? <Link class="btn primary" href="/content">Add a model</Link> : <p class="small">The owner of this Outpost can add one.</p>}
       </div>
     );
   const linkify = (text: string, sources: Source[]) =>
@@ -271,7 +232,7 @@ export function Assistant({ status }: { status: Status }) {
       <div class="spread">
         <div>
           <h1>Assistant</h1>
-          <p class="muted small" style={{ margin: 0 }}>Runs on this machine. It can be wrong: check the cited sources, especially for medical or safety questions.</p>
+          <p class="muted small" style={{ margin: 0 }}>It runs on this computer and it can be wrong. Check the sources it lists, above all on medical or safety questions.</p>
         </div>
         <div class="row">
           <label class="switch small" style={{ padding: 0 }}>
@@ -290,7 +251,7 @@ export function Assistant({ status }: { status: Status }) {
           <div key={i} class="stack">
             <div class="msg q">{t.q}</div>
             <div class="msg a">
-              {t.ungrounded && <p class="alert warn small" style={{ whiteSpace: "normal" }}>Nothing in your library matched, so this answer comes from the model alone.</p>}
+              {t.ungrounded && <p class="alert warn small" style={{ whiteSpace: "normal" }}>Nothing in your library matched, so this answer comes from the AI model alone, with no source to check.</p>}
               {t.a ? linkify(t.a, t.sources) : !t.error && <span class="muted"><span class="spinner" /> {t.status}</span>}
               {t.error && <p class="alert warn" style={{ whiteSpace: "normal" }}>{t.error}</p>}
               {t.sources.length > 0 && (
@@ -336,7 +297,7 @@ export function Content({ status, refresh }: { status: Status; refresh: () => vo
     setMsg("");
     try {
       await api.post("/api/selection", { selection: sel, apps });
-      setMsg("Saved. Downloads and removals are running in the background.");
+      setMsg("Saved. It is downloading and removing now.");
       reload();
       refresh();
     } catch (e: any) {
@@ -353,33 +314,33 @@ export function Content({ status, refresh }: { status: Status; refresh: () => vo
       setMsg(e.message);
     }
   };
-  const tabs: [string, string][] = [["apps", "Apps"], ["collections", "Collections"], ["wikipedia", "Wikipedia"], ["maps", "Maps"], ["models", "AI models"]];
+  const tabs: [string, string][] = [["apps", "What it does"], ["collections", "Subjects"], ["wikipedia", "Wikipedia"], ["maps", "Maps"], ["models", "AI models"]];
   const outdated = data.outdated || [];
   return (
     <div class="stack">
       <div class="spread">
         <div>
           <h1>Content</h1>
-          <p class="muted" style={{ margin: 0 }}>Change what this node keeps. Nothing changes until you apply.</p>
+          <p class="muted" style={{ margin: 0 }}>Change what your Outpost keeps. Nothing happens until you press Apply changes.</p>
         </div>
       </div>
       {outdated.length > 0 && (
         <div class="alert ok spread">
-          <span>Newer editions are available for {outdated.length} archive{outdated.length > 1 ? "s" : ""}: {outdated.slice(0, 4).map((id) => items.get(id)?.title || id).join(", ")}{outdated.length > 4 ? "…" : ""}</span>
+          <span>Newer editions are out for {outdated.length} title{outdated.length > 1 ? "s" : ""}: {outdated.slice(0, 4).map((id) => items.get(id)?.title || id).join(", ")}{outdated.length > 4 ? "…" : ""}</span>
           <button class="btn small" onClick={updateAll}>Update all</button>
         </div>
       )}
       <StorageBar data={data} p={p} />
-      <div class="nav" role="tablist" style={{ flex: "none" }}>
+      <div class="nav" role="tablist" style={{ flex: "none", borderBottom: "1px solid var(--line-2)" }}>
         {tabs.map(([id, label]) => (
-          <a href="#" role="tab" key={id} aria-current={tab === id ? "page" : undefined} aria-selected={tab === id} onClick={(e) => (e.preventDefault(), setTab(id))}>{label}</a>
+          <a href="#" role="tab" key={id} aria-current={tab === id ? "page" : undefined} aria-selected={tab === id} style={{ padding: "0.7rem 0" }} onClick={(e) => (e.preventDefault(), setTab(id))}>{label}</a>
         ))}
       </div>
       {tab === "apps" && <AppsEditor apps={apps} setApps={setApps} aiAvailable={status.aiAvailable} />}
-      {tab === "collections" && (apps.library ? <CollectionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The library app is off. Turn it on under Apps.</p>)}
-      {tab === "wikipedia" && (apps.library ? <WikipediaEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The library app is off. Turn it on under Apps.</p>)}
-      {tab === "maps" && (apps.maps ? <RegionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The maps app is off. Turn it on under Apps.</p>)}
-      {tab === "models" && (apps.assistant ? <ModelsEditor c={data.catalog} sel={sel} setSel={setSel} memBytes={data.system.memBytes} installed={data.installed} /> : <p class="alert">The assistant is off{status.aiAvailable ? ". Turn it on under Apps." : " and not installed. Re-run the installer with --with-ai."}</p>)}
+      {tab === "collections" && (apps.library ? <CollectionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The library is switched off. Turn it on under “What it does”.</p>)}
+      {tab === "wikipedia" && (apps.library ? <WikipediaEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The library is switched off. Turn it on under “What it does”.</p>)}
+      {tab === "maps" && (apps.maps ? <RegionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">Maps are switched off. Turn them on under “What it does”.</p>)}
+      {tab === "models" && (apps.assistant ? <ModelsEditor c={data.catalog} sel={sel} setSel={setSel} memBytes={data.system.memBytes} installed={data.installed} /> : <p class="alert">The assistant is switched off{status.aiAvailable ? ". Turn it on under “What it does”." : ", and Ollama, the program it needs, is not on this computer yet."}</p>)}
       <div class="wizard-nav spread">
         <span class="small">
           {p.add.length > 0 && <>Add <strong>{p.add.length}</strong> ({bytes(p.addBytes)}) </>}
@@ -395,67 +356,6 @@ export function Content({ status, refresh }: { status: Status; refresh: () => vo
   );
 }
 
-export function Downloads() {
-  const [data, err, reload] = usePoll<{ jobs: Job[] }>("/api/jobs", 1500);
-  const act = async (path: string) => {
-    try {
-      await api.post(path);
-      reload();
-    } catch {
-      reload();
-    }
-  };
-  if (err) return <p class="alert warn">{err}</p>;
-  if (!data) return <p class="empty"><span class="spinner" /></p>;
-  const label: Record<string, string> = { queued: "Queued", running: "Working", waiting: "Retrying soon", done: "Done", failed: "Failed", cancelled: "Cancelled" };
-  return (
-    <div class="stack">
-      <div class="spread">
-        <div>
-          <h1>Downloads</h1>
-          <p class="muted" style={{ margin: 0 }}>Every file is checked against its published checksum before it is used.</p>
-        </div>
-        <button class="btn small" onClick={() => act("/api/jobs/clear")}>Clear finished</button>
-      </div>
-      <div class="card">
-        {data.jobs.length === 0 && <p class="empty">No downloads.</p>}
-        {data.jobs.map((j) => {
-          const total = j.live?.total || j.size;
-          const done = j.live?.done || 0;
-          const pct = j.state === "done" ? 100 : total ? Math.min(100, (done / total) * 100) : 0;
-          return (
-            <div class="job" key={j.id}>
-              <div>
-                <strong>{j.action === "remove" ? "Remove " : ""}{j.title}</strong>
-                <div class="small muted">
-                  <span class={j.state === "failed" ? "badge warn" : j.state === "done" ? "badge" : "badge plain"}>{label[j.state]}</span>{" "}
-                  {j.state === "running" && j.live && (
-                    <>
-                      {j.live.phase} · <span class="mono">{bytes(done)} / {bytes(total)}</span>
-                      {j.live.speed > 0 && <> · {bytes(j.live.speed)}/s · {duration((total - done) / j.live.speed)} left</>}
-                    </>
-                  )}
-                  {j.state !== "running" && j.action === "install" && <span class="mono">{bytes(j.size)}</span>}
-                  {j.error && <div class="small" style={{ color: "var(--warn)" }}>{j.error}{j.state === "waiting" ? ` (attempt ${j.attempts})` : ""}</div>}
-                </div>
-              </div>
-              <div class="row">
-                {(j.state === "queued" || j.state === "running" || j.state === "waiting") && <button class="btn small" onClick={() => act(`/api/jobs/${j.id}/cancel`)}>Cancel</button>}
-                {(j.state === "failed" || j.state === "cancelled") && <button class="btn small" onClick={() => act(`/api/jobs/${j.id}/retry`)}>Retry</button>}
-              </div>
-              {j.action === "install" && j.state !== "cancelled" && j.state !== "failed" && (
-                <div class="progress" role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100} aria-label={j.title}>
-                  <div style={{ width: `${pct}%` }} />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 export function Settings({ status, refresh }: { status: Status; refresh: () => void }) {
   const [sys, err, reload] = usePoll<any>("/api/system", 0);
   const [s, setS] = useState({ nodeName: status.nodeName, publicAccess: status.publicAccess, assistantPublic: status.assistantPublic, checkForUpdates: true });
@@ -463,6 +363,7 @@ export function Settings({ status, refresh }: { status: Status; refresh: () => v
   const [pw, setPw] = useState({ current: "", next: "" });
   const [pwMsg, setPwMsg] = useState("");
   const [catMsg, setCatMsg] = useState("");
+  const [copied, setCopied] = useState(false);
   const save = async () => {
     try {
       await api.put("/api/settings", s);
@@ -486,39 +387,39 @@ export function Settings({ status, refresh }: { status: Status; refresh: () => v
     setCatMsg("Checking…");
     try {
       const r = await api.post<{ changed: boolean; sequence: number }>("/api/catalog/refresh");
-      setCatMsg(r.changed ? "A newer catalog was installed." : "The catalog is up to date.");
+      setCatMsg(r.changed ? "A newer list arrived. See Content." : "Nothing new.");
       reload();
     } catch (e: any) {
       setCatMsg(e.message);
     }
   };
-  const update = status.latestVersion && status.version !== "dev" && status.latestVersion !== status.version;
+  const update = !!status.latestVersion && newer(status.latestVersion, status.version);
   return (
     <div class="stack">
       <h1>Settings</h1>
       <div class="grid cols-2">
         <section class="card">
-          <h2>Access</h2>
+          <h2>Who can read</h2>
           <label class="field">
-            <span>Node name</span>
+            <span>Name of this Outpost</span>
             <input type="text" value={s.nodeName} maxLength={60} onInput={(e) => setS({ ...s, nodeName: (e.target as HTMLInputElement).value })} />
           </label>
           <label class="switch">
             <input type="checkbox" checked={s.publicAccess} onChange={(e) => setS({ ...s, publicAccess: (e.target as HTMLInputElement).checked })} />
-            <span><strong>Anyone on the network can read</strong><br /><span class="small muted">Library, search and maps without signing in. Turn off to require the admin password for everything.</span></span>
+            <span><strong>Anyone on your Wi-Fi can read</strong><br /><span class="small muted">The library, search and maps open without signing in. Turn this off to ask for the password for everything.</span></span>
           </label>
           <label class="switch">
             <input type="checkbox" checked={s.assistantPublic} disabled={!s.publicAccess} onChange={(e) => setS({ ...s, assistantPublic: (e.target as HTMLInputElement).checked })} />
-            <span><strong>Visitors can use the assistant</strong><br /><span class="small muted">Answers use this machine's processor; turn off on slow hardware.</span></span>
+            <span><strong>Guests can use the assistant</strong><br /><span class="small muted">Every answer keeps this computer busy for a while. Turn this off on a slow machine.</span></span>
           </label>
           <label class="switch">
             <input type="checkbox" checked={s.checkForUpdates} onChange={(e) => setS({ ...s, checkForUpdates: (e.target as HTMLInputElement).checked })} />
-            <span><strong>Check for updates when online</strong><br /><span class="small muted">Fetches the signed catalog and the latest version number from the Outpost website. Nothing about this node is sent.</span></span>
+            <span><strong>Look for updates when there is internet</strong><br /><span class="small muted">Fetches the list of what is available and the newest version number from the Outpost website. Nothing about this Outpost is sent.</span></span>
           </label>
           <div class="row"><button class="btn primary" onClick={save}>Save</button><span class="small muted">{msg}</span></div>
         </section>
         <section class="card">
-          <h2>Admin password</h2>
+          <h2>Password</h2>
           <form onSubmit={changePw}>
             <label class="field"><span>Current password</span><input type="password" autocomplete="current-password" value={pw.current} onInput={(e) => setPw({ ...pw, current: (e.target as HTMLInputElement).value })} required /></label>
             <label class="field"><span>New password</span><input type="password" autocomplete="new-password" minLength={10} value={pw.next} onInput={(e) => setPw({ ...pw, next: (e.target as HTMLInputElement).value })} required /></label>
@@ -529,21 +430,26 @@ export function Settings({ status, refresh }: { status: Status; refresh: () => v
           <h2>Software</h2>
           <table class="facts"><tbody>
             <tr><td>Outpost</td><td class="mono">{status.version}</td></tr>
-            <tr><td>Latest release</td><td class="mono">{status.latestVersion || "unknown (offline?)"}</td></tr>
+            <tr><td>Newest release</td><td class="mono">{status.latestVersion || "unknown (no internet?)"}</td></tr>
             <tr><td>Catalog</td><td class="mono">{sys?.catalog?.generated || "…"}</td></tr>
-            <tr><td>Library server</td><td>{sys?.library?.running ? `running, ${sys.library.books} archives` : "not running"}</td></tr>
-            <tr><td>AI service</td><td>{status.aiAvailable ? `Ollama ${status.aiVersion}` : "not installed"}</td></tr>
+            <tr><td>Library</td><td>{sys?.library?.running ? `running, ${sys.library.books} titles` : "not running"}</td></tr>
+            <tr><td>AI program</td><td>{status.aiAvailable ? `Ollama ${status.aiVersion}` : "not installed"}</td></tr>
           </tbody></table>
-          {update && <p class="alert ok small" style={{ marginTop: "0.8rem" }}>Version {status.latestVersion} is available. On the node, run the installer again; it keeps your content and settings:</p>}
-          <code class="kbd small">curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash</code>
-          <div class="row" style={{ marginTop: "0.8rem" }}><button class="btn small" onClick={refreshCatalog}>Check for new content now</button><span class="small muted">{catMsg}</span></div>
+          <p class={`small ${update ? "alert ok" : "muted"}`} style={{ marginTop: "0.8rem" }}>
+            {update ? `Version ${status.latestVersion} is out. ` : ""}To update, paste this line into Terminal on the Outpost computer. It keeps everything you downloaded and all your settings.
+          </p>
+          <div class="copyline">
+            <code class="kbd small">{UPDATE}</code>
+            <button type="button" class="btn small" onClick={async () => setCopied(await copyText(UPDATE))}>{copied ? "Copied" : "Copy"}</button>
+          </div>
+          <div class="row" style={{ marginTop: "0.8rem" }}><button class="btn small" onClick={refreshCatalog}>Look for new titles now</button><span class="small muted">{catMsg}</span></div>
         </section>
         <section class="card">
-          <h2>System</h2>
+          <h2>This computer</h2>
           {err && <p class="alert warn">{err}</p>}
           {sys && (
             <table class="facts"><tbody>
-              <tr><td>Host</td><td>{sys.system.hostname} ({sys.system.os}/{sys.system.arch})</td></tr>
+              <tr><td>Name on the network</td><td>{sys.system.hostname} ({sys.system.os}/{sys.system.arch})</td></tr>
               <tr><td>Processor</td><td>{sys.system.cpu || "unknown"} · {sys.system.cores} cores</td></tr>
               <tr><td>Memory</td><td class="mono">{bytes(sys.system.memBytes)}</td></tr>
               <tr><td>Graphics</td><td>{sys.system.gpu || "none detected"}</td></tr>
