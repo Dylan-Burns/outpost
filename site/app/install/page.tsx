@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CopyCommand from "../components/CopyCommand";
 import { installerDigest, loadRelease } from "@/lib/catalog";
-import { INSTALL } from "@/lib/site";
+import { GET_AI, INSTALL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Install",
@@ -112,8 +112,12 @@ export default function Install() {
             </p>
             <p>
               The installer downloads Outpost and two helpers, checks that each is the genuine article, and sets Outpost to start by itself
-              whenever the computer is on. When it finishes it shows an address to open and a one-time setup code:
+              whenever the computer is on. Each download fills in as it arrives, so you can see it working:
             </p>
+            <pre>{`==> Downloading kiwix-tools 3.8.2 and pmtiles 1.31.2
+    kiwix-tools 3.8.2  ###########                 4.7 MB / 10.3 MB     45.8%
+    pmtiles 1.31.2     #########################  17.3 MB / 17.3 MB  COMPLETE`}</pre>
+            <p>When it finishes it shows an address to open and a one-time setup code:</p>
             <pre>{`Outpost ${rel.version} is running.
 
   Open the dashboard:  http://192.168.1.40:8080
@@ -127,17 +131,18 @@ export default function Install() {
               best.
             </p>
             <dl>
-              <dt>On Linux</dt>
-              <dd>Use this line instead of the one above. It installs Ollama from ollama.com for you.</dd>
-            </dl>
-            <CopyCommand command={`${INSTALL} -s -- --with-ai`} />
-            <dl>
-              <dt>On a Mac</dt>
+              <dt>On a Mac or on Linux</dt>
               <dd>
-                Download the Ollama app from <a href="https://ollama.com/download">ollama.com/download</a> and open it once. Outpost finds it
-                by itself, and the assistant appears in the dashboard.
+                Once Outpost is installed, paste this second line. It is Ollama&apos;s own installer, from ollama.com. Outpost finds Ollama by
+                itself, and the assistant appears in the dashboard. The setup page shows this same line, so you can also do it from there.
               </dd>
             </dl>
+            <CopyCommand command={GET_AI} />
+            <dl>
+              <dt>On Linux, in one go</dt>
+              <dd>Or use this line instead of the first one, and Outpost&apos;s installer runs Ollama&apos;s for you.</dd>
+            </dl>
+            <CopyCommand command={`${INSTALL} -s -- --with-ai`} />
 
             <h3>For the technical</h3>
             <dl>

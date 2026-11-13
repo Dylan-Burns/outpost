@@ -171,6 +171,9 @@ label.field > span { display: block; margin-bottom: 0.4rem; color: var(--dim); }
 .choice.disabled { cursor: not-allowed; }
 .choice.disabled > * { opacity: 0.5; }
 .choice.disabled:hover { background: transparent; }
+/* What a switched-off choice needs before it can be switched on. */
+.needs { padding: 0.95rem 1.05rem 1.05rem; border: 1px solid var(--line-2); }
+.needs p { margin: 0 0 0.7rem; }
 .tiers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 0.9rem; border: 1px solid var(--fg); }
 .tiers button { appearance: none; padding: 0.5rem 0.2rem; border: 0; border-left: 1px solid var(--fg); border-radius: 0; background: var(--bg); color: var(--fg); font: 600 0.8rem/1.25 var(--sans); text-align: center; cursor: pointer; }
 .tiers button:first-child { border-left: 0; }

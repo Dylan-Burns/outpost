@@ -3,11 +3,12 @@
 # knowledge server. Safe to run again: it upgrades in place and keeps your
 # content.
 #
-#   curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash
-#   curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash -s -- --with-ai
+#   curl -fsSL https://projectoutpost.org/install.sh | sudo bash
+#   curl -fsSL https://projectoutpost.org/install.sh | sudo bash -s -- --with-ai
 #
 # Options:
-#   --with-ai            set up the AI assistant (installs Ollama on Linux)
+#   --with-ai            set up the AI assistant (installs Ollama on Linux;
+#                        on a Mac, shows the one line that installs it)
 #   --data-dir DIR       where content is stored (default /var/lib/outpost)
 #   --port N             dashboard port (default 8080)
 #   --library-port N     library port (default 8081)
@@ -22,7 +23,7 @@
 main() {
 set -Eeuo pipefail
 
-SITE="${OUTPOST_SITE:-https://outpost-offline.vercel.app}"
+SITE="${OUTPOST_SITE:-https://projectoutpost.org}"
 RELEASE_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrMpCCBsGNt2QYPvv84kSXqzkIMJIvTJAgadKprEcLV outpost-release"
 KIWIX_VERSION="3.8.2"
 PMTILES_VERSION="1.31.2"
@@ -40,6 +41,7 @@ MAC_FIREWALL="/usr/libexec/ApplicationFirewall/socketfilterfw"
 [ "$OS" != "Darwin" ] || SERVICE_USER="_outpost"
 
 WITH_AI=0; DATA_DIR=""; PORT=""; LIB_PORT=""; VERSION=""; FIREWALL=1; UNINSTALL=0; PURGE=0; YES=0; OPEN=1
+AI_HINT=0
 
 c_bold=$'\e[1m'; c_dim=$'\e[2m'; c_green=$'\e[32m'; c_red=$'\e[31m'; c_off=$'\e[0m'
 [ -t 1 ] || { c_bold=""; c_dim=""; c_green=""; c_red=""; c_off=""; }
@@ -341,12 +343,86 @@ if [ -n "$ssh_ver" ]; then
 fi
 
 WORK="$(mktemp -d)"
-trap 'rm -rf "$WORK"' EXIT
+DL_PID=""
+trap '[ -z "$DL_PID" ] || kill "$DL_PID" 2>/dev/null || true; rm -rf "$WORK"' EXIT
 verify_sig() { # verify_sig NAMESPACE FILE SIGFILE
   printf 'outpost-release %s\n' "$RELEASE_KEY" > "$WORK/allowed_signers"
   ssh-keygen -Y verify -f "$WORK/allowed_signers" -I outpost-release -n "$1" -s "$3" < "$2" >/dev/null 2>&1
 }
 fetch() { curl -fsSL --proto '=https' --tlsv1.2 --retry 4 --retry-delay 2 --connect-timeout 20 -o "$2" "$1"; }
+
+# A download people can watch: a line of # that grows with the file, how much
+# has arrived of how much, then COMPLETE. Off a terminal (a log, a pipe) it is
+# one plain line for each file instead.
+megabytes() { # megabytes BYTES: prints megabytes with one decimal
+  local tenths=$(( ($1 * 10 + 524288) / 1048576 ))
+  printf '%d.%d' $((tenths / 10)) $((tenths % 10))
+}
+on_disk() { # on_disk FILE: its size in bytes, 0 if it is not there yet
+  local n=0
+  [ -f "$1" ] && n="$(wc -c < "$1" 2>/dev/null | tr -d ' ')"
+  printf '%s' "${n:-0}"
+}
+expected_size() { # expected_size HEADERFILE: Content-Length of the real answer, not of a redirect on the way to it
+  awk 'BEGIN { ok = 0; len = 0 }
+       /^HTTP\// { ok = ($2 ~ /^2/); if (ok) len = 0 }
+       ok && tolower($1) == "content-length:" { v = $2; gsub(/[^0-9]/, "", v); len = v }
+       END { print len + 0 }' "$1" 2>/dev/null || printf 0
+}
+progress_line() { # progress_line LABEL HAVE TOTAL STATE: STATE is empty while it runs, else COMPLETE or FAILED
+  local label="$1" have="$2" total="$3" state="$4" cols="" width filled=0 bar="" gap="" right
+  # The terminal's width, asked of the terminal itself: with the script piped
+  # in and output captured for a moment, nothing else here is a terminal.
+  if [ -r /dev/tty ]; then cols="$( (stty size < /dev/tty) 2>/dev/null | cut -d' ' -f2 || true)"; fi
+  [[ "$cols" =~ ^[0-9]+$ ]] || cols=80
+  width=$((cols - 55)); [ "$width" -gt 40 ] && width=40; [ "$width" -lt 10 ] && width=10
+  if [ "$state" = COMPLETE ]; then total="$have"; fi
+  if [ "$total" -gt 0 ]; then
+    [ "$have" -gt "$total" ] && have="$total"
+    filled=$((have * width / total))
+    if [ -z "$state" ]; then
+      local tenths=$((have * 1000 / total))
+      state="$((tenths / 10)).$((tenths % 10))%"
+    fi
+    right="$(printf '%9s / %-9s' "$(megabytes "$have") MB" "$(megabytes "$total") MB")"
+  else
+    right="$(printf '%9s   %-9s' "$(megabytes "$have") MB" "")"
+  fi
+  [ "$filled" -gt 0 ] && bar="$(printf '%*s' "$filled" '' | tr ' ' '#')"
+  [ "$filled" -lt "$width" ] && gap="$(printf '%*s' $((width - filled)) '')"
+  case "$state" in
+    COMPLETE) state="$c_green$state$c_off" ;;
+    FAILED) state="$c_red$state$c_off" ;;
+    *) state="$(printf '%8s' "$state")" ;;
+  esac
+  printf '\r    %-18.18s %s%s %s %s\033[K' "$label" "$bar" "$gap" "$right" "$state"
+}
+fetch_show() { # fetch_show LABEL URL FILE
+  local label="$1" url="$2" out="$3" headers="$WORK/.headers" problem="$WORK/.problem" total=0 ok=1
+  if ! [ -t 1 ]; then
+    fetch "$url" "$out" || return 1
+    note "$label: $(megabytes "$(on_disk "$out")") MB"
+    return 0
+  fi
+  : > "$headers"
+  # curl's own complaint, if it has one, is kept for after the line is finished.
+  curl -fsSL --proto '=https' --tlsv1.2 --retry 4 --retry-delay 2 --connect-timeout 20 -D "$headers" -o "$out" "$url" 2> "$problem" &
+  DL_PID=$!
+  while kill -0 "$DL_PID" 2>/dev/null; do
+    [ "$total" -gt 0 ] || total="$(expected_size "$headers")"
+    progress_line "$label" "$(on_disk "$out")" "$total" ""
+    sleep 0.2
+  done
+  wait "$DL_PID" || ok=0
+  DL_PID=""
+  if [ "$ok" -eq 1 ]; then
+    progress_line "$label" "$(on_disk "$out")" "$total" COMPLETE; printf '\n'
+    return 0
+  fi
+  progress_line "$label" "$(on_disk "$out")" "$total" FAILED; printf '\n'
+  if [ -s "$problem" ]; then note "$(tail -n 1 "$problem")"; fi
+  return 1
+}
 sha256_of() {
   if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi
 }
@@ -395,14 +471,14 @@ if [ -z "$WANT" ]; then
   if [ "$GOOS" = "darwin" ]; then die "Outpost $VERSION was not published for Macs. Mac support starts with version 1.1.0."; fi
   die "Outpost $VERSION was not published for this kind of machine."
 fi
-fetch "$REL/$TARBALL" "$WORK/$TARBALL" || die "cannot download $REL/$TARBALL"
+fetch_show "Outpost $VERSION" "$REL/$TARBALL" "$WORK/$TARBALL" || die "cannot download $REL/$TARBALL"
 sha256_is "$WORK/$TARBALL" "$WANT" || die "the download does not match its signed checksum"
 note "checksum verified"
 
 say "Downloading kiwix-tools $KIWIX_VERSION and pmtiles $PMTILES_VERSION"
-fetch "https://download.kiwix.org/release/kiwix-tools/$KT" "$WORK/$KT" || die "cannot download kiwix-tools"
+fetch_show "kiwix-tools $KIWIX_VERSION" "https://download.kiwix.org/release/kiwix-tools/$KT" "$WORK/$KT" || die "cannot download kiwix-tools"
 sha256_is "$WORK/$KT" "$KIWIX_SHA" || die "kiwix-tools does not match its pinned checksum"
-fetch "https://github.com/protomaps/go-pmtiles/releases/download/v$PMTILES_VERSION/$PT" "$WORK/$PT" || die "cannot download pmtiles"
+fetch_show "pmtiles $PMTILES_VERSION" "https://github.com/protomaps/go-pmtiles/releases/download/v$PMTILES_VERSION/$PT" "$WORK/$PT" || die "cannot download pmtiles"
 sha256_is "$WORK/$PT" "$PMT_SHA" || die "pmtiles does not match its pinned checksum"
 note "checksums verified"
 
@@ -615,12 +691,13 @@ if [ "$OS" = "Linux" ]; then
     systemctl enable --now ollama >/dev/null 2>&1 || true
   fi
 elif [ "$WITH_AI" -eq 1 ]; then
-  # On a Mac, Ollama is an app the owner installs; Outpost finds it once it runs.
+  # On a Mac, Ollama is an app that runs for the person signed in, so it is
+  # theirs to install rather than root's. Outpost finds it once it is running;
+  # the line that installs it is shown with the closing summary.
   if command -v ollama >/dev/null 2>&1 || [ -d /Applications/Ollama.app ]; then
     note "Ollama is already installed; keep it open and the assistant will find it"
   else
-    note "The AI assistant uses the Ollama app. Download it from https://ollama.com/download and open it once;"
-    note "the assistant then appears in the Outpost dashboard."
+    AI_HINT=1
   fi
 fi
 
@@ -689,6 +766,11 @@ if [ -n "$CODE" ]; then
 fi
 printf '\n  Content is stored in %s\n' "$DATA_DIR"
 printf '  Logs: %s    Update: re-run this installer\n\n' "$LOGS_HINT"
+if [ "$AI_HINT" -eq 1 ]; then
+  printf '  %sFor the AI assistant%s, paste this next. It is the installer from ollama.com:\n' "$c_bold" "$c_off"
+  printf '      curl -fsSL https://ollama.com/install.sh | sh\n'
+  printf '  %sThe assistant then appears in the dashboard by itself.%s\n\n' "$c_dim" "$c_off"
+fi
 open_setup_page
 }
 

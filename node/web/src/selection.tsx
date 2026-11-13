@@ -1,8 +1,8 @@
 // Shared pieces of the setup wizard and the content manager: computing what a
 // selection needs, and the editors for each part of it.
-import { useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import type { Apps, Catalog, CatalogResponse, Category, Item, Selection } from "./api";
-import { bytes } from "./format";
+import { bytes, copyText } from "./format";
 import { Icon } from "./icons";
 
 export const TIERS = ["essential", "standard", "comprehensive"] as const;
@@ -86,7 +86,18 @@ export function StorageBar({ data, p }: { data: CatalogResponse; p: Plan }) {
   );
 }
 
-export function AppsEditor({ apps, setApps, aiAvailable }: { apps: Apps; setApps: (a: Apps) => void; aiAvailable: boolean }) {
+/** Ollama's own one-line installer. The same line works on a Mac and on Linux. */
+export const GET_AI = "curl -fsSL https://ollama.com/install.sh | sh";
+
+export function AppsEditor({ apps, setApps, aiAvailable, recheck }: { apps: Apps; setApps: (a: Apps) => void; aiAvailable: boolean; recheck?: () => void }) {
+  const [copied, setCopied] = useState(false);
+  // While the assistant's program is missing, look for it every few seconds,
+  // so the choice unlocks by itself once it has been installed.
+  useEffect(() => {
+    if (aiAvailable || !recheck) return;
+    const t = setInterval(recheck, 4000);
+    return () => clearInterval(t);
+  }, [aiAvailable, recheck]);
   const rows: [keyof Apps, string, string, boolean][] = [
     ["library", "Library", "Encyclopedias, manuals, books and lessons that anyone on your Wi-Fi can read and search in a browser.", true],
     ["maps", "Maps", "Street maps of the places you choose. They work with no internet.", true],
@@ -95,7 +106,7 @@ export function AppsEditor({ apps, setApps, aiAvailable }: { apps: Apps; setApps
       "AI assistant",
       aiAvailable
         ? "Answers questions in plain words from your library, and shows where each answer came from. Runs on this computer only."
-        : "Needs a free program called Ollama, which is not on this computer yet. On a Mac, install the Ollama app and open it once. On Linux, run the installer again with --with-ai.",
+        : "Answers questions in plain words from your library. It needs a free program called Ollama, which is not on this computer yet.",
       aiAvailable,
     ],
   ];
@@ -110,6 +121,18 @@ export function AppsEditor({ apps, setApps, aiAvailable }: { apps: Apps; setApps
           <p class="muted small" style={{ margin: "0.3rem 0 0 1.6rem" }}>{desc}</p>
         </label>
       ))}
+      {!aiAvailable && (
+        <div class="needs">
+          <p class="small">
+            <strong>To add the AI assistant,</strong> paste this line into Terminal on the Outpost computer. It is Ollama’s own installer, from
+            ollama.com, and it may ask for the computer’s password. The choice above unlocks by itself a few seconds after it finishes.
+          </p>
+          <div class="copyline">
+            <code class="kbd small">{GET_AI}</code>
+            <button type="button" class="btn small" onClick={async () => { setCopied(await copyText(GET_AI)); setTimeout(() => setCopied(false), 1800); }}>{copied ? "Copied" : "Copy"}</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

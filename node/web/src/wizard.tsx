@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { api, setCSRF, type Apps, type CatalogResponse, type Selection, type Status } from "./api";
 import { bytes } from "./format";
 import { Logo } from "./icons";
@@ -117,7 +117,7 @@ export function Login({ onDone, title }: { onDone: () => void; title?: string })
 
 const STEPS = ["What it does", "Wikipedia", "Subjects", "Maps", "AI models", "Review"];
 
-export function Wizard({ status, onDone }: { status: Status; onDone: () => void }) {
+export function Wizard({ status, refresh, onDone }: { status: Status; refresh: () => void; onDone: () => void }) {
   const [data, setData] = useState<CatalogResponse | null>(null);
   const [err, setErr] = useState("");
   const [step, setStep] = useState(0);
@@ -125,6 +125,18 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
   const [sel, setSel] = useState<Selection | null>(null);
   const [name, setName] = useState(status.nodeName || "Outpost");
   const [busy, setBusy] = useState(false);
+  const hadAI = useRef(status.aiAvailable);
+
+  // The assistant's program can arrive while this page is open: the first
+  // step shows the line that installs it. When it does, switch the assistant
+  // on and pick the smallest model, as if it had been there from the start.
+  useEffect(() => {
+    if (!status.aiAvailable || hadAI.current) return;
+    hadAI.current = true;
+    setApps((a) => ({ ...a, assistant: true }));
+    const small = data?.catalog.items.find((i) => i.kind === "model");
+    if (small) setSel((s) => (s && s.models.length === 0 ? { ...s, models: [small.id] } : s));
+  }, [status.aiAvailable, data]);
 
   useEffect(() => {
     api.get<CatalogResponse>("/api/catalog").then((d) => {
@@ -182,7 +194,7 @@ export function Wizard({ status, onDone }: { status: Status; onDone: () => void 
             <input type="text" value={name} maxLength={60} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
             <div class="hint">Shown at the top of every page, for example “Cabin library”.</div>
           </label>
-          <AppsEditor apps={apps} setApps={setApps} aiAvailable={status.aiAvailable} />
+          <AppsEditor apps={apps} setApps={setApps} aiAvailable={status.aiAvailable} recheck={refresh} />
           <p class="small muted">
             This computer: {data.system.cpu || data.system.arch}, {bytes(data.system.memBytes)} of memory, {bytes(data.disk.free)} free of{" "}
             {bytes(data.disk.total)}

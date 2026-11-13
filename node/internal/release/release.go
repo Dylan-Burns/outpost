@@ -5,8 +5,9 @@ package release
 // content catalog (namespace "outpost-catalog").
 const PublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrMpCCBsGNt2QYPvv84kSXqzkIMJIvTJAgadKprEcLV outpost-release"
 
-// SiteURL is the Outpost website, which hosts the catalog and releases.
-const SiteURL = "https://outpost-offline.vercel.app"
+// SiteURL is the Outpost website, which hosts the catalog and releases. The
+// bare domain answers with a redirect to www; the downloader follows it.
+const SiteURL = "https://projectoutpost.org"
 
 // CatalogURL is where the signed catalog is published.
 const CatalogURL = SiteURL + "/catalog/v1/catalog.json"

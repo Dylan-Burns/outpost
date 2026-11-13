@@ -9,3 +9,6 @@ export const SITE = `https://www.${DOMAIN}`;
 
 /** The one line that installs Outpost. */
 export const INSTALL = `curl -fsSL https://${DOMAIN}/install.sh | sudo bash`;
+
+/** Ollama's own one-line installer, for the optional AI assistant. It works on a Mac and on Linux. */
+export const GET_AI = "curl -fsSL https://ollama.com/install.sh | sh";

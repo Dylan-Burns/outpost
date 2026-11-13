@@ -46,7 +46,7 @@ function App() {
   if (!status.setupComplete) {
     return (
       <main>
-        {!status.signedIn ? <Login title="Finish setting up" onDone={refresh} /> : <Wizard status={status} onDone={() => { refresh(); navigate("/downloads"); }} />}
+        {!status.signedIn ? <Login title="Finish setting up" onDone={refresh} /> : <Wizard status={status} refresh={refresh} onDone={() => { refresh(); navigate("/downloads"); }} />}
       </main>
     );
   }

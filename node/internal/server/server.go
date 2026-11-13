@@ -44,7 +44,7 @@ type Server struct {
 	MapsDir     string
 	AssetsDir   string
 	LibraryPort int
-	SiteURL     string // e.g. https://outpost-offline.vercel.app
+	SiteURL     string // e.g. https://projectoutpost.org
 	// SetupCode returns the current one-time setup code ("" once claimed).
 	SetupCode func() string
 	// ClearSetupCode is called once the node has been claimed.

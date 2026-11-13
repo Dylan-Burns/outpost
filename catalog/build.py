@@ -8,6 +8,7 @@ style assets, reads model sizes from the Ollama registry, then writes and
 signs site/public/catalog/v1/catalog.json and copies it into the node.
 
 Usage: python3 catalog/build.py --pmtiles PATH [--key ~/.config/outpost-release/release_ed25519]
+       python3 catalog/build.py --rehost     (the site moved: same content, new address, signed again)
 Standard library only.
 """
 import argparse
@@ -29,11 +30,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SITE_URL = "https://outpost-offline.vercel.app"
+SITE_URL = "https://projectoutpost.org"
 OPDS = "https://opds.library.kiwix.org/catalog/v2/entries?count=-1&lang={lang}"
 MIRROR = "https://download.kiwix.org/zim/"
 NE = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/"
-UA = "outpost-catalog-builder/1 (+https://outpost-offline.vercel.app)"
+UA = "outpost-catalog-builder/1 (+https://projectoutpost.org)"
 NS = {"a": "http://www.w3.org/2005/Atom"}
 CACHE = ROOT / "catalog" / ".cache"
 
@@ -268,15 +269,54 @@ def model_size(name):
     return sum(l["size"] for l in d["layers"]) + d["config"]["size"]
 
 
+def publish(cat, out_dir, key):
+    """Write the catalog, sign it, and copy both into the node."""
+    data = json.dumps(cat, indent=1, ensure_ascii=False).encode() + b"\n"
+    out = out_dir / "catalog.json"
+    out.write_bytes(data)
+    sig = out.with_suffix(".json.sig")
+    if sig.exists():
+        sig.unlink()
+    subprocess.run(["ssh-keygen", "-Y", "sign", "-f", key, "-n", "outpost-catalog", str(out)], check=True, capture_output=True)
+    emb = ROOT / "node" / "internal" / "catalog" / "embedded"
+    emb.mkdir(parents=True, exist_ok=True)
+    shutil.copy(out, emb / "catalog.json")
+    shutil.copy(sig, emb / "catalog.json.sig")
+    print(f"catalog: {len(cat['items'])} items, sequence {cat['sequence']}", file=sys.stderr)
+
+
+def rehost(out_dir, key):
+    """The site has a new address. Point every file the site itself serves at
+    SITE_URL, leave everything else exactly as it was, and sign again with a
+    higher sequence number so nodes take the new copy."""
+    cat = json.loads((out_dir / "catalog.json").read_text())
+    moved = 0
+    for item in cat["items"]:
+        m = re.match(r"https://[^/]+(/(?:assets|catalog/v1/regions)/.+)$", item.get("url", ""))
+        if m and not item["url"].startswith(SITE_URL + "/"):
+            item["url"] = SITE_URL + m.group(1)
+            moved += 1
+    cat["sequence"] = max(int(time.time()), cat["sequence"] + 1)
+    cat["generated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    print(f"rehost: {moved} addresses now at {SITE_URL}", file=sys.stderr)
+    publish(cat, out_dir, key)
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pmtiles", required=True)
+    ap.add_argument("--pmtiles")
     ap.add_argument("--key", default=os.path.expanduser("~/.config/outpost-release/release_ed25519"))
     ap.add_argument("--jobs", type=int, default=6)
     ap.add_argument("--skip-maps", action="store_true", help="reuse region sizes from the previous catalog")
+    ap.add_argument("--rehost", action="store_true", help="only move the site's own files to SITE_URL and sign again")
     args = ap.parse_args()
-    src = json.loads((ROOT / "catalog" / "source.json").read_text())
     out_dir = ROOT / "site" / "public" / "catalog" / "v1"
+    if args.rehost:
+        rehost(out_dir, args.key)
+        return
+    if not args.pmtiles:
+        ap.error("--pmtiles is required")
+    src = json.loads((ROOT / "catalog" / "source.json").read_text())
     prev = {}
     prev_path = out_dir / "catalog.json"
     if prev_path.exists():
@@ -370,18 +410,7 @@ def main():
 
     cat = {"schema": 1, "sequence": int(time.time()), "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
            "mapBuild": build, "categories": categories, "items": all_items}
-    data = json.dumps(cat, indent=1, ensure_ascii=False).encode() + b"\n"
-    out = out_dir / "catalog.json"
-    out.write_bytes(data)
-    sig = out.with_suffix(".json.sig")
-    if sig.exists():
-        sig.unlink()
-    subprocess.run(["ssh-keygen", "-Y", "sign", "-f", args.key, "-n", "outpost-catalog", str(out)], check=True, capture_output=True)
-    emb = ROOT / "node" / "internal" / "catalog" / "embedded"
-    emb.mkdir(parents=True, exist_ok=True)
-    shutil.copy(out, emb / "catalog.json")
-    shutil.copy(sig, emb / "catalog.json.sig")
-    print(f"catalog: {len(all_items)} items, sequence {cat['sequence']}", file=sys.stderr)
+    publish(cat, out_dir, args.key)
 
 
 if __name__ == "__main__":

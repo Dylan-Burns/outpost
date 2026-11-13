@@ -7,7 +7,7 @@ import { Icon } from "./icons";
 import { CollectionsEditor, ModelsEditor, RegionsEditor, StorageBar, WikipediaEditor, plan, AppsEditor } from "./selection";
 import { navigate, Link } from "./router";
 
-const UPDATE = "curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash";
+const UPDATE = "curl -fsSL https://projectoutpost.org/install.sh | sudo bash";
 
 type Book = { id: string; title: string; description: string; path: string; size: number; date: string; category: string; notice?: string };
 
@@ -336,11 +336,11 @@ export function Content({ status, refresh }: { status: Status; refresh: () => vo
           <a href="#" role="tab" key={id} aria-current={tab === id ? "page" : undefined} aria-selected={tab === id} style={{ padding: "0.7rem 0" }} onClick={(e) => (e.preventDefault(), setTab(id))}>{label}</a>
         ))}
       </div>
-      {tab === "apps" && <AppsEditor apps={apps} setApps={setApps} aiAvailable={status.aiAvailable} />}
+      {tab === "apps" && <AppsEditor apps={apps} setApps={setApps} aiAvailable={status.aiAvailable} recheck={refresh} />}
       {tab === "collections" && (apps.library ? <CollectionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The library is switched off. Turn it on under “What it does”.</p>)}
       {tab === "wikipedia" && (apps.library ? <WikipediaEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">The library is switched off. Turn it on under “What it does”.</p>)}
       {tab === "maps" && (apps.maps ? <RegionsEditor c={data.catalog} sel={sel} setSel={setSel} installed={data.installed} /> : <p class="alert">Maps are switched off. Turn them on under “What it does”.</p>)}
-      {tab === "models" && (apps.assistant ? <ModelsEditor c={data.catalog} sel={sel} setSel={setSel} memBytes={data.system.memBytes} installed={data.installed} /> : <p class="alert">The assistant is switched off{status.aiAvailable ? ". Turn it on under “What it does”." : ", and Ollama, the program it needs, is not on this computer yet."}</p>)}
+      {tab === "models" && (apps.assistant ? <ModelsEditor c={data.catalog} sel={sel} setSel={setSel} memBytes={data.system.memBytes} installed={data.installed} /> : <p class="alert">The assistant is switched off{status.aiAvailable ? ". Turn it on under “What it does”." : ", and Ollama, the program it needs, is not on this computer yet. “What it does” shows the line that installs it."}</p>)}
       <div class="wizard-nav spread">
         <span class="small">
           {p.add.length > 0 && <>Add <strong>{p.add.length}</strong> ({bytes(p.addBytes)}) </>}

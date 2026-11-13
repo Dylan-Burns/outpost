@@ -111,6 +111,15 @@ fi
 grep -q "Outpost $VERSION is running" "$WORK/install.log" || fail "the installer did not report a running node"
 grep -q "release signature verified" "$WORK/install.log" || fail "the installer did not verify the release signature"
 grep -q "Setup code:" "$WORK/install.log" || fail "the installer did not print a setup code"
+# Each download shows itself: on a terminal as a line of # that fills and ends
+# in COMPLETE, otherwise as one plain line with its size.
+if [ "$OS" = "Darwin" ]; then
+  grep -q "kiwix-tools .*#.*COMPLETE" "$WORK/install.log" || fail "the installer did not show a download filling in"
+  grep -q "Outpost $VERSION .*#.*COMPLETE" "$WORK/install.log" || fail "the installer did not show Outpost itself arriving"
+else
+  grep -Eq "kiwix-tools [0-9.]+: [0-9.]+ MB" "$WORK/install.log" || fail "the installer did not say what it downloaded"
+fi
+ok "showed each download as it arrived"
 [ "$(curl -fs "$DASH/api/status" | json version)" = "$VERSION" ] || fail "the node reports a different version"
 service_running || fail "the service is not registered with the system"
 OWNER="$(ps -axo user=,comm= | awk '$2 ~ /\/outpost$/ || $2 == "outpost" {print $1; exit}')"
