@@ -252,14 +252,60 @@ func printSetupCode(args []string) int {
 	return 0
 }
 
+// launchdLabel names the macOS job. It must match LABEL in install.sh.
+const launchdLabel = "org.outpost-offline.node"
+
+// systemService reports how to stop and start the installed service, when
+// this command runs as root on a machine where that service is running.
+// Both are nil otherwise: there is then nothing to pause.
+func systemService() (stop func() error, start func()) {
+	if os.Geteuid() != 0 {
+		return nil, nil
+	}
+	switch runtime.GOOS {
+	case "linux":
+		if exec.Command("systemctl", "is-active", "--quiet", "outpost").Run() != nil {
+			return nil, nil
+		}
+		stop = func() error {
+			if out, err := exec.Command("systemctl", "stop", "outpost").CombinedOutput(); err != nil {
+				return fmt.Errorf("%v %s", err, out)
+			}
+			return nil
+		}
+		return stop, func() { exec.Command("systemctl", "start", "outpost").Run() }
+	case "darwin":
+		target := "system/" + launchdLabel
+		loaded := func() bool { return exec.Command("launchctl", "print", target).Run() == nil }
+		if !loaded() {
+			return nil, nil
+		}
+		stop = func() error {
+			exec.Command("launchctl", "bootout", target).Run()
+			// launchd lets go of the job a moment after it is told to.
+			for i := 0; i < 40 && loaded(); i++ {
+				time.Sleep(250 * time.Millisecond)
+			}
+			if loaded() {
+				return errors.New("launchd did not stop the job")
+			}
+			return nil
+		}
+		return stop, func() {
+			exec.Command("launchctl", "bootstrap", "system", "/Library/LaunchDaemons/"+launchdLabel+".plist").Run()
+		}
+	}
+	return nil, nil
+}
+
 func resetAdmin(args []string) int {
 	fs := flag.NewFlagSet("reset-admin", flag.ExitOnError)
 	p := commonFlags(fs)
 	fs.Parse(args)
-	systemd := runtime.GOOS == "linux" && os.Geteuid() == 0 && exec.Command("systemctl", "is-active", "--quiet", "outpost").Run() == nil
-	if systemd {
-		if out, err := exec.Command("systemctl", "stop", "outpost").CombinedOutput(); err != nil {
-			fmt.Fprintf(os.Stderr, "could not stop the service: %v %s\n", err, out)
+	stop, start := systemService()
+	if stop != nil {
+		if err := stop(); err != nil {
+			fmt.Fprintf(os.Stderr, "could not stop the service: %v\n", err)
 			return 1
 		}
 	}
@@ -290,8 +336,8 @@ func resetAdmin(args []string) int {
 			os.Chown(setupCodePath(p.data), int(sys.Uid), int(sys.Gid))
 		}
 	}
-	if systemd {
-		exec.Command("systemctl", "start", "outpost").Run()
+	if start != nil {
+		start()
 	}
 	fmt.Println("The administrator password was removed. Your content is untouched.")
 	fmt.Println("Open the dashboard and claim the node again with this setup code:")

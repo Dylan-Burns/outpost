@@ -1,0 +1,29 @@
+name: install-e2e
+# Runs the real installer on real Linux and Mac machines against the release
+# staged in site/public, then uses, updates, restarts, resets and removes the
+# node (tests/e2e/install-check.sh). Started by hand before a release goes
+# live: Mac runners are costly, so this does not run on every push.
+on:
+  workflow_dispatch:
+    inputs:
+      systems:
+        description: Which machines to test
+        type: choice
+        default: all
+        options: [all, linux, mac, mac-intel]
+permissions:
+  contents: read
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(inputs.systems == 'linux' && '["ubuntu-latest"]' || inputs.systems == 'mac' && '["macos-latest"]' || inputs.systems == 'mac-intel' && '["macos-15-intel"]' || '["ubuntu-latest","macos-latest","macos-15-intel"]') }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: uname -a && (sw_vers 2>/dev/null || head -3 /etc/os-release)
+      - run: tests/e2e/install-check.sh
