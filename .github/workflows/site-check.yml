@@ -1,0 +1,43 @@
+# Opens the live site on real Windows, macOS and Linux machines and checks
+# that the hero globe moves in each browser, with and without the system
+# asking for reduced motion. Run it by hand after a change to the hero.
+name: site check
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Address to check
+        default: https://projectoutpost.org
+permissions:
+  contents: read
+jobs:
+  globe:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            browsers: chromium,msedge,chrome,firefox
+          - os: macos-latest
+            browsers: chromium,webkit,firefox
+          - os: ubuntu-latest
+            browsers: chromium,firefox
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Playwright
+        working-directory: tests/e2e
+        run: |
+          npm ci
+          npx playwright install chromium firefox webkit
+      - name: Linux libraries for the browsers
+        if: runner.os == 'Linux'
+        working-directory: tests/e2e
+        run: npx playwright install-deps chromium firefox
+      - name: Does the globe move?
+        working-directory: tests/e2e
+        run: node site-motion.mjs "${{ inputs.url }}" "${{ matrix.browsers }}"
