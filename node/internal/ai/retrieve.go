@@ -31,6 +31,7 @@ type candidate struct {
 	hit     Hit
 	score   float64
 	passage string
+	byWords bool // the full-text search on the question's own words found it
 }
 
 // Retrieve searches the library for the question and returns up to four
@@ -104,10 +105,13 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 	if len(terms) > 0 {
 		queries = append(queries, strings.Join(terms, " "))
 	}
-	for _, query := range queries {
+	for qi, query := range queries {
 		hits, _ := lib.Search(sctx, query, 8)
 		for i, h := range hits {
 			add(h, 1.5-float64(i)*0.15)
+			if qi == len(queries)-1 && len(terms) > 0 {
+				byPath[h.Path].byWords = true
+			}
 		}
 	}
 	// Titles that share the question's words usually answer it; titles that
@@ -152,7 +156,16 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 		cover := float64(overlap(p, all)) / float64(len(all))
 		// A passage must share a word with the question itself, not only
 		// with the model's guess at the topic, which can be wrong.
-		if cover == 0 || len(terms) > 0 && overlap(c.hit.Title+" "+p, terms) == 0 {
+		// A passage must share words with the question itself, not only with
+		// the model's guess at the topic, which can be wrong ("Back" for a
+		// question about an unconscious man's position). One word will do for
+		// what the question's own words found, or when the title has it; a
+		// topic's other finds need two.
+		need := 1
+		if !c.byWords && overlap(c.hit.Title, terms) == 0 {
+			need = min(2, len(terms))
+		}
+		if cover == 0 || len(terms) > 0 && overlap(c.hit.Title+" "+p, terms) < need {
 			continue
 		}
 		// The same document is often in two archives (a manual in both a
@@ -184,11 +197,21 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 }
 
 // overlap counts how many of words occur in s, in any common inflection.
+// A word must start a word of s: "man" is not in "human".
 func overlap(s string, words []string) int {
-	ls, n := strings.ToLower(s), 0
+	ls, n := " "+strings.ToLower(s), 0
 	for _, w := range words {
-		if strings.Contains(ls, stem(w)) {
-			n++
+		st := stem(w)
+		for i := strings.Index(ls, st); i >= 0; {
+			if c := ls[i-1]; !(c >= 'a' && c <= 'z' || c >= '0' && c <= '9') {
+				n++
+				break
+			}
+			j := strings.Index(ls[i+1:], st)
+			if j < 0 {
+				break
+			}
+			i += 1 + j
 		}
 	}
 	return n

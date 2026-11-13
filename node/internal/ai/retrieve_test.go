@@ -97,3 +97,12 @@ func TestEmergencyTopics(t *testing.T) {
 		t.Error("coreTopic")
 	}
 }
+
+func TestOverlapMatchesWordStarts(t *testing.T) {
+	if overlap("The human back", []string{"man"}) != 0 {
+		t.Fatal("man matched inside human")
+	}
+	if overlap("A man swallows pills", []string{"man", "swallowed", "pills"}) != 3 {
+		t.Fatal("whole words missed")
+	}
+}

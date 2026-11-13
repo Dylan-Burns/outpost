@@ -147,7 +147,10 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 	var sources []ai.Source
 	if useLibrary && s.Kiwix != nil && s.Kiwix.Running() {
 		send("status", "Searching your library…")
-		sources = s.gatherSources(ctx, q, model.Model)
+		// The smallest model names the topics, whichever model answers: it
+		// is the quickest, and a larger model is no surer to name them well
+		// (Llama 3.2 3B refused to name any for some emergencies).
+		sources = s.gatherSources(ctx, q, models[0].Model)
 	}
 	send("sources", nonNil(sources))
 	var msgs []ai.Message
