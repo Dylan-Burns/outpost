@@ -226,6 +226,9 @@ exec /opt/outpost/bin/outpost "$@"
 WRAP
 chmod 755 /usr/local/bin/outpost
 
+PROTECT_HOME=yes
+case "$DATA_DIR" in /home/*|/root/*|/run/user/*) PROTECT_HOME=read-only ;; esac
+
 cat > /etc/systemd/system/outpost.service <<UNIT
 [Unit]
 Description=Outpost offline knowledge server
@@ -245,7 +248,7 @@ LimitNOFILE=65536
 # Hardening: the service can write only to its data directory.
 NoNewPrivileges=yes
 ProtectSystem=strict
-ProtectHome=yes
+ProtectHome=$PROTECT_HOME
 ReadWritePaths=$DATA_DIR
 PrivateTmp=yes
 PrivateDevices=yes
