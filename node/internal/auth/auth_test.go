@@ -84,3 +84,24 @@ func TestWithHashSlot(t *testing.T) {
 	}
 	close(release)
 }
+
+func TestThrottle(t *testing.T) {
+	now := time.Unix(0, 0)
+	slept := 0
+	th := NewThrottle(time.Minute, 2, time.Second)
+	th.now = func() time.Time { return now }
+	th.sleep = func(time.Duration) { slept++ }
+	ran := 0
+	th.Do(func() { ran++ })
+	th.Fail()
+	th.Fail()
+	th.Do(func() { ran++ })
+	if ran != 2 || slept != 1 {
+		t.Fatalf("ran %d slept %d", ran, slept)
+	}
+	now = now.Add(time.Minute)
+	th.Do(func() { ran++ })
+	if slept != 1 {
+		t.Fatal("throttle did not reset with the window")
+	}
+}

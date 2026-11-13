@@ -50,7 +50,9 @@ type Server struct {
 	// ClearSetupCode is called once the node has been claimed.
 	ClearSetupCode func()
 
-	loginLimit *auth.Limiter
+	loginLimit *auth.Limiter // per IPv4 address or IPv6 /64
+	wideLimit  *auth.Limiter // per IPv6 /56
+	throttle   *auth.Throttle
 	once       sync.Once
 	latestMu   sync.Mutex
 	latest     string
@@ -66,6 +68,8 @@ const (
 func (s *Server) init() {
 	s.once.Do(func() {
 		s.loginLimit = auth.NewLimiter(15*time.Minute, 10)
+		s.wideLimit = auth.NewLimiter(15*time.Minute, 30)
+		s.throttle = auth.NewThrottle(15*time.Minute, 50, 2*time.Second)
 	})
 }
 
@@ -204,6 +208,44 @@ func clientKey(r *http.Request) string {
 		return ip.Mask(net.CIDRMask(64, 128)).String() + "/64"
 	}
 	return ip.String()
+}
+
+// wideKey is the client's IPv6 /56, or "" for IPv4.
+func wideKey(r *http.Request) string {
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		host = r.RemoteAddr
+	}
+	ip := net.ParseIP(host)
+	if ip == nil || ip.To4() != nil {
+		return ""
+	}
+	return ip.Mask(net.CIDRMask(56, 128)).String() + "/56"
+}
+
+// admit counts a credential attempt against the client's limits.
+func (s *Server) admit(r *http.Request) bool {
+	if !s.loginLimit.Begin(clientKey(r)) {
+		return false
+	}
+	if wk := wideKey(r); wk != "" && !s.wideLimit.Begin(wk) {
+		return false
+	}
+	return true
+}
+
+// checkCredential runs check under the account-wide throttle and the argon2
+// slot limit, recording a failure when check reports false.
+func (s *Server) checkCredential(check func() bool) (ok bool, busy bool) {
+	var err error
+	s.throttle.Do(func() { err = auth.WithHashSlot(func() { ok = check() }) })
+	if err != nil {
+		return false, true
+	}
+	if !ok {
+		s.throttle.Fail()
+	}
+	return ok, false
 }
 
 // session returns the valid session for the request, if any.

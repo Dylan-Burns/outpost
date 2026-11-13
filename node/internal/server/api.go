@@ -269,7 +269,7 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := clientKey(r)
-	if !s.loginLimit.Begin(key) {
+	if !s.admit(r) {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts; wait 15 minutes")
 		return
 	}
@@ -283,7 +283,7 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 	if s.SetupCode != nil {
 		code = s.SetupCode()
 	}
-	if !auth.SetupCodeMatches(code, req.Code) {
+	if ok, _ := s.checkCredential(func() bool { return auth.SetupCodeMatches(code, req.Code) }); !ok {
 		writeErr(w, http.StatusForbidden, "that setup code is not right")
 		return
 	}
@@ -333,14 +333,14 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := clientKey(r)
-	if !s.loginLimit.Begin(key) {
+	if !s.admit(r) {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts; wait 15 minutes")
 		return
 	}
 	var hash string
 	s.Store.View(func(st *state.State) { hash = st.AdminHash })
-	ok := false
-	if err := auth.WithHashSlot(func() { ok = hash != "" && auth.VerifyPassword(hash, req.Password) }); err != nil {
+	ok, busy := s.checkCredential(func() bool { return hash != "" && auth.VerifyPassword(hash, req.Password) })
+	if busy {
 		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
 		return
 	}
@@ -374,7 +374,7 @@ func (s *Server) handlePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := clientKey(r)
-	if !s.loginLimit.Begin(key) {
+	if !s.admit(r) {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts; wait 15 minutes")
 		return
 	}
@@ -384,13 +384,15 @@ func (s *Server) handlePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	var hash, nh string
 	s.Store.View(func(st *state.State) { hash = st.AdminHash })
-	ok := false
 	var herr error
-	if err := auth.WithHashSlot(func() {
-		if ok = auth.VerifyPassword(hash, req.Current); ok {
-			nh, herr = auth.HashPassword(req.New)
+	ok, busy := s.checkCredential(func() bool {
+		if !auth.VerifyPassword(hash, req.Current) {
+			return false
 		}
-	}); err != nil {
+		nh, herr = auth.HashPassword(req.New)
+		return true
+	})
+	if busy {
 		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
 		return
 	}
