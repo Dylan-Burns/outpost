@@ -11,6 +11,15 @@ import { useEffect, useRef } from "react";
 // phone it is a whole globe in a square box. On a desktop it is the top half
 // of one, as wide as the screen, filling the hero with the words laid over it.
 //
+// It is drawn on two sheets. The map (grid, land, cities) is white on the
+// lower one, under the headline, whose big letters let it show through. The
+// signals (links, their traffic, the pulses) are on the upper one, over the
+// headline and in the only colour on the site: green while they work, red as
+// they fail. Colour under those letters would come out as its opposite, which
+// is why the signals have a sheet of their own. A second sheet costs about a
+// frame and a half in sixty; blending it into the page cost eight, so it is
+// simply laid on top.
+//
 // It is an illustration, so the drawing is hidden from assistive tech; the
 // one real control, the pause button, is not.
 
@@ -28,6 +37,10 @@ const CUT = 7; // links start to fail
 const DARK = 10; // the last one is gone
 const BACK = 15; // they start to return
 const ARC_STEPS = 36;
+const LIVE = "66,196,118"; // a working link, a pulse: green, kept short of neon
+const DEAD = "208,74,64"; // a link as it fails: red, likewise
+const FLICKER = 0.45; // seconds a failing link flickers
+const LINGER = 1.6; // seconds its red takes to fade once it has dropped
 
 // [latitude, longitude] of the cities the links run between.
 const CITIES: [number, number][] = [
@@ -168,6 +181,8 @@ const smooth = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 export default function Globe() {
   const box = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const signalsBox = useRef<HTMLDivElement>(null);
+  const signalsRef = useRef<HTMLCanvasElement>(null);
   const netRef = useRef<HTMLSpanElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const toggle = useRef<() => void>(() => {});
@@ -176,7 +191,9 @@ export default function Globe() {
     const canvas = canvasRef.current;
     const holder = box.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !holder || !ctx) return;
+    const signals = signalsRef.current;
+    const sig = signals?.getContext("2d");
+    if (!canvas || !holder || !ctx || !signals || !sig) return;
 
     const grid = graticule();
     const routes = links();
@@ -351,43 +368,6 @@ export default function Globe() {
       }
       ctx.stroke();
 
-      // The links, each in its own state: carrying traffic, failing, gone, or
-      // being drawn back in. Each is its own short stroke, which stays cheap.
-      ctx.lineWidth = 1.25 * dpr;
-      ctx.fillStyle = "#fff";
-      for (const link of routes) {
-        let alpha = 0.8;
-        let upTo = 1;
-        if (t >= link.cutAt && t < link.backAt) {
-          const since = t - link.cutAt;
-          if (since > 0.45) continue;
-          alpha = Math.floor(since * 22) % 2 ? 0.12 : 0.9; // a flicker before it drops
-        } else if (t >= link.backAt && t < link.backAt + 0.8) {
-          upTo = (t - link.backAt) / 0.8;
-        }
-        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-        ctx.beginPath();
-        let pen = false;
-        const stop = Math.floor(upTo * ARC_STEPS);
-        for (let s = 0; s <= stop; s++) {
-          if (place(link.xyz, s * 3, m)) {
-            if (pen) ctx.lineTo(p[0], p[1]);
-            else {
-              ctx.moveTo(p[0], p[1]);
-              pen = true;
-            }
-          } else pen = false;
-        }
-        ctx.stroke();
-        // Traffic: one bright mark running the length of a working link.
-        if (upTo === 1 && alpha > 0.5) {
-          const at = Math.floor(((clock * link.speed + link.phase) % 1) * ARC_STEPS);
-          if (place(link.xyz, at * 3, m)) {
-            const k = 2.2 * dpr;
-            ctx.fillRect(p[0] - k, p[1] - k, k * 2, k * 2);
-          }
-        }
-      }
       // The cities stay on the map; they just have nothing to talk to.
       ctx.fillStyle = `rgba(255,255,255,${0.35 + 0.65 * lit})`;
       for (let i = 0; i < cities.length; i += 3) {
@@ -397,19 +377,63 @@ export default function Globe() {
         }
       }
 
-      // The pulses themselves, brightest in the dark, and the library's mark:
-      // at the centre of the whole globe, at the foot of the half one.
-      ctx.lineWidth = dpr;
+      // The signals, on their own sheet. Each link is in one of its states:
+      // carrying traffic (green), failing (it turns red and flickers), down
+      // (the red fades away), gone, or being drawn back in (green again).
+      // Each is its own short stroke, which stays cheap.
+      sig.clearRect(0, 0, w, h);
+      sig.lineJoin = "round";
+      sig.lineWidth = 1.25 * dpr;
+      sig.fillStyle = `rgb(${LIVE})`;
+      for (const link of routes) {
+        let colour = LIVE;
+        let alpha = 0.9;
+        let upTo = 1;
+        if (t >= link.cutAt && t < link.backAt) {
+          const since = t - link.cutAt;
+          if (since > FLICKER + LINGER) continue;
+          colour = DEAD;
+          alpha = since < FLICKER ? (Math.floor(since * 22) % 2 ? 0.25 : 1) : 0.75 * (1 - smooth((since - FLICKER) / LINGER));
+        } else if (t >= link.backAt && t < link.backAt + 0.8) {
+          upTo = (t - link.backAt) / 0.8;
+        }
+        sig.strokeStyle = `rgba(${colour},${alpha})`;
+        sig.beginPath();
+        let pen = false;
+        const stop = Math.floor(upTo * ARC_STEPS);
+        for (let s = 0; s <= stop; s++) {
+          if (place(link.xyz, s * 3, m)) {
+            if (pen) sig.lineTo(p[0], p[1]);
+            else {
+              sig.moveTo(p[0], p[1]);
+              pen = true;
+            }
+          } else pen = false;
+        }
+        sig.stroke();
+        // Traffic: one bright mark running the length of a working link.
+        if (upTo === 1 && colour === LIVE) {
+          const at = Math.floor(((clock * link.speed + link.phase) % 1) * ARC_STEPS);
+          if (place(link.xyz, at * 3, m)) {
+            const k = 2.2 * dpr;
+            sig.fillRect(p[0] - k, p[1] - k, k * 2, k * 2);
+          }
+        }
+      }
+
+      // The pulses, brightest in the dark, and the library's mark: at the
+      // centre of the whole globe, at the foot of the half one. They never
+      // fail, so they are never red.
+      sig.lineWidth = dpr;
       for (const at of pulses) {
-        ctx.strokeStyle = `rgba(255,255,255,${(1 - at) * (0.3 + 0.6 * (1 - lit))})`;
-        ctx.beginPath();
-        ctx.arc(cx, cy, at * reach, 0, Math.PI * 2);
-        ctx.stroke();
+        sig.strokeStyle = `rgba(${LIVE},${(1 - at) * (0.35 + 0.6 * (1 - lit))})`;
+        sig.beginPath();
+        sig.arc(cx, cy, at * reach, 0, Math.PI * 2);
+        sig.stroke();
       }
       const k = 3.5 * dpr;
       const by = half ? h - 12 * dpr : cy;
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(cx - k, by - k, k * 2, k * 2);
+      sig.fillRect(cx - k, by - k, k * 2, k * 2);
 
       const down = t >= CUT + 0.4 && t < BACK + 0.6;
       if (down !== shownDown && netRef.current) {
@@ -493,8 +517,8 @@ export default function Globe() {
       // half globe is as wide as the window, and a 4K canvas redrawn sixty
       // times a second is work nobody would see.
       dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2, 2880 / wide) * coarse);
-      canvas.width = Math.round(wide * dpr);
-      canvas.height = Math.round(tall * dpr);
+      canvas.width = signals.width = Math.round(wide * dpr);
+      canvas.height = signals.height = Math.round(tall * dpr);
       const edge = 26 * dpr; // room for the bezel's ticks
       cx = canvas.width / 2;
       if (half) {
@@ -607,6 +631,7 @@ export default function Globe() {
       .finally(() => {
         if (gone) return;
         holder.dataset.ready = "";
+        if (signalsBox.current) signalsBox.current.dataset.ready = "";
         draw();
         wake();
       });
@@ -629,6 +654,9 @@ export default function Globe() {
     <>
       <div className="globe" ref={box}>
         <canvas ref={canvasRef} aria-hidden="true" />
+      </div>
+      <div className="globe-signals" ref={signalsBox}>
+        <canvas ref={signalsRef} aria-hidden="true" />
       </div>
       <div className="globe-panel">
         <p className="globe-readout" aria-hidden="true">

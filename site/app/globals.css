@@ -158,20 +158,36 @@ section > .wrap { padding-block: var(--sec); }
   .hero h1 .line:nth-child(2)::after { animation-delay: 0.38s; }
   @keyframes release { from { transform: scaleX(1); } }
   @media (min-width: 861px) {
-    .globe { transition: opacity 1.6s ease 0.25s, translate 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s; }
-    .globe:not([data-ready]) { translate: 0 3.5rem; }
+    .globe,
+    .globe-signals { transition: opacity 1.6s ease 0.25s, translate 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s; }
+    .globe:not([data-ready]),
+    .globe-signals:not([data-ready]) { translate: 0 3.5rem; }
   }
 }
 
-/* The script reads --shape to know what to draw in this box. */
-.globe { --shape: half; position: absolute; z-index: 0; inset: 0; opacity: 0; transition: opacity 1.6s ease 0.25s; }
-.globe[data-ready] { opacity: 1; }
-.globe canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+/* The globe is two sheets the same size. The map is the lower one; the script
+   reads --shape from it to know what to draw. The signals (links and pulses,
+   the only colour on the site: green while they work, red as they fail) are
+   the upper one. It lies over the headline's big letters, because colour
+   under them would come out as its opposite. */
+.globe,
+.globe-signals { position: absolute; inset: 0; opacity: 0; transition: opacity 1.6s ease 0.25s; }
+.globe { --shape: half; z-index: 0; }
+.globe-signals { z-index: 1; pointer-events: none; }
+.globe[data-ready],
+.globe-signals[data-ready] { opacity: 1; }
+.globe canvas,
+.globe-signals canvas { display: block; width: 100%; height: 100%; }
+.globe canvas { touch-action: pan-y; }
+/* Words meant to be read stay above the signals. */
+.hero h1 .setup,
+.hero .lede,
+.hero-actions { position: relative; z-index: 2; }
 .globe[data-over] canvas { cursor: grab; }
 .globe[data-dragging] canvas { cursor: grabbing; }
 /* What the picture is showing, in words, and the control that stops it: in
    the stage's top corners, which the dome leaves empty. */
-.globe-panel { position: absolute; top: 0.9rem; left: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2 + var(--pad)); right: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2 + var(--pad)); display: flex; align-items: center; justify-content: space-between; gap: 1.1rem; pointer-events: none; }
+.globe-panel { position: absolute; z-index: 2; top: 0.9rem; left: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2 + var(--pad)); right: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2 + var(--pad)); display: flex; align-items: center; justify-content: space-between; gap: 1.1rem; pointer-events: none; }
 .globe-panel > * { pointer-events: auto; }
 .globe-readout { margin: 0; display: flex; align-items: center; gap: 0.55em; white-space: nowrap; color: var(--fg); }
 .globe-readout span:nth-child(odd) { color: var(--dim); }
@@ -493,7 +509,11 @@ table.hw { width: calc(100% + 2 * var(--pad)); margin: 0 calc(-1 * var(--pad)); 
   /* A small screen gets a whole globe in the top corner, fading out behind
      the words, which go back to the left edge and cover it. */
   .hero { min-height: 0; }
-  .globe { --shape: whole; inset: 0 -34vw auto auto; width: min(124vw, 36rem); aspect-ratio: 1; translate: 0 -12%; -webkit-mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); }
+  .globe,
+  .globe-signals { inset: 0 -34vw auto auto; width: min(124vw, 36rem); aspect-ratio: 1; translate: 0 -12%; -webkit-mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); }
+  .globe { --shape: whole; }
+  /* Here the words cover the globe, signals and all. */
+  .globe-signals { z-index: 0; }
   .hero-body { align-items: flex-start; text-align: left; padding-block: clamp(5rem, 24vw, 10rem) 2.5rem; }
   .hero h1 .setup,
   .hero h1 .line { margin-inline: 0; }
