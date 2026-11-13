@@ -50,9 +50,10 @@ type Server struct {
 	// ClearSetupCode is called once the node has been claimed.
 	ClearSetupCode func()
 
-	loginLimit *auth.Limiter // per IPv4 address or IPv6 /64
-	wideLimit  *auth.Limiter // per IPv6 /56
-	throttle   *auth.Throttle
+	loginLimit *auth.Limiter  // per IPv4 address or IPv6 /64
+	wideLimit  *auth.Limiter  // per IPv6 /56
+	throttle   *auth.Throttle // account-wide budget for password checks
+	claimGate  *auth.Throttle // separate budget for setup-code attempts
 	trustMu    sync.Mutex
 	trusted    map[string]time.Time // client keys that signed in successfully
 	once       sync.Once
@@ -72,6 +73,7 @@ func (s *Server) init() {
 		s.loginLimit = auth.NewLimiter(15*time.Minute, 10)
 		s.wideLimit = auth.NewLimiter(15*time.Minute, 30)
 		s.throttle = auth.NewThrottle(15*time.Minute, 50, 2*time.Second)
+		s.claimGate = auth.NewThrottle(15*time.Minute, 50, 2*time.Second)
 		s.trusted = map[string]time.Time{}
 	})
 }
@@ -259,16 +261,25 @@ func (s *Server) isTrusted(r *http.Request) bool {
 // slot limit, recording a failure when check reports false. busy means the
 // attempt was refused without being checked.
 func (s *Server) checkCredential(r *http.Request, check func() bool) (ok bool, busy bool) {
-	if !s.isTrusted(r) && !s.throttle.Allow() {
+	return s.checkWith(s.throttle, r, check)
+}
+
+func (s *Server) checkWith(th *auth.Throttle, r *http.Request, check func() bool) (ok bool, busy bool) {
+	trusted := s.isTrusted(r)
+	if !trusted && !th.Allow() {
 		return false, true
 	}
 	if err := auth.WithHashSlot(func() { ok = check() }); err != nil {
+		if !trusted {
+			th.Succeeded() // not checked: give the slot back
+		}
 		return false, true
 	}
 	if ok {
+		if !trusted {
+			th.Succeeded()
+		}
 		s.trust(r)
-	} else {
-		s.throttle.Fail()
 	}
 	return ok, false
 }

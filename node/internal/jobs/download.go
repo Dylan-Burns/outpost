@@ -240,7 +240,10 @@ func (d *Downloader) FetchSmall(ctx context.Context, url string, limit int64) ([
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
+	switch {
+	case resp.StatusCode == http.StatusNotFound || resp.StatusCode == http.StatusGone || resp.StatusCode == http.StatusForbidden:
+		return nil, errPermanent{fmt.Errorf("the server answered %s", resp.Status)}
+	case resp.StatusCode != http.StatusOK:
 		return nil, fmt.Errorf("the server answered %s", resp.Status)
 	}
 	b, err := io.ReadAll(io.LimitReader(resp.Body, limit+1))

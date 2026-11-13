@@ -212,28 +212,33 @@ func (t *Throttle) rollLocked(now time.Time) {
 	}
 }
 
-// Fail records a failed attempt.
-func (t *Throttle) Fail() {
+// Succeeded un-counts an admitted attempt that turned out to be right.
+func (t *Throttle) Succeeded() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	t.rollLocked(t.now())
-	t.failures++
+	if t.failures > 0 {
+		t.failures--
+	}
 }
 
-// Allow reports whether an attempt may run now.
+// Allow admits an attempt and counts it as a failure until Succeeded is
+// called, so attempts still in flight count against the budget. Past the
+// budget one attempt per interval is admitted; the rest are refused.
+// The owner is never starved for good: clients that signed in before skip
+// the throttle, and "outpost reset-admin" on the machine always works.
 func (t *Throttle) Allow() bool {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	now := t.now()
 	t.rollLocked(now)
-	if t.failures < t.budget {
-		return true
-	}
-	if now.Sub(t.last) >= t.interval {
+	if t.failures >= t.budget {
+		if now.Sub(t.last) < t.interval {
+			return false
+		}
 		t.last = now
-		return true
 	}
-	return false
+	t.failures++
+	return true
 }
 
 // hashSlots bounds concurrent argon2 computations (19 MiB each).

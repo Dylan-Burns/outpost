@@ -283,7 +283,7 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 	if s.SetupCode != nil {
 		code = s.SetupCode()
 	}
-	if ok, busy := s.checkCredential(r, func() bool { return auth.SetupCodeMatches(code, req.Code) }); busy {
+	if ok, busy := s.checkWith(s.claimGate, r, func() bool { return auth.SetupCodeMatches(code, req.Code) }); busy {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts on this node; try again in a few seconds")
 		return
 	} else if !ok {

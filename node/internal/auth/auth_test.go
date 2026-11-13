@@ -89,11 +89,10 @@ func TestThrottle(t *testing.T) {
 	now := time.Unix(1000, 0)
 	th := NewThrottle(time.Minute, 2, time.Second)
 	th.now = func() time.Time { return now }
-	if !th.Allow() {
+	if !th.Allow() || !th.Allow() {
 		t.Fatal("under budget refused")
 	}
-	th.Fail()
-	th.Fail()
+	// Two attempts in flight have used the budget.
 	if !th.Allow() {
 		t.Fatal("first throttled attempt refused")
 	}
@@ -105,7 +104,11 @@ func TestThrottle(t *testing.T) {
 		t.Fatal("attempt after the interval refused")
 	}
 	now = now.Add(time.Minute)
-	if !th.Allow() || !th.Allow() {
+	if !th.Allow() {
 		t.Fatal("budget did not reset with the window")
+	}
+	th.Succeeded()
+	if !th.Allow() || !th.Allow() {
+		t.Fatal("a success should give its slot back")
 	}
 }
