@@ -59,7 +59,24 @@ node "$ROOT/tests/e2e/serve-site.mjs" "$ROOT/site/public" "$SITE_PORT" "$WORK/ke
 SERVER=$!
 sleep 2
 curl -fs --cacert "$WORK/bundle.pem" -o /dev/null "https://localhost:$SITE_PORT/releases/latest.json" || fail "the local site is not answering"
-installer() { sudo env OUTPOST_SITE="https://localhost:$SITE_PORT" CURL_CA_BUNDLE="$WORK/bundle.pem" bash "$ROOT/install/install.sh" --yes "$@"; }
+run_installer() { sudo env OUTPOST_SITE="https://localhost:$SITE_PORT" CURL_CA_BUNDLE="$WORK/bundle.pem" bash "$ROOT/install/install.sh" --yes "$@"; }
+# This test installs three times in a few minutes, and each install fetches
+# kiwix-tools from download.kiwix.org, which answers 429 ("too many requests")
+# to callers that come too fast, CI machines above all. That is the server
+# being reasonable, not the installer failing: wait and try again.
+installer() {
+  local try
+  for try in 1 2 3 4; do
+    if run_installer "$@" > "$WORK/attempt.log" 2>&1; then cat "$WORK/attempt.log"; return 0; fi
+    if [ "$try" -lt 4 ] && grep -q "error: 429" "$WORK/attempt.log"; then
+      echo "note: download.kiwix.org asked us to slow down; waiting $((try * 90)) seconds" >&2
+      sleep $((try * 90))
+      continue
+    fi
+    cat "$WORK/attempt.log"
+    return 1
+  done
+}
 
 if [ "$OS" = "Darwin" ]; then
   # Most Macs that turn the firewall on leave it on; test that case.

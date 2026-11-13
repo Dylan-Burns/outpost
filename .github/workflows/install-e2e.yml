@@ -17,10 +17,13 @@ jobs:
   install:
     strategy:
       fail-fast: false
+      # One machine at a time: every install downloads kiwix-tools from
+      # download.kiwix.org, which turns away callers that come in a burst.
+      max-parallel: 1
       matrix:
         os: ${{ fromJSON(inputs.systems == 'linux' && '["ubuntu-latest"]' || inputs.systems == 'mac' && '["macos-latest"]' || inputs.systems == 'mac-intel' && '["macos-15-intel"]' || '["ubuntu-latest","macos-latest","macos-15-intel"]') }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
