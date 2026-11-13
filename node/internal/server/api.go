@@ -115,7 +115,7 @@ func (s *Server) handleLibrary(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	var books []bookView
+	books := []bookView{}
 	s.Store.View(func(st *state.State) {
 		for id, in := range st.Installed {
 			if in.Kind != catalog.KindZim {
@@ -166,7 +166,7 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusBadGateway, "search failed")
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"results": res, "total": total, "start": start})
+	writeJSON(w, http.StatusOK, map[string]any{"results": nonNil(res), "total": total, "start": start})
 }
 
 type regionView struct {
@@ -179,7 +179,7 @@ type regionView struct {
 
 func (s *Server) handleMaps(w http.ResponseWriter, r *http.Request) {
 	c := s.Catalog.Current()
-	var regions []regionView
+	regions := []regionView{}
 	world, assets := "", false
 	s.Store.View(func(st *state.State) {
 		for id, in := range st.Installed {
@@ -436,6 +436,10 @@ func (s *Server) handleCatalog(w http.ResponseWriter, r *http.Request) {
 			installed[k] = v
 		}
 	})
+	sel.Regions, sel.Models, sel.Extra = nonNil(sel.Regions), nonNil(sel.Models), nonNil(sel.Extra)
+	if sel.Tiers == nil {
+		sel.Tiers = map[string]string{}
+	}
 	free, total, _ := fsutil.DiskSpace(s.DataDir)
 	var used int64
 	for _, in := range installed {
@@ -446,7 +450,7 @@ func (s *Server) handleCatalog(w http.ResponseWriter, r *http.Request) {
 		"selection": sel,
 		"apps":      apps,
 		"installed": installed,
-		"outdated":  s.Jobs.Outdated(),
+		"outdated":  nonNil(s.Jobs.Outdated()),
 		"disk":      map[string]any{"free": free, "total": total, "used": used, "partial": s.Jobs.PartialBytes()},
 		"system":    sysinfo.Collect(),
 	})
@@ -536,7 +540,7 @@ func (s *Server) handleSetupComplete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleJobs(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]any{"jobs": s.Jobs.Snapshot()})
+	writeJSON(w, http.StatusOK, map[string]any{"jobs": nonNil(s.Jobs.Snapshot())})
 }
 
 func (s *Server) handleJobCancel(w http.ResponseWriter, r *http.Request) {
@@ -620,4 +624,12 @@ func (s *Server) handleSettings(w http.ResponseWriter, r *http.Request) {
 	}
 	s.Store.Update(func(st *state.State) error { st.Settings = req; return nil })
 	writeJSON(w, http.StatusOK, map[string]any{"ok": true})
+}
+
+// nonNil makes empty lists encode as [] instead of null.
+func nonNil[T any](v []T) []T {
+	if v == nil {
+		return []T{}
+	}
+	return v
 }

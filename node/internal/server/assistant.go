@@ -50,7 +50,7 @@ func (s *Server) handleAssistantInfo(w http.ResponseWriter, r *http.Request) {
 		cancel()
 		available = err == nil
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"available": available, "models": s.installedModels()})
+	writeJSON(w, http.StatusOK, map[string]any{"available": available, "models": nonNil(s.installedModels())})
 }
 
 func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +117,7 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		send("status", "Searching your library…")
 		sources = s.gatherSources(ctx, q)
 	}
-	send("sources", sources)
+	send("sources", nonNil(sources))
 	var msgs []ai.Message
 	if len(sources) > 0 {
 		msgs = ai.BuildPrompt(q, sources)

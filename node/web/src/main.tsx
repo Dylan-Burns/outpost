@@ -28,7 +28,11 @@ function App() {
   useEffect(() => {
     refresh();
     const t = setInterval(refresh, 30000);
-    return () => clearInterval(t);
+    window.addEventListener("outpost:unauthorized", refresh);
+    return () => {
+      clearInterval(t);
+      window.removeEventListener("outpost:unauthorized", refresh);
+    };
   }, []);
 
   if (!status) return <main>{err ? <p class="alert warn">Cannot reach this node: {err}</p> : <p class="empty"><span class="spinner" /></p>}</main>;

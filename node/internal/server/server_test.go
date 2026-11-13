@@ -262,3 +262,20 @@ func TestHeadersAndPaths(t *testing.T) {
 	}
 	resp.Body.Close()
 }
+
+func TestEmptyListsAreArrays(t *testing.T) {
+	e := newEnv(t)
+	e.claim()
+	for _, p := range []string{"/api/library", "/api/maps", "/api/jobs", "/api/catalog"} {
+		req, _ := http.NewRequest("GET", e.srv.URL+p, nil)
+		resp, err := e.client.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		b, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if strings.Contains(string(b), ":null") {
+			t.Errorf("%s returned null: %.200s", p, b)
+		}
+	}
+}

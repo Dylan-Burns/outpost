@@ -115,6 +115,10 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   } catch {
     /* not JSON */
   }
+  if (res.status === 401 && path !== "/api/login" && path !== "/api/setup/claim") {
+    // The session ended (signed out elsewhere, expired, password changed).
+    window.dispatchEvent(new Event("outpost:unauthorized"));
+  }
   if (!res.ok) throw new ApiError(res.status, (data && data.error) || `Request failed (${res.status})`);
   return data as T;
 }

@@ -158,7 +158,7 @@ function CategoryCard({ cat, items, tier, setTier, installed }: { cat: Category;
       </div>
       {current.length > 0 && (
         <details>
-          <summary>{current.length} archives</summary>
+          <summary>{current.length} archive{current.length === 1 ? "" : "s"}</summary>
           <ul class="itemlist">
             {current.map((id) => {
               const it = items.get(id);
