@@ -1,0 +1,9 @@
+catalog/.cache/
+node/outpost
+dist/
+node_modules/
+.next/
+.vercel
+.env*
+*.part
+.DS_Store

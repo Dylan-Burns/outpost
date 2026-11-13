@@ -1,0 +1,375 @@
+{
+  "comment": "Curated content for the Outpost catalog. Zim refs are 'name' or 'name:flavour' as in the Kiwix library. build.py resolves each to the newest file, its exact size and SHA-256.",
+  "licenses": {
+    "wikipedia_": "CC BY-SA 4.0",
+    "wiktionary_": "CC BY-SA 4.0",
+    "wikibooks_": "CC BY-SA 4.0",
+    "wikivoyage_": "CC BY-SA 4.0",
+    "wikiquote_": "CC BY-SA 4.0",
+    "wikisource_": "CC BY-SA 4.0 (texts often public domain)",
+    "wikiversity_": "CC BY-SA 4.0",
+    "vikidia_": "CC BY-SA 4.0",
+    "mdwiki_": "CC BY-SA 4.0",
+    "gutenberg_": "Public domain in the US",
+    "ifixit_": "CC BY-NC-SA 3.0",
+    "ted_": "CC BY-NC-ND 4.0",
+    "khanacademy_": "CC BY-NC-SA 3.0",
+    "crashcourse_": "CC BY-NC-SA 4.0",
+    "phet_": "CC BY 4.0",
+    "libretexts.org_": "CC BY-NC-SA and other open licenses, per page",
+    "appropedia_": "CC BY-SA 4.0",
+    "energypedia_": "CC BY-SA 3.0",
+    "irp.fas.org_": "US government work, public domain",
+    "nhs.uk_": "Open Government Licence v3.0",
+    "freecodecamp_": "BSD-3-Clause",
+    "devdocs_": "Per project documentation licence",
+    "stackexchange": "CC BY-SA 4.0",
+    "askubuntu": "CC BY-SA 4.0",
+    "superuser": "CC BY-SA 4.0",
+    "zimgit-": "Mixed: public-domain and openly licensed documents",
+    "cd3wdproject": "Free for non-commercial use",
+    "canadian-prepper": "Creator's terms (YouTube)",
+    "based.cooking": "Public domain (CC0)",
+    "foss.cooking": "CC BY-SA 4.0",
+    "quickguidesformedicine": "CC BY-NC-SA",
+    "biologycourses": "Creator's terms"
+  },
+  "notices": {
+    "medical": [
+      "wikipedia_en_medicine",
+      "mdwiki_en_all",
+      "zimgit-medicine_en",
+      "irp.fas.org_en_military-medicine",
+      "nhs.uk_en_medicines",
+      "libretexts.org_en_med",
+      "quickguidesformedicine_en_all",
+      "medicalsciences.stackexchange.com_en_all"
+    ]
+  },
+  "wikipedia": {
+    "name": "Wikipedia",
+    "description": "The encyclopedia, in the depth you have room for.",
+    "default": "top-maxi",
+    "options": [
+      {
+        "id": "none",
+        "label": "None",
+        "description": "Skip Wikipedia.",
+        "items": []
+      },
+      {
+        "id": "top-mini",
+        "label": "Quick reference",
+        "description": "The most-read articles, introductions only.",
+        "items": [
+          "wikipedia_en_top:mini"
+        ]
+      },
+      {
+        "id": "top-maxi",
+        "label": "Best of Wikipedia",
+        "description": "The most-read articles in full, with pictures.",
+        "items": [
+          "wikipedia_en_top:maxi"
+        ]
+      },
+      {
+        "id": "top1m-nopic",
+        "label": "Top million, text only",
+        "description": "The million most important articles in full, without pictures.",
+        "items": [
+          "wikipedia_en_top1m:nopic"
+        ]
+      },
+      {
+        "id": "all-mini",
+        "label": "Everything, introductions",
+        "description": "Every article, introduction only.",
+        "items": [
+          "wikipedia_en_all:mini"
+        ]
+      },
+      {
+        "id": "all-nopic",
+        "label": "Everything, text only",
+        "description": "Every article in full, without pictures.",
+        "items": [
+          "wikipedia_en_all:nopic"
+        ]
+      },
+      {
+        "id": "all-maxi",
+        "label": "Everything, with pictures",
+        "description": "All of English Wikipedia, as on the web.",
+        "items": [
+          "wikipedia_en_all:maxi"
+        ]
+      }
+    ]
+  },
+  "categories": [
+    {
+      "id": "medicine",
+      "name": "Medicine & first aid",
+      "icon": "medical",
+      "description": "Medical encyclopedias, field and military medicine, drug references.",
+      "essential": [
+        "zimgit-medicine_en",
+        "irp.fas.org_en_military-medicine",
+        "nhs.uk_en_medicines",
+        "wikipedia_en_medicine:maxi"
+      ],
+      "standard": [
+        "+",
+        "mdwiki_en_all:maxi",
+        "libretexts.org_en_med",
+        "quickguidesformedicine_en_all",
+        "medicalsciences.stackexchange.com_en_all"
+      ],
+      "comprehensive": [
+        "+",
+        "ted_mul_medicine",
+        "ted_mul_health",
+        "ted_mul_public-health",
+        "ted_mul_mental-health"
+      ]
+    },
+    {
+      "id": "survival",
+      "name": "Survival & preparedness",
+      "icon": "shield",
+      "description": "Water, food storage, knots, shelter and post-disaster resources.",
+      "essential": [
+        "zimgit-water_en",
+        "zimgit-food-preparation_en",
+        "zimgit-post-disaster_en",
+        "zimgit-knots_en",
+        "wikipedia_en_knots:maxi"
+      ],
+      "standard": [
+        "+",
+        "appropedia_en_all:maxi",
+        "cd3wdproject.org_en_all",
+        "outdoors.stackexchange.com_en_all",
+        "sustainability.stackexchange.com_en_all"
+      ],
+      "comprehensive": [
+        "+",
+        "canadian-prepper_en_preppingfood",
+        "energypedia_en_all:maxi",
+        "ted_mul_water"
+      ]
+    },
+    {
+      "id": "repair",
+      "name": "Repair & DIY",
+      "icon": "wrench",
+      "description": "Repair guides for thousands of devices, home improvement, vehicles and woodworking.",
+      "essential": [
+        "ifixit_en_all"
+      ],
+      "standard": [
+        "+",
+        "diy.stackexchange.com_en_all",
+        "mechanics.stackexchange.com_en_all",
+        "bicycles.stackexchange.com_en_all",
+        "woodworking.stackexchange.com_en_all"
+      ],
+      "comprehensive": [
+        "+",
+        "electronics.stackexchange.com_en_all",
+        "ham.stackexchange.com_en_all",
+        "lifehacks.stackexchange.com_en_all"
+      ]
+    },
+    {
+      "id": "homestead",
+      "name": "Food, farming & homestead",
+      "icon": "sprout",
+      "description": "Cooking, gardening, brewing and animal care.",
+      "essential": [
+        "cooking.stackexchange.com_en_all",
+        "based.cooking_en_all",
+        "foss.cooking_en_all",
+        "gardening.stackexchange.com_en_all"
+      ],
+      "standard": [
+        "+",
+        "homebrew.stackexchange.com_en_all",
+        "pets.stackexchange.com_en_all",
+        "ted_mul_gardening"
+      ],
+      "comprehensive": [
+        "+",
+        "ted_mul_food",
+        "ted_mul_sustainability"
+      ]
+    },
+    {
+      "id": "education",
+      "name": "Education",
+      "icon": "school",
+      "description": "Interactive science simulations, textbooks and courses from K-12 up.",
+      "essential": [
+        "phet_en_all",
+        "libretexts.org_en_k12",
+        "vikidia_en_all:maxi",
+        "freecodecamp_en_all"
+      ],
+      "standard": [
+        "+",
+        "libretexts.org_en_math",
+        "libretexts.org_en_phys",
+        "libretexts.org_en_chem",
+        "libretexts.org_en_bio",
+        "libretexts.org_en_stats",
+        "wikibooks_en_all:maxi"
+      ],
+      "comprehensive": [
+        "+",
+        "khanacademy_en_all",
+        "crashcourse_en_all",
+        "ted_mul_education",
+        "wikiversity_en_all:maxi"
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Science & math",
+      "icon": "atom",
+      "description": "Chemistry, physics and mathematics encyclopedias and Q&A.",
+      "essential": [
+        "wikipedia_en_chemistry:nopic",
+        "wikipedia_en_physics:nopic",
+        "wikipedia_en_mathematics:nopic"
+      ],
+      "standard": [
+        "wikipedia_en_chemistry:maxi",
+        "wikipedia_en_physics:maxi",
+        "wikipedia_en_mathematics:maxi",
+        "physics.stackexchange.com_en_all",
+        "chemistry.stackexchange.com_en_all",
+        "biology.stackexchange.com_en_all",
+        "earthscience.stackexchange.com_en_all"
+      ],
+      "comprehensive": [
+        "+",
+        "math.stackexchange.com_en_all",
+        "ted_mul_science"
+      ]
+    },
+    {
+      "id": "computing",
+      "name": "Computing",
+      "icon": "terminal",
+      "description": "Linux, programming and hardware help.",
+      "essential": [
+        "unix.stackexchange.com_en_all",
+        "devdocs_en_python",
+        "raspberrypi.stackexchange.com_en_all"
+      ],
+      "standard": [
+        "+",
+        "askubuntu.com_en_all",
+        "freecodecamp_en_all"
+      ],
+      "comprehensive": [
+        "+",
+        "superuser.com_en_all",
+        "electronics.stackexchange.com_en_all"
+      ]
+    },
+    {
+      "id": "reference",
+      "name": "Dictionaries & travel",
+      "icon": "book",
+      "description": "Dictionaries, quotations and travel guides.",
+      "essential": [
+        "wiktionary_en-simple_all:nopic",
+        "wikivoyage_en_all:nopic",
+        "wikiquote_en_all:nopic"
+      ],
+      "standard": [
+        "wiktionary_en_all:nopic",
+        "wikivoyage_en_all:maxi",
+        "wikiquote_en_all:maxi"
+      ],
+      "comprehensive": [
+        "+",
+        "wikisource_en_all:nopic"
+      ]
+    },
+    {
+      "id": "books",
+      "name": "Classic books",
+      "icon": "library",
+      "description": "Project Gutenberg's public-domain books, by subject or all of them.",
+      "essential": [
+        "gutenberg_en_lcc-s"
+      ],
+      "standard": [
+        "+",
+        "gutenberg_en_lcc-t",
+        "gutenberg_en_lcc-r",
+        "gutenberg_en_lcc-q"
+      ],
+      "comprehensive": [
+        "gutenberg_en_all"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "model": "qwen3:1.7b",
+      "title": "Qwen3 1.7B",
+      "ramGB": 4,
+      "description": "Small and quick. Runs on almost any machine."
+    },
+    {
+      "model": "llama3.2:3b",
+      "title": "Llama 3.2 3B",
+      "ramGB": 6,
+      "description": "A capable small model from Meta."
+    },
+    {
+      "model": "gemma3:4b",
+      "title": "Gemma 3 4B",
+      "ramGB": 8,
+      "description": "Google's compact model; good at summaries."
+    },
+    {
+      "model": "qwen3:8b",
+      "title": "Qwen3 8B",
+      "ramGB": 12,
+      "description": "Noticeably smarter; wants 16 GB of memory or a GPU."
+    },
+    {
+      "model": "llama3.1:8b",
+      "title": "Llama 3.1 8B",
+      "ramGB": 12,
+      "description": "Meta's 8B model; wants 16 GB of memory or a GPU."
+    },
+    {
+      "model": "gemma3:12b",
+      "title": "Gemma 3 12B",
+      "ramGB": 16,
+      "description": "For machines with a strong GPU or 32 GB of memory."
+    }
+  ],
+  "maps": {
+    "assets_commit": "028c18f713baecad011301ff7a69acc39bcc2ae7",
+    "fonts": [
+      "Noto Sans Regular",
+      "Noto Sans Medium",
+      "Noto Sans Italic"
+    ],
+    "sprites": [
+      "v4/light",
+      "v4/light@2x",
+      "v4/dark",
+      "v4/dark@2x"
+    ],
+    "world_maxzoom": 6,
+    "region_maxzoom": 15
+  }
+}
