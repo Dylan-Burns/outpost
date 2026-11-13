@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"os"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -14,10 +15,17 @@ import (
 // assistant can read survival and medical manuals that kiwix cannot search.
 // Text is cached per archive under DataDir, so only new archives cost time.
 func (s *Server) RunPDFIndex(ctx context.Context) {
+	exe, err := os.Executable()
+	if err != nil {
+		s.logf("pdf index: %v", err)
+		return
+	}
 	b := &pdfindex.Builder{
 		Base:     s.Kiwix.Base(),
 		CacheDir: filepath.Join(s.DataDir, "pdftext"),
 		Logf:     s.logf,
+		// Each PDF is read by a child process with a time and memory limit.
+		Extract: pdfindex.Subprocess(exe, "pdftext"),
 	}
 	var last string
 	wait := 20 * time.Second

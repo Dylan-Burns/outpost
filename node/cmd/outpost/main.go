@@ -24,6 +24,7 @@ import (
 	"github.com/Dylan-Burns/outpost/node/internal/fsutil"
 	"github.com/Dylan-Burns/outpost/node/internal/jobs"
 	"github.com/Dylan-Burns/outpost/node/internal/kiwix"
+	"github.com/Dylan-Burns/outpost/node/internal/pdfindex"
 	"github.com/Dylan-Burns/outpost/node/internal/release"
 	"github.com/Dylan-Burns/outpost/node/internal/server"
 	"github.com/Dylan-Burns/outpost/node/internal/sshsig"
@@ -60,6 +61,8 @@ func main() {
 	switch os.Args[1] {
 	case "serve":
 		os.Exit(serve(os.Args[2:]))
+	case "pdftext": // internal: the PDF reader's sandbox, see pdfindex.Subprocess
+		os.Exit(pdfindex.ServeExtract())
 	case "setup-code":
 		os.Exit(printSetupCode(os.Args[2:]))
 	case "reset-admin":

@@ -1,7 +1,6 @@
 package pdfindex
 
 import (
-	"bytes"
 	"compress/gzip"
 	"context"
 	"encoding/json"
@@ -16,8 +15,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/ledongthuc/pdf"
 )
 
 // cacheVersion changes when the chunking or extraction changes, so old
@@ -46,6 +43,9 @@ type Builder struct {
 	CacheDir string
 	Client   *http.Client
 	Logf     func(format string, args ...any)
+	// Extract reads a PDF's pages. Nil reads them in this process, which is
+	// only safe for trusted files; the node passes Subprocess.
+	Extract func(ctx context.Context, body []byte) ([]string, error)
 }
 
 type cacheFile struct {
@@ -321,7 +321,7 @@ func (b *Builder) get(ctx context.Context, p string, max int64) ([]byte, string,
 }
 
 // extract reads one PDF's text and cuts it into chunks.
-func (b *Builder) extract(ctx context.Context, a Archive, d doc) (chunks []Chunk, err error) {
+func (b *Builder) extract(ctx context.Context, a Archive, d doc) ([]Chunk, error) {
 	body, ct, err := b.get(ctx, d.path, maxPDF)
 	if err != nil {
 		return nil, err
@@ -329,19 +329,12 @@ func (b *Builder) extract(ctx context.Context, a Archive, d doc) (chunks []Chunk
 	if !strings.Contains(ct, "pdf") {
 		return nil, fmt.Errorf("not a PDF (%s)", ct)
 	}
-	// The PDF reader is not written for hostile input; a malformed file must
-	// cost one document, not the node.
-	defer func() {
-		if r := recover(); r != nil {
-			chunks, err = nil, fmt.Errorf("unreadable PDF: %v", r)
-		}
-	}()
-	// "%PDF-1.2 " then a line break is valid, but the reader wants the break
-	// right after the version. Replacing the space keeps every offset.
-	if len(body) > 9 && bytes.HasPrefix(body, []byte("%PDF-1.")) && (body[8] == ' ' || body[8] == '\t') {
-		body[8] = '\n'
+	var pages []string
+	if b.Extract != nil {
+		pages, err = b.Extract(ctx, body)
+	} else {
+		pages, err = ExtractPages(body)
 	}
-	r, err := pdf.NewReader(bytes.NewReader(body), int64(len(body)))
 	if err != nil {
 		return nil, err
 	}
@@ -349,29 +342,23 @@ func (b *Builder) extract(ctx context.Context, a Archive, d doc) (chunks []Chunk
 	if title == "" {
 		title = strings.TrimSuffix(path.Base(d.path), ".pdf")
 	}
+	return chunkPages(a.Title, title, d.path, pages), nil
+}
+
+// chunkPages joins short pages and splits long ones into passages.
+func chunkPages(book, title, docPath string, pages []string) []Chunk {
+	var chunks []Chunk
 	var cur strings.Builder
 	curPage := 0
 	flush := func() {
 		if t := strings.TrimSpace(cur.String()); len(t) >= 80 {
-			chunks = append(chunks, Chunk{Book: a.Title, Doc: title, Path: d.path, Page: curPage, Text: t})
+			chunks = append(chunks, Chunk{Book: book, Doc: title, Path: docPath, Page: curPage, Text: t})
 		}
 		cur.Reset()
 		curPage = 0
 	}
-	n := r.NumPage()
-	for i := 1; i <= n && i <= maxPages; i++ {
-		if ctx.Err() != nil {
-			return nil, ctx.Err()
-		}
-		pg := r.Page(i)
-		if pg.V.IsNull() {
-			continue
-		}
-		txt, err := pg.GetPlainText(nil)
-		if err != nil {
-			continue
-		}
-		txt = strings.Join(strings.Fields(txt), " ")
+	for idx, txt := range pages {
+		i := idx + 1
 		if txt == "" {
 			continue
 		}
@@ -401,5 +388,5 @@ func (b *Builder) extract(ctx context.Context, a Archive, d doc) (chunks []Chunk
 		}
 	}
 	flush()
-	return chunks, nil
+	return chunks
 }
