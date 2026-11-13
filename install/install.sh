@@ -16,7 +16,7 @@
 #   --no-firewall        do not open the ports in the firewall
 #   --no-open            on a Mac, do not open the setup page in the browser
 #   --uninstall          remove Outpost (keeps content unless --purge)
-#   --purge              with --uninstall, also delete the data directory
+#   --purge              with --uninstall, delete the content and settings too
 #   -y, --yes            do not ask questions
 # Everything runs inside main(), called on the last line, so a download cut
 # off part way through runs nothing at all.
@@ -178,6 +178,31 @@ make_user() { # an account that owns the content and nothing else
   esac
 }
 
+close_ports() { # close what the installer opened in a Linux firewall
+  [ "$OS" = "Linux" ] || return 0
+  local tool="" one="" two="" port
+  if [ -f "$ETC/firewall" ]; then read -r tool one two < "$ETC/firewall" || true; fi
+  case "$tool" in
+    ufw)
+      for port in "$one" "$two"; do
+        if [[ "$port" =~ ^[0-9]+$ ]]; then ufw delete allow "$port/tcp" >/dev/null 2>&1 || true; fi
+      done ;;
+    firewalld)
+      if [[ "$one" =~ ^[0-9]+$ ]] && [[ "$two" =~ ^[0-9]+$ ]] && command -v firewall-cmd >/dev/null 2>&1; then
+        firewall-cmd -q --permanent --remove-port="$one/tcp" --remove-port="$two/tcp" >/dev/null 2>&1 || true
+        firewall-cmd -q --reload >/dev/null 2>&1 || true
+      fi ;;
+    *)
+      # Installed before this note was kept: the rules it added to ufw carry
+      # the name Outpost, and only those are taken away.
+      if command -v ufw >/dev/null 2>&1; then
+        for port in $(ufw status 2>/dev/null | awk '/# Outpost/ { sub(/\/tcp.*/, "", $1); if ($1 ~ /^[0-9]+$/) print $1 }' | sort -u); do
+          ufw delete allow "$port/tcp" >/dev/null 2>&1 || true
+        done
+      fi ;;
+  esac
+  rm -f "$ETC/firewall"
+}
 remove_user() {
   id "$SERVICE_USER" >/dev/null 2>&1 || return 0
   case "$OS" in
@@ -255,27 +280,52 @@ lan_ip() {
 
 # ---------------------------------------------------------------- uninstall
 if [ "$UNINSTALL" -eq 1 ]; then
-  say "Removing Outpost"
   existing_data="/var/lib/outpost"
   if [ -f "$ETC/outpost.env" ]; then existing_data="$(sed -n 's/^OUTPOST_DATA_DIR=//p' "$ETC/outpost.env" | tail -1)"; fi
+  has_data=0
+  if [ -n "$existing_data" ] && [ "$existing_data" != "/" ] && { [ -f "$existing_data/state.json" ] || [ -d "$existing_data/content" ]; }; then has_data=1; fi
+  # A library can be days of downloading. Someone at a terminal is asked
+  # before it is deleted; a script says --yes, and is not asked.
+  if [ "$PURGE" -eq 1 ] && [ "$has_data" -eq 1 ] && [ "$YES" -eq 0 ] && (exec < /dev/tty) 2>/dev/null; then
+    size="$(du -sh "$existing_data" 2>/dev/null | cut -f1)" || true
+    printf '\n  This removes Outpost and deletes everything it stored: the library, the maps,\n'
+    printf '  your password and your settings, in %s%s%s%s.\n' "$c_bold" "$existing_data" "$c_off" "${size:+ ($size)}"
+    printf '  Installing again afterwards starts from the beginning.\n\n'
+    ans=""
+    read -r -p "  Delete it all? [y/N] " ans < /dev/tty || ans=""
+    case "$ans" in
+      y|Y|yes|Yes|YES) ;;
+      *)
+        say "Nothing was removed."
+        note "To remove the program but keep your downloads, leave off --purge."
+        exit 0 ;;
+    esac
+  fi
+  say "Removing Outpost"
   svc_remove
+  close_ports
   if [ "$OS" = "Darwin" ] && [ -x "$MAC_FIREWALL" ] && [ -e "$PREFIX/bin/outpost" ]; then
     "$MAC_FIREWALL" --remove "$PREFIX/bin/outpost" >/dev/null 2>&1 || true
   fi
   unlink_cli
   rm -rf "$PREFIX"
   if [ "$PURGE" -eq 1 ]; then
-    if [ -n "$existing_data" ] && [ "$existing_data" != "/" ] && { [ -f "$existing_data/state.json" ] || [ -d "$existing_data/content" ]; }; then
-      rm -rf "$existing_data"; note "deleted $existing_data"
-    fi
+    if [ "$has_data" -eq 1 ]; then rm -rf "$existing_data"; note "deleted $existing_data"; fi
     rm -rf "$ETC"
     [ "$OS" != "Darwin" ] || rm -f "$LOG"
     remove_user
+    note "Ollama, the separate program behind the AI assistant, was left alone if you had it."
+    say "Outpost is gone from this computer."
+    note "Installing again starts from the beginning, with a new setup code:"
+    note "    curl -fsSL $SITE/install.sh | sudo bash"
   else
-    note "your content is still in $existing_data (use --uninstall --purge to delete it)"
+    note "your library and settings are still in $existing_data."
+    note "Installing again picks them up, with the same password."
+    note "To delete them as well and start fresh:"
+    note "    curl -fsSL $SITE/install.sh | sudo bash -s -- --uninstall --purge"
+    note "Ollama, the separate program behind the AI assistant, was left alone if you had it."
+    say "Done."
   fi
-  note "Ollama, if installed, was left in place."
-  say "Done."
   exit 0
 fi
 
@@ -707,10 +757,11 @@ if [ "$FIREWALL" -eq 1 ]; then
     ufw_state=""; command -v ufw >/dev/null 2>&1 && ufw_state="$(ufw status 2>/dev/null || true)"
     case "$ufw_state" in
       *"Status: active"*)
-        ufw allow "$PORT/tcp" comment Outpost >/dev/null && ufw allow "$LIB_PORT/tcp" comment "Outpost library" >/dev/null && note "opened ports $PORT and $LIB_PORT in ufw" ;;
+        # What was opened is written down, so removing Outpost can close it again.
+        ufw allow "$PORT/tcp" comment Outpost >/dev/null && ufw allow "$LIB_PORT/tcp" comment "Outpost library" >/dev/null && note "opened ports $PORT and $LIB_PORT in ufw" && printf 'ufw %s %s\n' "$PORT" "$LIB_PORT" > "$ETC/firewall" ;;
       *)
         if command -v firewall-cmd >/dev/null 2>&1 && firewall-cmd --state >/dev/null 2>&1; then
-          firewall-cmd -q --permanent --add-port="$PORT/tcp" --add-port="$LIB_PORT/tcp" && firewall-cmd -q --reload && note "opened ports $PORT and $LIB_PORT in firewalld"
+          firewall-cmd -q --permanent --add-port="$PORT/tcp" --add-port="$LIB_PORT/tcp" && firewall-cmd -q --reload && note "opened ports $PORT and $LIB_PORT in firewalld" && printf 'firewalld %s %s\n' "$PORT" "$LIB_PORT" > "$ETC/firewall"
         fi ;;
     esac
   elif [ -x "$MAC_FIREWALL" ]; then

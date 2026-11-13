@@ -2,7 +2,8 @@
 // selection needs, and the editors for each part of it.
 import { useEffect, useMemo, useState } from "preact/hooks";
 import type { Apps, Catalog, CatalogResponse, Category, Item, Selection } from "./api";
-import { bytes, copyText } from "./format";
+import { bytes } from "./format";
+import { CopyLine } from "./copyline";
 import { Icon } from "./icons";
 
 export const TIERS = ["essential", "standard", "comprehensive"] as const;
@@ -90,7 +91,6 @@ export function StorageBar({ data, p }: { data: CatalogResponse; p: Plan }) {
 export const GET_AI = "curl -fsSL https://ollama.com/install.sh | sh";
 
 export function AppsEditor({ apps, setApps, aiAvailable, recheck }: { apps: Apps; setApps: (a: Apps) => void; aiAvailable: boolean; recheck?: () => void }) {
-  const [copied, setCopied] = useState(false);
   // While the assistant's program is missing, look for it every few seconds,
   // so the choice unlocks by itself once it has been installed.
   useEffect(() => {
@@ -127,10 +127,7 @@ export function AppsEditor({ apps, setApps, aiAvailable, recheck }: { apps: Apps
             <strong>To add the AI assistant,</strong> paste this line into Terminal on the Outpost computer. It is Ollama’s own installer, from
             ollama.com, and it may ask for the computer’s password. The choice above unlocks by itself a few seconds after it finishes.
           </p>
-          <div class="copyline">
-            <code class="kbd small">{GET_AI}</code>
-            <button type="button" class="btn small" onClick={async () => { setCopied(await copyText(GET_AI)); setTimeout(() => setCopied(false), 1800); }}>{copied ? "Copied" : "Copy"}</button>
-          </div>
+          <CopyLine text={GET_AI} />
         </div>
       )}
     </div>

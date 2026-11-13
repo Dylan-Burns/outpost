@@ -215,6 +215,22 @@ if [ "$OS" = "Darwin" ]; then
 else
   [ ! -e /etc/systemd/system/outpost.service ] || fail "the systemd unit is still there after --purge"
 fi
+grep -q "Outpost is gone from this computer" "$WORK/purge.log" || fail "the installer did not say Outpost was gone"
 ok "nothing left behind"
 
-printf '\nPASS: install, use, update, restart, reset, uninstall on %s %s\n' "$OS" "$(uname -m)"
+step "Install again after removing everything: it starts from the beginning"
+installer > "$WORK/fresh.log" 2>&1 || { cat "$WORK/fresh.log"; fail "installing again after a full removal failed"; }
+wait_up || fail "the node did not start after the fresh install"
+FRESH="$(curl -fs "$DASH/api/status")"
+[ "$(printf '%s' "$FRESH" | json claimed)" = "false" ] || fail "a fresh install already has an owner: $FRESH"
+[ "$(printf '%s' "$FRESH" | json setupComplete)" = "false" ] || fail "a fresh install says setup is already done: $FRESH"
+NEW_CODE="$(sudo /opt/outpost/cli/outpost setup-code)"
+[ -n "$NEW_CODE" ] || fail "a fresh install has no setup code"
+[ "$NEW_CODE" != "$CODE" ] || fail "a fresh install reused the setup code of the one before it"
+grep -q "Setup code:" "$WORK/fresh.log" || fail "the fresh install did not print its setup code"
+[ "$(sudo find /var/lib/outpost/content -type f 2>/dev/null | wc -l | tr -d ' ')" = "0" ] || fail "a fresh install still has content from before"
+ok "a new owner, a new setup code and an empty library"
+installer --uninstall --purge > "$WORK/purge2.log" 2>&1 || { cat "$WORK/purge2.log"; fail "the last clean-up failed"; }
+[ ! -e /var/lib/outpost ] && [ ! -e /opt/outpost ] || fail "the last clean-up left files behind"
+
+printf '\nPASS: install, use, update, restart, reset, uninstall, start again on %s %s\n' "$OS" "$(uname -m)"

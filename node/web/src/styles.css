@@ -138,6 +138,11 @@ label.field > span { display: block; margin-bottom: 0.4rem; color: var(--dim); }
 .empty { padding: 2.5rem 1rem; text-align: center; color: var(--dim); }
 .kbd { display: block; padding: 0.7rem 0.85rem; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); font-family: var(--mono); font-stretch: 80%; white-space: pre-wrap; overflow-wrap: anywhere; }
 .copyline { display: flex; align-items: stretch; }
+.kbd .word { display: inline-block; max-width: 100%; }
+/* A card that takes a row of the grid to itself. */
+.card.whole-row { grid-column: 1 / -1; }
+.card.whole-row > p { max-width: 62rem; }
+.card.whole-row .copyline { max-width: 62rem; }
 .copyline .kbd { flex: 1; min-width: 0; border-right: 0; }
 
 /* Home */

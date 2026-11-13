@@ -231,10 +231,15 @@ export default function Install() {
                 Paste the install line again. It replaces the program, keeps your content and settings, and restarts Outpost. Newer editions of
                 your libraries show up in the dashboard under Content as “Update all”.
               </dd>
-              <dt>Remove Outpost, keep the content</dt>
-              <dd><code>{INSTALL} -s -- --uninstall</code></dd>
-              <dt>Remove everything, content included</dt>
+              <dt>Remove everything</dt>
+              <dd>
+                Takes away the program, everything you downloaded, your password and your settings. It asks once before it deletes. Installing
+                again afterwards starts from the beginning, with a new setup code. The same line is in the dashboard under Settings.
+              </dd>
               <dd><code>{INSTALL} -s -- --uninstall --purge</code></dd>
+              <dt>Remove the program, keep the downloads</dt>
+              <dd>The library, the maps and your settings stay on the drive. Installing again picks them up, with the same password.</dd>
+              <dd><code>{INSTALL} -s -- --uninstall</code></dd>
             </dl>
 
             <h2 id="trouble">If something goes wrong</h2>

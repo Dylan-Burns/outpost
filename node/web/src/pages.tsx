@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { api, streamChat, type Apps, type CatalogResponse, type Selection, type Status } from "./api";
 import { JobSummary } from "./downloads";
-import { bytes, copyText, count, duration, libraryBase, newer } from "./format";
+import { bytes, count, duration, libraryBase, newer } from "./format";
+import { CopyLine } from "./copyline";
 import { usePoll } from "./poll";
 import { Icon } from "./icons";
 import { CollectionsEditor, ModelsEditor, RegionsEditor, StorageBar, WikipediaEditor, plan, AppsEditor } from "./selection";
 import { navigate, Link } from "./router";
 
+// The installer does it all: run again it updates, with a flag it removes.
 const UPDATE = "curl -fsSL https://projectoutpost.org/install.sh | sudo bash";
+const REMOVE_ALL = `${UPDATE} -s -- --uninstall --purge`;
+const REMOVE_PROGRAM = `${UPDATE} -s -- --uninstall`;
 
 type Book = { id: string; title: string; description: string; path: string; size: number; date: string; category: string; notice?: string };
 
@@ -363,7 +367,6 @@ export function Settings({ status, refresh }: { status: Status; refresh: () => v
   const [pw, setPw] = useState({ current: "", next: "" });
   const [pwMsg, setPwMsg] = useState("");
   const [catMsg, setCatMsg] = useState("");
-  const [copied, setCopied] = useState(false);
   const save = async () => {
     try {
       await api.put("/api/settings", s);
@@ -438,10 +441,7 @@ export function Settings({ status, refresh }: { status: Status; refresh: () => v
           <p class={`small ${update ? "alert ok" : "muted"}`} style={{ marginTop: "0.8rem" }}>
             {update ? `Version ${status.latestVersion} is out. ` : ""}To update, paste this line into Terminal on the Outpost computer. It keeps everything you downloaded and all your settings.
           </p>
-          <div class="copyline">
-            <code class="kbd small">{UPDATE}</code>
-            <button type="button" class="btn small" onClick={async () => setCopied(await copyText(UPDATE))}>{copied ? "Copied" : "Copy"}</button>
-          </div>
+          <CopyLine text={UPDATE} />
           <div class="row" style={{ marginTop: "0.8rem" }}><button class="btn small" onClick={refreshCatalog}>Look for new titles now</button><span class="small muted">{catMsg}</span></div>
         </section>
         <section class="card">
@@ -457,6 +457,23 @@ export function Settings({ status, refresh }: { status: Status; refresh: () => v
               <tr><td>Running for</td><td>{duration(sys.system.uptimeSeconds) || "just started"}</td></tr>
             </tbody></table>
           )}
+        </section>
+        <section class="card whole-row">
+          <h2>Remove Outpost</h2>
+          <p class="small">
+            <strong>Remove everything.</strong> Paste this line into Terminal on the Outpost computer. It takes away the program, everything you
+            downloaded{sys ? <> (kept in <span class="mono">{sys.disk.path}</span>)</> : ""}, your password and your settings. It asks once before it
+            deletes. Installing again afterwards starts from the beginning, with a new setup code.
+          </p>
+          <CopyLine text={REMOVE_ALL} />
+          <p class="small" style={{ marginTop: "1.1rem" }}>
+            <strong>Remove the program, keep the downloads.</strong> The library, the maps and your settings stay on the drive. Installing again
+            picks them up, with the same password.
+          </p>
+          <CopyLine text={REMOVE_PROGRAM} />
+          <p class="small muted" style={{ marginTop: "0.8rem", marginBottom: 0 }}>
+            Ollama, the separate program behind the AI assistant, is not removed by either line.
+          </p>
         </section>
       </div>
     </div>
