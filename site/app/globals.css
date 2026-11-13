@@ -142,10 +142,11 @@ section > .wrap { padding-block: var(--sec); }
 .hero h1 .setup { display: block; width: fit-content; margin: 0 auto 0.42em; font-size: 0.3em; font-weight: 700; letter-spacing: 0.02em; line-height: 1.1; pointer-events: auto; text-shadow: 0.09em 0 var(--bg), -0.09em 0 var(--bg), 0 0.09em var(--bg), 0 -0.09em var(--bg), 0.065em 0.065em var(--bg), -0.065em 0.065em var(--bg), 0.065em -0.065em var(--bg), -0.065em -0.065em var(--bg), 0 0 0.3em var(--bg), 0 0 0.3em var(--bg), 0 0 0.6em var(--bg); }
 /* Where the big letters cross the globe its lines show through them in black. */
 .hero h1 .line { display: block; width: fit-content; margin-inline: auto; position: relative; white-space: nowrap; pointer-events: auto; mix-blend-mode: difference; }
-/* Everything smaller sits on a plate of the ground colour, like the buttons
-   and the command, so the map never runs through words meant to be read. */
-.hero .lede { margin: 0; max-width: 47rem; text-wrap: balance; pointer-events: auto; }
-.hero .lede > span { padding: 0.3em 0.7em; background: var(--bg); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+/* The paragraph under the headline sits in a pool of shade that fades out
+   into the globe, and each letter has a soft dark halo, so the map never runs
+   through words meant to be read and there is no hard box around them. */
+.hero .lede { margin: 0; max-width: 47rem; text-wrap: balance; pointer-events: auto; isolation: isolate; text-shadow: 0 0 0.35em var(--bg), 0 0 0.8em var(--bg), 0 0 1.4em var(--bg); }
+.hero .lede::before { content: ""; position: absolute; z-index: -1; inset: -2.6em -5em; background: radial-gradient(closest-side, rgb(0 0 0 / 0.92) 55%, rgb(0 0 0 / 0.6) 75%, transparent); pointer-events: none; }
 .hero-actions { width: fit-content; max-width: 100%; margin-top: clamp(1.4rem, 2.2vw, 1.75rem); pointer-events: auto; }
 .hero-or { margin: 1.25rem 0 0.6rem; font-size: 0.88rem; line-height: 1.4; color: var(--dim); max-width: 34rem; }
 /* In the hero the line that introduces the command is the command's own

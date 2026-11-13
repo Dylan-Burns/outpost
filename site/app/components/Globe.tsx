@@ -37,8 +37,8 @@ const CUT = 7; // links start to fail
 const DARK = 10; // the last one is gone
 const BACK = 15; // they start to return
 const ARC_STEPS = 36;
-const LIVE = "66,196,118"; // a working link, a pulse: green, kept short of neon
-const DEAD = "208,74,64"; // a link as it fails: red, likewise
+const LIVE = "34,139,74"; // a working link, a pulse: a deep green
+const DEAD = "160,40,34"; // a link as it fails: a deep red
 const FLICKER = 0.45; // seconds a failing link flickers
 const LINGER = 1.6; // seconds its red takes to fade once it has dropped
 
@@ -112,20 +112,50 @@ function lineSet(runs: number[][]): LineSet {
   return { xyz: new Float32Array(pts), starts: new Uint32Array(starts) };
 }
 
-function unpack(d: Packed): LineSet {
-  return lineSet(
-    d.rings.map((r) => {
-      const run: number[] = [];
-      let x = 0;
-      let y = 0;
-      for (let i = 0; i < r.length; i += 2) {
-        x += r[i];
-        y += r[i + 1];
-        run.push(x / d.scale, y / d.scale);
-      }
-      return run;
-    }),
-  );
+/** The land as a field of dots: points of an even grid, about `step` degrees
+ *  apart on the ground, kept where they fall on land. The outlines are
+ *  filled once on a small flat map and each grid point is looked up in it,
+ *  which is quicker and steadier than testing points against polygons. */
+function landDots(d: Packed, step: number): Float32Array {
+  const W = 1440;
+  const H = 720;
+  const k = W / 360;
+  const flat = document.createElement("canvas");
+  flat.width = W;
+  flat.height = H;
+  const fc = flat.getContext("2d", { willReadFrequently: true });
+  if (!fc) return new Float32Array(0);
+  fc.fillStyle = "#fff";
+  fc.beginPath();
+  for (const ring of d.rings) {
+    let x = 0;
+    let y = 0;
+    for (let i = 0; i < ring.length; i += 2) {
+      x += ring[i];
+      y += ring[i + 1];
+      const px = (x / d.scale + 180) * k;
+      const py = (90 - y / d.scale) * k;
+      if (i === 0) fc.moveTo(px, py);
+      else fc.lineTo(px, py);
+    }
+    fc.closePath();
+  }
+  fc.fill();
+  const img = fc.getImageData(0, 0, W, H).data;
+  const pts: number[] = [];
+  for (let lat = -90 + step / 2; lat < 90; lat += step) {
+    const ring = Math.max(1, Math.round((360 * Math.cos(lat * RAD)) / step));
+    // Rows are offset by half a dot in turn, so the field reads as a weave
+    // rather than as lines of latitude.
+    const shift = (Math.round(lat / step) % 2) * 0.5;
+    for (let j = 0; j < ring; j++) {
+      const lon = -180 + ((j + shift) * 360) / ring;
+      const px = Math.min(W - 1, Math.floor((lon + 180) * k));
+      const py = Math.min(H - 1, Math.floor((90 - lat) * k));
+      if (img[(py * W + px) * 4 + 3] > 127) pts.push(...unit(lat, lon));
+    }
+  }
+  return new Float32Array(pts);
 }
 
 function graticule(): LineSet {
@@ -198,7 +228,8 @@ export default function Globe() {
     const grid = graticule();
     const routes = links();
     const cities = new Float32Array(CITIES.flatMap(([lat, lon]) => unit(lat, lon)));
-    let land: LineSet | null = null;
+    let land: Float32Array | null = null; // the land, as dots
+    let landStep = 1; // degrees between them
     let lon = -30 * RAD;
     let tilt = 24 * RAD;
     // It plays on its own everywhere, including where the system says to
@@ -264,6 +295,48 @@ export default function Globe() {
       ctx.stroke();
     };
 
+    /** Fills the land's dots on the near (or far) side as small squares. A
+     *  dot shrinks toward the globe's edge, where the ground turns away, so
+     *  the field reads as a surface rather than a stencil.
+     *
+     *  Each dot's brightness is worked out here, by the same rule as
+     *  mapPaint (thinning toward the edge, lifted in a pulse's wake), and the
+     *  dots are drawn in a few shades of plain white: thousands of small
+     *  gradient fills, or one path spanning the canvas, both cost far more. */
+    const SHADES = 8;
+    const shadeX: number[][] = Array.from({ length: SHADES }, () => []);
+    const dots = (pts: Float32Array, m: number[], front: boolean, onlyTop: boolean, base: number, glow: number) => {
+      const [cl, sl, ct, st] = m;
+      const side = Math.max(1, 0.46 * landStep * RAD * r);
+      const wake = Math.min(0.24, (150 * dpr) / r);
+      for (const b of shadeX) b.length = 0;
+      for (let i = 0; i < pts.length; i += 3) {
+        const x = pts[i];
+        const y = pts[i + 1];
+        const z = pts[i + 2];
+        const x1 = x * cl - z * sl;
+        const z1 = z * cl + x * sl;
+        const z2 = y * st + z1 * ct;
+        if (z2 > 0 !== front) continue;
+        const y2 = y * ct - z1 * st;
+        if (onlyTop && y2 < -0.02) continue;
+        const d = Math.sqrt(x1 * x1 + y2 * y2); // 0 at the centre, 1 at the edge
+        let lift = 0;
+        if (glow > 0) for (const at of pulses) if (d <= at && d > at - wake) lift = Math.max(lift, Math.sqrt(1 - at) * (1 - (at - d) / wake));
+        const edge = !half || d <= 0.8 ? 1 : Math.max(0, 1 - 4.25 * (d - 0.8));
+        const a = Math.min(1, base + glow * lift) * edge;
+        if (a <= 0.01) continue;
+        const k = side * (0.35 + 0.65 * Math.abs(z2));
+        shadeX[Math.min(SHADES - 1, Math.floor(a * SHADES))].push(cx + x1 * r - k / 2, cy - y2 * r - k / 2, k);
+      }
+      for (let b = 0; b < SHADES; b++) {
+        const list = shadeX[b];
+        if (!list.length) continue;
+        ctx.fillStyle = `rgba(255,255,255,${(b + 0.5) / SHADES})`;
+        for (let n = 0; n < list.length; n += 3) ctx.fillRect(list[n], list[n + 1], list[n + 2], list[n + 2]);
+      }
+    };
+
     /** Puts the screen position of the point at index i into p, or returns
      *  false when the globe hides it. A point above the surface can still
      *  show past the edge. */
@@ -322,9 +395,9 @@ export default function Globe() {
         // stroke that spans the canvas grows with the canvas, not with the
         // line. Measured in Chrome on a 2019 MacBook Pro at 2880 pixels wide:
         // about 3ms for a stroke one canvas pixel wide, 14ms for a wider one.
-        // So the map is two strokes, grid and land, one canvas pixel wide
-        // whatever the screen's density; on a dense screen that is finer, so
-        // it is given a little more strength there. The far side is left out:
+        // So the grid is one stroke, one canvas pixel wide whatever the
+        // screen's density (finer on a dense screen, so given a little more
+        // strength there), and the land is small squares, see dots(). The far side is left out:
         // behind a page of words it only added noise. In the dark each pulse
         // lights the coast it has just passed over, and that is in the paint.
         const ink = Math.min(1, 0.85 + 0.15 * (dpr - 1));
@@ -332,21 +405,18 @@ export default function Globe() {
         ctx.strokeStyle = mapPaint((0.08 + 0.07 * lit) * ink, 0);
         stroke(grid, m, true);
         if (land) {
-          ctx.strokeStyle = mapPaint((0.24 + 0.68 * lit) * ink, 0.9 * (1 - lit));
-          stroke(land, m, true);
+          dots(land, m, true, true, (0.24 + 0.68 * lit) * ink, 0.9 * (1 - lit));
         }
       } else {
         // The whole globe: far side first, faint, so the sphere reads as glass.
         ctx.lineWidth = dpr;
         if (land) {
-          ctx.strokeStyle = `rgba(255,255,255,${0.04 + 0.07 * lit})`;
-          stroke(land, m, false);
+          dots(land, m, false, false, 0.04 + 0.07 * lit, 0);
         }
         ctx.strokeStyle = `rgba(255,255,255,${0.08 + 0.07 * lit})`;
         stroke(grid, m, true);
         if (land) {
-          ctx.strokeStyle = `rgba(255,255,255,${0.24 + 0.68 * lit})`;
-          stroke(land, m, true);
+          dots(land, m, true, false, 0.24 + 0.68 * lit, 0);
         }
       }
 
@@ -623,7 +693,9 @@ export default function Globe() {
       .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
       .then((d: Packed) => {
         if (gone) return;
-        land = unpack(d);
+        // Finer dots on the wide half globe, so each stays a small square.
+        landStep = wantsHalf() ? 1.1 : 2.4;
+        land = landDots(d, landStep);
       })
       .catch(() => {
         /* the grid and the links still draw */
