@@ -206,3 +206,10 @@ table.hw tbody th { font: 700 1.35rem var(--display); color: var(--water); white
   .tierbar button small { font-size: 0.64rem; }
   .site-header nav a { font-size: 1.05rem; }
 }
+@media (max-width: 640px) {
+  .cat-items th:nth-child(3), .cat-items td:nth-child(3) { display: none; }
+  .cat-items td, .cat-items th { padding-right: 0.5rem; }
+  .cat-block p code { display: inline-block; }
+}
+.cat-block { overflow-wrap: anywhere; }
+.cat-items { table-layout: auto; }
