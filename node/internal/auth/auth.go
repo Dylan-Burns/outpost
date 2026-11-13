@@ -185,61 +185,55 @@ func (l *Limiter) Reset(key string) {
 	delete(l.counts, key)
 }
 
-// Throttle is an account-wide failure budget. Past the budget, every
-// attempt waits its turn behind one shared lock and a fixed delay, so a
-// distributed guesser gets roughly one try per delay in total, while the
-// owner can still sign in (slowly) instead of being locked out.
+// Throttle is an account-wide failure budget. Past the budget it admits at
+// most one attempt per interval across all clients and rejects the rest at
+// once (no queue), so a distributed guesser gets about one try per interval.
 type Throttle struct {
 	mu       sync.Mutex
-	gate     sync.Mutex
 	window   time.Duration
 	budget   int
-	delay    time.Duration
+	interval time.Duration
 	start    time.Time
 	failures int
+	last     time.Time
 	now      func() time.Time
-	sleep    func(time.Duration)
 }
 
-// NewThrottle allows budget failures per window before throttling.
-func NewThrottle(window time.Duration, budget int, delay time.Duration) *Throttle {
-	return &Throttle{window: window, budget: budget, delay: delay, now: time.Now, sleep: time.Sleep}
+// NewThrottle allows budget failures per window before throttling to one
+// attempt per interval.
+func NewThrottle(window time.Duration, budget int, interval time.Duration) *Throttle {
+	return &Throttle{window: window, budget: budget, interval: interval, now: time.Now}
+}
+
+func (t *Throttle) rollLocked(now time.Time) {
+	if now.Sub(t.start) >= t.window {
+		t.start = now
+		t.failures = 0
+	}
 }
 
 // Fail records a failed attempt.
 func (t *Throttle) Fail() {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	t.rollLocked()
+	t.rollLocked(t.now())
 	t.failures++
 }
 
-func (t *Throttle) rollLocked() {
-	if now := t.now(); now.Sub(t.start) >= t.window {
-		t.start = now
-		t.failures = 0
-	}
-}
-
-// Over reports whether the budget is spent.
-func (t *Throttle) Over() bool {
+// Allow reports whether an attempt may run now.
+func (t *Throttle) Allow() bool {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	t.rollLocked()
-	return t.failures >= t.budget
-}
-
-// Do runs fn, first queueing behind other throttled attempts and waiting
-// the delay when the budget is spent.
-func (t *Throttle) Do(fn func()) {
-	if !t.Over() {
-		fn()
-		return
+	now := t.now()
+	t.rollLocked(now)
+	if t.failures < t.budget {
+		return true
 	}
-	t.gate.Lock()
-	defer t.gate.Unlock()
-	t.sleep(t.delay)
-	fn()
+	if now.Sub(t.last) >= t.interval {
+		t.last = now
+		return true
+	}
+	return false
 }
 
 // hashSlots bounds concurrent argon2 computations (19 MiB each).

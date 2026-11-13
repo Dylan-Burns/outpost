@@ -283,7 +283,10 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 	if s.SetupCode != nil {
 		code = s.SetupCode()
 	}
-	if ok, _ := s.checkCredential(func() bool { return auth.SetupCodeMatches(code, req.Code) }); !ok {
+	if ok, busy := s.checkCredential(r, func() bool { return auth.SetupCodeMatches(code, req.Code) }); busy {
+		writeErr(w, http.StatusTooManyRequests, "too many attempts on this node; try again in a few seconds")
+		return
+	} else if !ok {
 		writeErr(w, http.StatusForbidden, "that setup code is not right")
 		return
 	}
@@ -294,7 +297,7 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 	}
 	var herr error
 	if err := auth.WithHashSlot(func() { hash, herr = auth.HashPassword(req.Password) }); err != nil {
-		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
+		writeErr(w, http.StatusTooManyRequests, "too many attempts on this node; try again in a few seconds")
 		return
 	}
 	if herr != nil {
@@ -339,9 +342,9 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	var hash string
 	s.Store.View(func(st *state.State) { hash = st.AdminHash })
-	ok, busy := s.checkCredential(func() bool { return hash != "" && auth.VerifyPassword(hash, req.Password) })
+	ok, busy := s.checkCredential(r, func() bool { return hash != "" && auth.VerifyPassword(hash, req.Password) })
 	if busy {
-		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
+		writeErr(w, http.StatusTooManyRequests, "too many attempts on this node; try again in a few seconds")
 		return
 	}
 	if !ok {
@@ -385,7 +388,7 @@ func (s *Server) handlePassword(w http.ResponseWriter, r *http.Request) {
 	var hash, nh string
 	s.Store.View(func(st *state.State) { hash = st.AdminHash })
 	var herr error
-	ok, busy := s.checkCredential(func() bool {
+	ok, busy := s.checkCredential(r, func() bool {
 		if !auth.VerifyPassword(hash, req.Current) {
 			return false
 		}
@@ -393,7 +396,7 @@ func (s *Server) handlePassword(w http.ResponseWriter, r *http.Request) {
 		return true
 	})
 	if busy {
-		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
+		writeErr(w, http.StatusTooManyRequests, "too many attempts on this node; try again in a few seconds")
 		return
 	}
 	if !ok {

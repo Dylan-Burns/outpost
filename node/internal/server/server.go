@@ -53,6 +53,8 @@ type Server struct {
 	loginLimit *auth.Limiter // per IPv4 address or IPv6 /64
 	wideLimit  *auth.Limiter // per IPv6 /56
 	throttle   *auth.Throttle
+	trustMu    sync.Mutex
+	trusted    map[string]time.Time // client keys that signed in successfully
 	once       sync.Once
 	latestMu   sync.Mutex
 	latest     string
@@ -70,6 +72,7 @@ func (s *Server) init() {
 		s.loginLimit = auth.NewLimiter(15*time.Minute, 10)
 		s.wideLimit = auth.NewLimiter(15*time.Minute, 30)
 		s.throttle = auth.NewThrottle(15*time.Minute, 50, 2*time.Second)
+		s.trusted = map[string]time.Time{}
 	})
 }
 
@@ -234,15 +237,37 @@ func (s *Server) admit(r *http.Request) bool {
 	return true
 }
 
+// trust remembers a client that proved the credential, so a later attack by
+// others does not throttle the owner's own sign-ins.
+func (s *Server) trust(r *http.Request) {
+	s.trustMu.Lock()
+	defer s.trustMu.Unlock()
+	if len(s.trusted) > 1000 {
+		s.trusted = map[string]time.Time{}
+	}
+	s.trusted[clientKey(r)] = time.Now()
+}
+
+func (s *Server) isTrusted(r *http.Request) bool {
+	s.trustMu.Lock()
+	defer s.trustMu.Unlock()
+	t, ok := s.trusted[clientKey(r)]
+	return ok && time.Since(t) < 30*24*time.Hour
+}
+
 // checkCredential runs check under the account-wide throttle and the argon2
-// slot limit, recording a failure when check reports false.
-func (s *Server) checkCredential(check func() bool) (ok bool, busy bool) {
-	var err error
-	s.throttle.Do(func() { err = auth.WithHashSlot(func() { ok = check() }) })
-	if err != nil {
+// slot limit, recording a failure when check reports false. busy means the
+// attempt was refused without being checked.
+func (s *Server) checkCredential(r *http.Request, check func() bool) (ok bool, busy bool) {
+	if !s.isTrusted(r) && !s.throttle.Allow() {
 		return false, true
 	}
-	if !ok {
+	if err := auth.WithHashSlot(func() { ok = check() }); err != nil {
+		return false, true
+	}
+	if ok {
+		s.trust(r)
+	} else {
 		s.throttle.Fail()
 	}
 	return ok, false

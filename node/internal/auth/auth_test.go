@@ -86,22 +86,26 @@ func TestWithHashSlot(t *testing.T) {
 }
 
 func TestThrottle(t *testing.T) {
-	now := time.Unix(0, 0)
-	slept := 0
+	now := time.Unix(1000, 0)
 	th := NewThrottle(time.Minute, 2, time.Second)
 	th.now = func() time.Time { return now }
-	th.sleep = func(time.Duration) { slept++ }
-	ran := 0
-	th.Do(func() { ran++ })
+	if !th.Allow() {
+		t.Fatal("under budget refused")
+	}
 	th.Fail()
 	th.Fail()
-	th.Do(func() { ran++ })
-	if ran != 2 || slept != 1 {
-		t.Fatalf("ran %d slept %d", ran, slept)
+	if !th.Allow() {
+		t.Fatal("first throttled attempt refused")
+	}
+	if th.Allow() {
+		t.Fatal("second attempt in the same interval admitted")
+	}
+	now = now.Add(time.Second)
+	if !th.Allow() {
+		t.Fatal("attempt after the interval refused")
 	}
 	now = now.Add(time.Minute)
-	th.Do(func() { ran++ })
-	if slept != 1 {
-		t.Fatal("throttle did not reset with the window")
+	if !th.Allow() || !th.Allow() {
+		t.Fatal("budget did not reset with the window")
 	}
 }
