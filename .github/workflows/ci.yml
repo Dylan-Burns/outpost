@@ -1,0 +1,23 @@
+name: ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version-file: node/go.mod }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: cd node/web && npm ci && npx tsc --noEmit && node build.mjs
+      - run: cd node && go vet ./... && go test -race ./...
+      - run: shellcheck -S warning install/install.sh scripts/release.sh
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: cd site && npm ci && npx eslint . && npx next build

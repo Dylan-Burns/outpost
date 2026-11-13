@@ -37,10 +37,15 @@ function App() {
 
   if (!status) return <main>{err ? <p class="alert warn">Cannot reach this node: {err}</p> : <p class="empty"><span class="spinner" /></p>}</main>;
 
+  if (!status.claimed) {
+    // A new node, or one whose admin was reset with "outpost reset-admin".
+    return <main><Claim onDone={refresh} /></main>;
+  }
+
   if (!status.setupComplete) {
     return (
       <main>
-        {!status.claimed ? <Claim onDone={refresh} /> : !status.signedIn ? <Login title="Finish setting up" onDone={refresh} /> : <Wizard status={status} onDone={() => { refresh(); navigate("/downloads"); }} />}
+        {!status.signedIn ? <Login title="Finish setting up" onDone={refresh} /> : <Wizard status={status} onDone={() => { refresh(); navigate("/downloads"); }} />}
       </main>
     );
   }

@@ -124,7 +124,13 @@ if ! command -v ssh-keygen >/dev/null 2>&1; then
   if command -v pacman >/dev/null 2>&1; then need+=(openssh); elif command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then need+=(openssh); else need+=(openssh-client); fi
 fi
 if [ ${#need[@]} -gt 0 ]; then say "Installing ${need[*]}"; pkg_install "${need[@]}"; fi
-ssh-keygen -Y verify 2>&1 | grep -qi 'usage\|missing\|option' || die "this system's OpenSSH is too old to check signatures (need 8.1 or later)."
+ssh_ver="$(ssh -V 2>&1 | sed -n 's/^OpenSSH_\([0-9]*\)\.\([0-9]*\).*/\1 \2/p' | head -1)"
+if [ -n "$ssh_ver" ]; then
+  set -- $ssh_ver
+  if [ "$1" -lt 8 ] || { [ "$1" -eq 8 ] && [ "$2" -lt 1 ]; }; then
+    die "this system's OpenSSH ($1.$2) is too old to check signatures (need 8.1 or later)."
+  fi
+fi
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
@@ -263,7 +269,7 @@ RestrictRealtime=yes
 RestrictNamespaces=yes
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
-RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
 CapabilityBoundingSet=
 AmbientCapabilities=
 SystemCallArchitectures=native
@@ -304,7 +310,7 @@ systemctl enable outpost.service >/dev/null 2>&1
 systemctl restart outpost.service
 ok=0
 for _ in $(seq 1 30); do
-  if curl -fsS -o /dev/null "http://127.0.0.1:$PORT/api/status"; then ok=1; break; fi
+  if curl -fs -o /dev/null "http://127.0.0.1:$PORT/api/status"; then ok=1; break; fi
   sleep 1
 done
 [ "$ok" -eq 1 ] || die "Outpost did not start. See: journalctl -u outpost -n 50"
