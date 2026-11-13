@@ -162,9 +162,13 @@ type Message struct {
 
 // Chat streams a reply, calling onToken for each piece of text.
 func (c *Client) Chat(ctx context.Context, model string, msgs []Message, onToken func(string) error) error {
+	return c.chat(ctx, model, msgs, map[string]any{"temperature": 0.2, "num_ctx": 8192}, onToken)
+}
+
+func (c *Client) chat(ctx context.Context, model string, msgs []Message, opts map[string]any, onToken func(string) error) error {
 	resp, err := c.do(ctx, http.MethodPost, "/api/chat", map[string]any{
 		"model": model, "messages": msgs, "stream": true, "think": false,
-		"options": map[string]any{"temperature": 0.2, "num_ctx": 8192},
+		"options": opts,
 	})
 	if err != nil {
 		return err
@@ -175,17 +179,17 @@ func (c *Client) Chat(ctx context.Context, model string, msgs []Message, onToken
 		msg := strings.TrimSpace(string(b))
 		// Models without a thinking switch reject "think"; retry without it.
 		if resp.StatusCode == http.StatusBadRequest && strings.Contains(msg, "think") {
-			return c.chatNoThink(ctx, model, msgs, onToken)
+			return c.chatNoThink(ctx, model, msgs, opts, onToken)
 		}
 		return fmt.Errorf("ollama chat: %s %s", resp.Status, msg)
 	}
 	return readChat(resp.Body, onToken)
 }
 
-func (c *Client) chatNoThink(ctx context.Context, model string, msgs []Message, onToken func(string) error) error {
+func (c *Client) chatNoThink(ctx context.Context, model string, msgs []Message, opts map[string]any, onToken func(string) error) error {
 	resp, err := c.do(ctx, http.MethodPost, "/api/chat", map[string]any{
 		"model": model, "messages": msgs, "stream": true,
-		"options": map[string]any{"temperature": 0.2, "num_ctx": 8192},
+		"options": opts,
 	})
 	if err != nil {
 		return err

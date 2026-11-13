@@ -185,6 +185,7 @@ func serve(args []string) int {
 	defer stop()
 	go kw.Run(ctx)
 	go jm.Run(ctx)
+	go srv.RunPDFIndex(ctx)
 	go catalogRefresher(ctx, store, prov, logger)
 	logger.Printf("Outpost %s: dashboard on %s, library on %s, data in %s", version, *listen, *libListen, p.data)
 	if err := srv.Serve(ctx, *listen, *libListen); err != nil {

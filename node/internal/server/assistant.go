@@ -12,6 +12,7 @@ import (
 
 	"github.com/Dylan-Burns/outpost/node/internal/ai"
 	"github.com/Dylan-Burns/outpost/node/internal/catalog"
+	"github.com/Dylan-Burns/outpost/node/internal/retrieval"
 	"github.com/Dylan-Burns/outpost/node/internal/state"
 )
 
@@ -146,7 +147,7 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 	var sources []ai.Source
 	if useLibrary && s.Kiwix != nil && s.Kiwix.Running() {
 		send("status", "Searching your library…")
-		sources = s.gatherSources(ctx, q)
+		sources = s.gatherSources(ctx, q, model.Model)
 	}
 	send("sources", nonNil(sources))
 	var msgs []ai.Message
@@ -154,64 +155,28 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		msgs = ai.BuildPrompt(q, sources)
 	} else {
 		send("ungrounded", true)
-		msgs = []ai.Message{
-			{Role: "system", Content: "You are a helpful assistant on an offline computer. Answer briefly and plainly. If you are not sure, say so. For medical, electrical or other safety-critical questions, tell the reader to check an authoritative reference."},
-			{Role: "user", Content: q},
-		}
+		msgs = ai.UngroundedPrompt(q)
 	}
 	send("status", "Writing…")
-	err := s.AI.Chat(ctx, model.Model, msgs, func(tok string) error { return send("token", tok) })
+	var answer strings.Builder
+	err := s.AI.Chat(ctx, model.Model, msgs, func(tok string) error {
+		answer.WriteString(tok)
+		return send("token", tok)
+	})
 	if err != nil && ctx.Err() == nil {
 		s.logf("assistant: %v", err)
 		send("error", "The assistant could not answer: "+err.Error())
 		return
 	}
+	if len(sources) > 0 {
+		if nums := ai.UnsupportedNumbers(answer.String(), sources); len(nums) > 0 {
+			send("unsupported", nums)
+		}
+	}
 	send("done", map[string]any{"model": model.Title})
 }
 
 // gatherSources searches the library and returns up to four passages.
-func (s *Server) gatherSources(ctx context.Context, q string) []ai.Source {
-	terms := ai.Terms(q)
-	query := strings.Join(terms, " ")
-	if query == "" {
-		query = q
-	}
-	sctx, cancel := context.WithTimeout(ctx, 15*time.Second)
-	defer cancel()
-	res, _, err := s.Kiwix.Search(sctx, query, 0, 8)
-	if err != nil || len(res) == 0 {
-		return nil
-	}
-	// Articles whose titles contain the question's words usually answer it.
-	titleScore := func(t string) int {
-		lt, n := strings.ToLower(t), 0
-		for _, w := range terms {
-			if strings.Contains(lt, w) {
-				n++
-			}
-		}
-		return n
-	}
-	sort.SliceStable(res, func(a, b int) bool { return titleScore(res[a].Title) > titleScore(res[b].Title) })
-	var out []ai.Source
-	seen := map[string]bool{}
-	for _, r := range res {
-		if len(out) >= 4 || seen[r.Path] {
-			continue
-		}
-		seen[r.Path] = true
-		text, err := s.Kiwix.ArticleText(sctx, r.Path, 60000)
-		if err != nil || len(text) < 80 {
-			text = r.Snippet
-		}
-		passage := ai.BestPassages(text, terms, 1800)
-		if len(passage) < 60 {
-			passage = r.Snippet
-		}
-		if passage == "" {
-			continue
-		}
-		out = append(out, ai.Source{Label: fmt.Sprintf("S%d", len(out)+1), Title: r.Title, Book: r.Book, Path: r.Path, Text: passage})
-	}
-	return out
+func (s *Server) gatherSources(ctx context.Context, q, model string) []ai.Source {
+	return ai.Retrieve(ctx, retrieval.Kiwix{M: s.Kiwix, PDF: s.pdf.Load()}, q, s.AI.TopicsWith(model))
 }

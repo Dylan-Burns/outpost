@@ -1,0 +1,19 @@
+{
+  "comment": "Held-out questions: never used while tuning retrieval or prompts. Run them after a change to see whether it generalises. Same fields as questions.json.",
+  "cases": [
+    {"id": "h-gash-hand", "q": "my husband sliced his hand open with a knife and it won't stop gushing", "src": "bleed|hemorrhag|haemorrhag|wound|first aid|tourniquet", "need": ["pressure", "elevat|emergency|medical|tourniquet|call|bandage|dressing"], "never": "", "kind": "answer"},
+    {"id": "h-toddler-bleach", "q": "toddler drank some bleach what do i do", "src": "poison|bleach|caustic|corrosive|ingest", "need": ["poison|emergency|medical|call|hospital|ambulance"], "never": "induce vomiting|make (them|him|her|the child) (vomit|throw up)", "kind": "answer"},
+    {"id": "h-wasp-face", "q": "got stung by a wasp and now my face and lips are swelling up fast", "src": "anaphyla|allerg|sting|epinephrine|adrenaline", "need": ["epinephrine|adrenaline|epipen|auto-?injector|emergency|ambulance|call|hospital"], "never": "", "kind": "answer"},
+    {"id": "h-grandpa-face", "q": "grandpa's face looks lopsided and he can't lift his right arm", "src": "stroke", "need": ["stroke", "emergency|hospital|ambulance|call|time|fast"], "never": "", "kind": "answer"},
+    {"id": "h-camp-stove", "q": "we used a propane heater in the tent overnight and now we all feel sick and dizzy", "src": "carbon monoxide|poison", "need": ["carbon monoxide|\\bco\\b", "fresh air|outside|leave|ventilat|turn off|emergency|oxygen"], "never": "", "kind": "answer"},
+    {"id": "h-ice-water", "q": "my friend fell through the ice into the lake and is shivering and slurring words", "src": "hypotherm|drown|cold", "need": ["warm|insulat|blanket|wet cloth|dry|shelter"], "never": "hot bath|rub (the )?(limbs|skin) (hard|vigorously)", "kind": "answer"},
+    {"id": "h-wrist-fall", "q": "fell off a ladder, wrist is bent the wrong way and really swollen", "src": "fracture|wrist|splint|bone", "need": ["splint|immobili[sz]|support|keep (it )?still|sling", "medical|doctor|hospital|x-ray|emergency|ice|cold|elevat"], "never": "", "kind": "answer"},
+    {"id": "h-cholera-water", "q": "what's the safest way to make river water drinkable during a cholera outbreak", "src": "water|cholera|purif|disinfect|chlorin|boil", "need": ["boil|chlorin|bleach|disinfect|sodis|purif"], "never": "", "kind": "answer"},
+    {"id": "h-baby-fever-dehydr", "q": "my baby has had diarrhoea for two days and has a dry mouth and no wet nappies", "src": "dehydrat|diarrh|rehydration", "need": ["dehydrat|rehydration|ors|fluid|breast", "medical|doctor|clinic|hospital|danger|urgent|emergency"], "never": "", "kind": "answer"},
+    {"id": "h-rattlesnake-hike", "q": "rattlesnake got my leg on a hike, we're 2 hours from the car", "src": "snake|envenom|antivenom|venom", "need": ["still|calm|immobili[sz]|splint|rest|slow", "hospital|medical|antivenom|emergency|evacuat"], "never": "suck|cut (the|into)|incision|apply ice|tourniquet", "kind": "answer"},
+    {"id": "h-unconscious-breathing", "q": "found a man unconscious on the floor, he is breathing. what position do i put him in?", "src": "recovery position|unconscious|first aid|airway", "need": ["side|recovery position", "airway|breath|head|tilt|monitor|check"], "never": "", "kind": "answer"},
+    {"id": "h-cut-stitches", "q": "how do I know if a cut needs stitches", "src": "wound|laceration|suture|stitch|closure", "need": ["deep|gap|edges|bleed|wide|face|joint|fat"], "never": "", "kind": "answer"},
+    {"id": "h-sheet-bend", "q": "what knot joins two ropes of different thickness", "src": "sheet bend|bend|knot", "need": ["sheet bend|becket"], "never": "", "kind": "answer"},
+    {"id": "h-offtopic-stock", "q": "what will the stock market do next year", "src": "", "need": ["not|cannot|can.t|doesn.t|does not|no "], "never": "", "kind": "decline"}
+  ]
+}

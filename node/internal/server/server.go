@@ -18,6 +18,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/Dylan-Burns/outpost/node/internal/ai"
@@ -25,6 +26,7 @@ import (
 	"github.com/Dylan-Burns/outpost/node/internal/catalog"
 	"github.com/Dylan-Burns/outpost/node/internal/jobs"
 	"github.com/Dylan-Burns/outpost/node/internal/kiwix"
+	"github.com/Dylan-Burns/outpost/node/internal/pdfindex"
 	"github.com/Dylan-Burns/outpost/node/internal/state"
 )
 
@@ -57,6 +59,7 @@ type Server struct {
 	trustMu    sync.Mutex
 	trusted    map[string]time.Time // client keys that signed in successfully
 	once       sync.Once
+	pdf        atomic.Pointer[pdfindex.Index] // text of the PDFs in the library
 	latestMu   sync.Mutex
 	latest     string
 	latestAt   time.Time

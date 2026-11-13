@@ -181,7 +181,7 @@ export function Search({ status }: { status: Status }) {
 }
 
 type Source = { label: string; title: string; book: string; path: string };
-type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; error: string; status: string; done: boolean; model?: string };
+type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; error: string; status: string; done: boolean; model?: string };
 
 export function Assistant({ status }: { status: Status }) {
   const [info, err] = usePoll<{ available: boolean; models: { id: string; title: string }[] }>("/api/assistant", 0);
@@ -206,6 +206,7 @@ export function Assistant({ status }: { status: Status }) {
         if (ev === "token") upd((t) => (t.a += data, t.status = ""));
         else if (ev === "sources") upd((t) => (t.sources = data || []));
         else if (ev === "ungrounded") upd((t) => (t.ungrounded = true));
+        else if (ev === "unsupported") upd((t) => (t.unsupported = data || []));
         else if (ev === "status") upd((t) => (t.status = data));
         else if (ev === "error") upd((t) => (t.error = data));
         else if (ev === "done") upd((t) => (t.model = data?.model));
@@ -225,12 +226,22 @@ export function Assistant({ status }: { status: Status }) {
         {status.signedIn ? <Link class="btn primary" href="/content">Add a model</Link> : <p class="small">The owner of this Outpost can add one.</p>}
       </div>
     );
+  // Answers are plain text with [S1] marks; models still add **bold** and
+  // "# headings" now and then, which would otherwise show as symbols.
   const linkify = (text: string, sources: Source[]) =>
-    text.split(/(\[S\d+\])/g).map((part, i) => {
+    text.replace(/^#{1,6}[ \t]+/gm, "").split(/(\[S\d+\]|\*\*[^*\n]+\*\*)/g).map((part, i) => {
       const m = part.match(/^\[S(\d+)\]$/);
-      const s = m && sources[Number(m[1]) - 1];
-      return s ? <a key={i} href={base + s.path} target="_blank" rel="noopener" title={s.title}>{part}</a> : part;
+      if (m) {
+        const s = sources[Number(m[1]) - 1];
+        return s ? <a key={i} href={base + s.path} target="_blank" rel="noopener" title={s.title}>{part}</a> : part;
+      }
+      const b = part.match(/^\*\*([^*\n]+)\*\*$/);
+      return b ? <strong key={i}>{b[1]}</strong> : part;
     });
+  const cited = (t: Turn) => {
+    const n = new Set([...t.a.matchAll(/\[S(\d+)\]/g)].map((m) => Number(m[1])));
+    return t.sources.filter((_, i) => n.has(i + 1));
+  };
   return (
     <div class="stack">
       <div class="spread">
@@ -258,13 +269,32 @@ export function Assistant({ status }: { status: Status }) {
               {t.ungrounded && <p class="alert warn small" style={{ whiteSpace: "normal" }}>Nothing in your library matched, so this answer comes from the AI model alone, with no source to check.</p>}
               {t.a ? linkify(t.a, t.sources) : !t.error && <span class="muted"><span class="spinner" /> {t.status}</span>}
               {t.error && <p class="alert warn" style={{ whiteSpace: "normal" }}>{t.error}</p>}
-              {t.sources.length > 0 && (
-                <div class="sources">
-                  {t.sources.map((s) => (
-                    <a key={s.label} href={base + s.path} target="_blank" rel="noopener">[{s.label}] {s.title} · {s.book}</a>
-                  ))}
-                </div>
+              {t.unsupported && t.unsupported.length > 0 && (
+                <p class="alert warn small" style={{ whiteSpace: "normal" }}>
+                  Not found in the sources: {t.unsupported.join(", ")}. The model may have made {t.unsupported.length > 1 ? "these" : "this"} up; check the source before relying on it.
+                </p>
               )}
+              {t.sources.length > 0 && (() => {
+                // Once the answer is done, list what it rests on; the other
+                // passages it was shown are a footnote, not evidence.
+                const used = t.done ? cited(t) : t.sources;
+                const shown = used.length > 0 ? used : t.sources;
+                const rest = t.sources.filter((s) => !shown.includes(s));
+                return (
+                  <>
+                    <div class="sources">
+                      {shown.map((s) => (
+                        <a key={s.label} href={base + s.path} target="_blank" rel="noopener">[{s.label}] {s.title} · {s.book}</a>
+                      ))}
+                    </div>
+                    {rest.length > 0 && (
+                      <p class="muted small" style={{ margin: 0 }}>
+                        Also searched: {rest.map((s, i) => <>{i > 0 && " · "}<a key={s.label} href={base + s.path} target="_blank" rel="noopener">{s.title}</a></>)}
+                      </p>
+                    )}
+                  </>
+                );
+              })()}
             </div>
           </div>
         ))}

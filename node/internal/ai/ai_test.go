@@ -69,3 +69,23 @@ func TestPullAndChat(t *testing.T) {
 		t.Fatal(out.String())
 	}
 }
+
+func TestBestPassagesPrefersTreatmentSection(t *testing.T) {
+	text := "# Choking\nChoking is a blockage of the airway that stops breathing.\n" +
+		"## Epidemiology\nAbout 5,000 adults die of choking every year; breathing stops within minutes of choking.\n" +
+		"## Treatment\n### Abdominal thrusts\nStand behind the person and give up to five abdominal thrusts.\n" +
+		"## History\nThe rescue breathing method for choking adults was popular in the past.\n"
+	got := bestPassages(text, Terms("adult choking can't breathe"), "An adult is choking, what do I do?", 160)
+	if !strings.Contains(got, "abdominal thrusts") {
+		t.Fatalf("treatment step missing: %q", got)
+	}
+}
+
+func TestUnsupportedNumbers(t *testing.T) {
+	src := []Source{{Text: "Add 8 drops of bleach per gallon. Wait 30 minutes. Give 30:2 compressions at 100–120 a minute. About 4,500 deaths."}}
+	ans := "1. Add 8 drops per gallon [S1].\n2. Wait 30 minutes [S1].\n3. Use 1 tablespoon if cloudy [S1]. Ratio 30:2 at 100–120 per minute. 4500 deaths."
+	got := UnsupportedNumbers(ans, src)
+	if len(got) != 1 || got[0] != "1 tablespoon" {
+		t.Fatalf("got %q", got)
+	}
+}

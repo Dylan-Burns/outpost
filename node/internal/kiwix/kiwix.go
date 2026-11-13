@@ -223,8 +223,16 @@ func (m *Manager) httpClient() *http.Client {
 
 // Search runs a full-text search across every archive with an index.
 func (m *Manager) Search(ctx context.Context, query string, start, limit int) ([]Result, int, error) {
+	return m.SearchIn(ctx, query, nil, start, limit)
+}
+
+// SearchIn is Search limited to the named books (all books when empty).
+func (m *Manager) SearchIn(ctx context.Context, query string, books []string, start, limit int) ([]Result, int, error) {
 	q := url.Values{}
 	q.Set("pattern", query)
+	for _, b := range books {
+		q.Add("books.name", b)
+	}
 	q.Set("format", "xml")
 	q.Set("start", strconv.Itoa(start))
 	q.Set("pageLength", strconv.Itoa(limit))
@@ -295,6 +303,7 @@ func (m *Manager) ArticleText(ctx context.Context, path string, limit int) (stri
 
 var (
 	dropRE  = regexp.MustCompile(`(?is)<(script|style|noscript|template|svg|head|nav|footer|table)\b.*?</(script|style|noscript|template|svg|head|nav|footer|table)>`)
+	headRE  = regexp.MustCompile(`(?i)<h[1-6]\b[^>]*>`)
 	blockRE = regexp.MustCompile(`(?i)</?(p|div|li|h[1-6]|br|section|article|tr|dd|dt|blockquote|pre)\b[^>]*>`)
 )
 
@@ -302,6 +311,11 @@ var (
 // paragraph breaks.
 func HTMLToText(s string, limit int) string {
 	s = dropRE.ReplaceAllString(s, " ")
+	// Headings keep their level as "## Title" lines, so a reader can tell a
+	// section from its subsections.
+	s = headRE.ReplaceAllStringFunc(s, func(m string) string {
+		return "\n" + strings.Repeat("#", int(m[2]-'0')) + " "
+	})
 	s = blockRE.ReplaceAllString(s, "\n")
 	s = tagRE.ReplaceAllString(s, "")
 	s = html.UnescapeString(s)
