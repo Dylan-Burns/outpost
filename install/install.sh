@@ -26,6 +26,7 @@ RELEASE_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrMpCCBsGNt2QYPvv84kSXqzkIMJIv
 KIWIX_VERSION="3.8.2"
 PMTILES_VERSION="1.31.2"
 PREFIX="/opt/outpost"
+CLI_DIR="$PREFIX/cli"
 ETC="/etc/outpost"
 OS="$(uname -s)"
 # What differs between the two systems is kept in these few names and in the
@@ -184,6 +185,32 @@ remove_user() {
   esac
 }
 
+root_only_dir() { # true when DIR is a real folder that only root can change
+  local d="$1" owner="" mode=""
+  if [ ! -e "$d" ] && [ ! -L "$d" ]; then mkdir -p "$d" 2>/dev/null || return 1; fi
+  if [ -L "$d" ] || [ ! -d "$d" ]; then return 1; fi
+  case "$OS" in
+    Linux) owner="$(stat -c %u "$d" 2>/dev/null || true)"; mode="$(stat -c %a "$d" 2>/dev/null || true)" ;;
+    Darwin) owner="$(stat -f %u "$d" 2>/dev/null || true)"; mode="$(stat -f %Lp "$d" 2>/dev/null || true)" ;;
+  esac
+  [ "$owner" = "0" ] || return 1
+  [[ "$mode" =~ ^[0-7]{3,4}$ ]] || return 1
+  # The last two digits are the group's and everyone else's rights; 2 is "write".
+  case "${mode: -2}" in *[2367]*) return 1 ;; esac
+  return 0
+}
+
+unlink_cli() { # take away only the links and files this installer put in place
+  local target=""
+  if [ -L /usr/local/bin/outpost ]; then
+    target="$(readlink /usr/local/bin/outpost 2>/dev/null || true)"
+    [ "$target" != "$CLI_DIR/outpost" ] || unlink /usr/local/bin/outpost
+  elif [ -f /usr/local/bin/outpost ] && grep -q '^exec /opt/outpost/bin/outpost "\$@"$' /usr/local/bin/outpost 2>/dev/null; then
+    unlink /usr/local/bin/outpost # the wrapper file that releases before 1.1.0 wrote
+  fi
+  if [ "$OS" = "Darwin" ] && [ -f /etc/paths.d/outpost ] && [ ! -L /etc/paths.d/outpost ]; then unlink /etc/paths.d/outpost; fi
+}
+
 lan_ip() {
   local ip="" dev=""
   case "$OS" in
@@ -208,7 +235,7 @@ if [ "$UNINSTALL" -eq 1 ]; then
   if [ "$OS" = "Darwin" ] && [ -x "$MAC_FIREWALL" ] && [ -e "$PREFIX/bin/outpost" ]; then
     "$MAC_FIREWALL" --remove "$PREFIX/bin/outpost" >/dev/null 2>&1 || true
   fi
-  rm -f /usr/local/bin/outpost
+  unlink_cli
   rm -rf "$PREFIX"
   if [ "$PURGE" -eq 1 ]; then
     if [ -n "$existing_data" ] && [ "$existing_data" != "/" ] && { [ -f "$existing_data/state.json" ] || [ -d "$existing_data/content" ]; }; then
@@ -379,6 +406,7 @@ for p in "$PORT" "$LIB_PORT"; do
 done
 
 make_user
+[ ! -L "$DATA_DIR" ] || die "$DATA_DIR is a symbolic link. Give --data-dir the real folder."
 mkdir -p "$DATA_DIR"
 chown "$SERVICE_USER:$SERVICE_USER" "$DATA_DIR"
 chmod 750 "$DATA_DIR"
@@ -416,8 +444,12 @@ rm -rf "$PREFIX/bin.old"
 mv "$PREFIX/bin.new" "$PREFIX/bin"
 rm -rf "$PREFIX/bin.old"
 
-mkdir -p /usr/local/bin
-cat > /usr/local/bin/outpost <<'WRAP'
+# The command people type with sudo. It lives in a folder only root can
+# change. /usr/local/bin gets a link to it only when that folder is just as
+# safe: on many Macs it belongs to the user, and anything placed there could be
+# swapped for something else before the next "sudo outpost".
+mkdir -p "$CLI_DIR"
+cat > "$CLI_DIR/outpost.new" <<'WRAP'
 #!/bin/sh
 # Runs the Outpost command with the node's settings.
 set -a
@@ -425,7 +457,21 @@ set -a
 set +a
 exec /opt/outpost/bin/outpost "$@"
 WRAP
-chmod 755 /usr/local/bin/outpost
+chmod 755 "$CLI_DIR/outpost.new"
+mv -f "$CLI_DIR/outpost.new" "$CLI_DIR/outpost"
+CLI="$CLI_DIR/outpost"
+unlink_cli
+if root_only_dir /usr/local && root_only_dir /usr/local/bin; then
+  ln -s "$CLI_DIR/outpost" /usr/local/bin/outpost
+  CLI="outpost"
+elif [ "$OS" = "Darwin" ] && root_only_dir /etc/paths.d; then
+  # macOS adds the folders listed here to the PATH of every new Terminal window.
+  printf '%s\n' "$CLI_DIR" > /etc/paths.d/outpost.new
+  chmod 644 /etc/paths.d/outpost.new
+  mv -f /etc/paths.d/outpost.new /etc/paths.d/outpost
+  note "/usr/local/bin can be changed without a password on this Mac, so the command was not put there."
+  note "Use $CLI_DIR/outpost, or just 'outpost' in a new Terminal window."
+fi
 
 if [ "$OS" = "Linux" ]; then
 PROTECT_HOME=yes
@@ -609,7 +655,7 @@ printf '  Open the dashboard:  %shttp://%s:%s%s\n' "$c_bold" "${IP:-this-machine
 printf '  On this machine:     http://localhost:%s\n' "$PORT"
 if [ -n "$CODE" ]; then
   printf '\n  Setup code:          %s%s%s\n' "$c_bold" "$CODE" "$c_off"
-  printf '  %s(You need it once, to claim the node. See it again with: sudo outpost setup-code)%s\n' "$c_dim" "$c_off"
+  printf '  %s(You need it once, to claim the node. See it again with: sudo %s setup-code)%s\n' "$c_dim" "$CLI" "$c_off"
 fi
 printf '\n  Content is stored in %s\n' "$DATA_DIR"
 printf '  Logs: %s    Update: re-run this installer\n\n' "$LOGS_HINT"

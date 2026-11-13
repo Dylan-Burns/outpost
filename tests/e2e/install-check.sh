@@ -85,10 +85,24 @@ if [ "$OS" = "Darwin" ]; then
 else
   [ "$(systemctl is-enabled outpost)" = "enabled" ] || fail "the service is not enabled at boot"
 fi
+# The command people run with sudo must come from a folder only root can change.
+[ -x /opt/outpost/cli/outpost ] || fail "the outpost command is missing"
+CLI_OWNER="$(ls -ld /opt/outpost/cli | awk '{print $1, $3}')"
+case "$CLI_OWNER" in "drwxr-xr-x"*" root") ;; *) fail "the command folder is not root-only: $CLI_OWNER" ;; esac
+if [ -L /usr/local/bin/outpost ] || [ -e /usr/local/bin/outpost ]; then
+  [ "$(readlink /usr/local/bin/outpost)" = "/opt/outpost/cli/outpost" ] || fail "/usr/local/bin/outpost is not a link to the installed command"
+  BIN_OWNER="$(ls -ld /usr/local/bin | awk '{print $1, $3}')"
+  case "$BIN_OWNER" in "drwxr-xr-x"*" root") ok "linked from /usr/local/bin, which only root can change" ;; *) fail "a link was placed in a folder others can change: $BIN_OWNER" ;; esac
+elif [ "$OS" = "Darwin" ]; then
+  [ "$(cat /etc/paths.d/outpost 2>/dev/null)" = "/opt/outpost/cli" ] || fail "neither a link nor a PATH entry was set up"
+  ok "/usr/local/bin is user-writable here, so the command is offered through /etc/paths.d instead"
+else
+  fail "the outpost command was not linked into /usr/local/bin"
+fi
 ok "installed and running"
 
 step "Use it: claim, download, read, search, map"
-CODE="$(sudo /usr/local/bin/outpost setup-code)"
+CODE="$(sudo /opt/outpost/cli/outpost setup-code)"
 node "$ROOT/tests/e2e/smoke.mjs" "$DASH" "$LIB" "$CODE" || fail "the smoke test failed"
 BOOK="$LIB/content/devdocs_en_python/"
 
@@ -109,7 +123,7 @@ curl -fs -o /dev/null "$BOOK" || fail "the library did not come back after a res
 ok "back up with its library after a restart"
 
 step "Reset the administrator"
-sudo /usr/local/bin/outpost reset-admin 2>&1 | tee "$WORK/reset.log" >/dev/null || { cat "$WORK/reset.log"; fail "reset-admin failed"; }
+sudo /opt/outpost/cli/outpost reset-admin 2>&1 | tee "$WORK/reset.log" >/dev/null || { cat "$WORK/reset.log"; fail "reset-admin failed"; }
 grep -Eq '^ +[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$' "$WORK/reset.log" || { cat "$WORK/reset.log"; fail "reset-admin printed no setup code"; }
 wait_up || fail "the node did not come back after reset-admin"
 [ "$(curl -fs "$DASH/api/status" | json claimed)" = "false" ] || fail "the node still has an administrator after reset-admin"
@@ -134,7 +148,7 @@ step "Uninstall and delete everything"
 installer --uninstall --purge > "$WORK/purge.log" 2>&1 || { cat "$WORK/purge.log"; fail "purge failed"; }
 [ ! -e /var/lib/outpost ] || fail "the content folder is still there after --purge"
 [ ! -e /etc/outpost ] || fail "/etc/outpost is still there after --purge"
-[ ! -e /usr/local/bin/outpost ] || fail "the outpost command is still there after --purge"
+if [ -e /usr/local/bin/outpost ] || [ -L /usr/local/bin/outpost ] || [ -e /etc/paths.d/outpost ]; then fail "the outpost command is still there after --purge"; fi
 if id "$SERVICE_USER" >/dev/null 2>&1; then fail "the $SERVICE_USER account is still there after --purge"; fi
 if [ "$OS" = "Darwin" ]; then
   [ ! -e "/Library/LaunchDaemons/$LABEL.plist" ] || fail "the launchd job file is still there after --purge"
