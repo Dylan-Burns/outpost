@@ -74,7 +74,7 @@ case "$OS" in
     MAC_MAJOR="${MAC_VERSION%%.*}"
     [[ "$MAC_MAJOR" =~ ^[0-9]+$ ]] && [ "$MAC_MAJOR" -ge 13 ] || die "Outpost needs macOS 13 (Ventura) or later. This Mac runs macOS $MAC_VERSION."
     ;;
-  *) die "Outpost installs on macOS and Linux. For Windows, see $SITE/docs#windows." ;;
+  *) die "Outpost installs on macOS and Linux. For a Windows PC, see $SITE/install#windows." ;;
 esac
 
 ask() { # ask "question" default(y/n)

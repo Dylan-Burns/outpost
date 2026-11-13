@@ -2,15 +2,15 @@ import Link from "next/link";
 import CopyCommand from "./components/CopyCommand";
 import Globe from "./components/Globe";
 import Planner from "./components/Planner";
-import { bytes, loadCatalog, loadRelease, plannerData, releaseKeyFingerprint } from "@/lib/catalog";
+import { bytes, loadCatalog, plannerData, releaseKeyFingerprint } from "@/lib/catalog";
 
 const INSTALL = "curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash";
 
 export default function Home() {
   const c = loadCatalog();
-  const release = loadRelease();
   const archives = c.items.filter((i) => i.kind === "zim").length;
   const regions = c.items.filter((i) => i.kind === "map-region").length;
+  const models = c.items.filter((i) => i.kind === "model").length;
   const wikiAll = c.items.find((i) => i.id === "wikipedia_en_all_maxi");
   const fingerprint = releaseKeyFingerprint();
   return (
@@ -20,54 +20,82 @@ export default function Home() {
         <div className="wrap">
           <div className="hero-body">
             <h1>
-              <span className="line">
-                <span>Network</span> <span>down.</span>
-              </span>{" "}
-              <span className="line">
-                <span>Library</span> <span>open.</span>
-              </span>
+              <span className="setup">When the world goes dark,</span> <span className="line">information</span>{" "}
+              <span className="line">is power.</span>
             </h1>
             <p className="lede">
-              Outpost turns a computer you already own into an offline server for Wikipedia, medical references, repair guides, street maps and a
-              local AI. Every phone and laptop on your network can use it, with or without a connection to the outside world.
+              Outpost keeps Wikipedia, medical guides, repair manuals, street maps and an AI assistant on a computer you already own. When the
+              internet goes out, everyone on your Wi-Fi can still look things up, from any phone or laptop.
             </p>
             <div className="hero-actions">
-              <CopyCommand command={INSTALL} />
               <div className="row">
-                <Link href="/install">Step-by-step install guide</Link>
-                <a href="#plan">See what fits on your drive</a>
+                <Link href="/install" className="btn">
+                  Set it up in ten minutes
+                </Link>
+                <a href="#plan" className="btn ghost">
+                  See what fits on your drive
+                </a>
               </div>
+              <p className="hero-or">Know your way around a terminal? On a Mac or a Linux PC, this one line installs it:</p>
+              <CopyCommand command={INSTALL} />
             </div>
           </div>
           <dl className="titleblock">
             <div>
-              <dt>Release</dt>
+              <dt>Cost</dt>
               <dd>
-                {release.version}
-                <small>Signed{release.date ? `, ${release.date}` : ""}</small>
+                Free<small>No subscription, no box to buy</small>
               </dd>
             </div>
             <div>
-              <dt>Archives</dt>
+              <dt>Runs on</dt>
               <dd>
-                {archives}
-                <small>Wikipedia to repair manuals</small>
+                Mac + Linux<small>A spare computer you own</small>
               </dd>
             </div>
             <div>
-              <dt>Map regions</dt>
+              <dt>Inside</dt>
               <dd>
-                {regions}
-                <small>Street level, worldwide</small>
+                {archives} titles
+                <small>
+                  Plus {regions} maps and {models} AI models
+                </small>
               </dd>
             </div>
             <div>
-              <dt>Accounts needed</dt>
+              <dt>Sign-ups</dt>
               <dd>
-                0<small>No sign-up, no telemetry</small>
+                None<small>No account, no tracking</small>
               </dd>
             </div>
           </dl>
+        </div>
+      </section>
+
+      <section id="why">
+        <div className="wrap flush">
+          <div className="sec-head">
+            <h2>What it&apos;s for</h2>
+            <p>The things you look up every day, kept where a dead connection can&apos;t take them away.</p>
+          </div>
+          <div className="cells uses">
+            <div>
+              <h3>When the internet goes out</h3>
+              <p>Storms, power cuts, a cable dug up down the road. First aid, how to fix the generator, the back road to the next town: still there.</p>
+            </div>
+            <div>
+              <h3>Where there is no signal</h3>
+              <p>Cabins, boats, RVs, farms and job sites far from a tower. Take the library with you and leave the connection behind.</p>
+            </div>
+            <div>
+              <h3>Where internet is slow or costly</h3>
+              <p>Classrooms, clinics and community halls. Download once, and everyone in the room reads at full speed without using any data.</p>
+            </div>
+            <div>
+              <h3>When it&apos;s nobody else&apos;s business</h3>
+              <p>What you search for and what you ask stays inside your home. Nothing is sent to us or to anyone else.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -75,29 +103,32 @@ export default function Home() {
         <div className="wrap flush">
           <div className="sec-head">
             <h2>How it works</h2>
-            <p>From spare computer to field library in an afternoon.</p>
+            <p>From spare computer to home library in an afternoon. Most of that time is the downloads, which run by themselves.</p>
           </div>
           <ol className="cells steps">
             <li>
-              <h3>Install with one command</h3>
+              <h3>Install it on a spare computer</h3>
               <p>
-                Run the installer on any 64-bit Linux machine: an old laptop, a mini PC, a Raspberry Pi 5. It checks every download against a
-                signed checksum and sets Outpost up to start at boot.
+                An old laptop, a Mac mini or a small PC will do. Open the Terminal app, paste one line and press Return. The installer does the
+                rest and tells you what to open next.
               </p>
+              <p className="spec">macOS 13+ or 64-bit Linux // signed release</p>
             </li>
             <li>
-              <h3>Pick your content</h3>
+              <h3>Choose what to keep</h3>
               <p>
-                Open the dashboard from any browser, enter the setup code the installer printed, and choose collections in three sizes, the map
-                regions you need and an AI model. A storage bar keeps you inside your disk.
+                Open the setup page from your phone or laptop and pick what you want: how much of Wikipedia, which medical and repair guides,
+                which maps. A bar shows what fits on your drive.
               </p>
+              <p className="spec">Three sizes per subject // change any time</p>
             </li>
             <li>
-              <h3>Pull the plug</h3>
+              <h3>Unplug and carry on</h3>
               <p>
-                Outpost downloads in the background and verifies each file. Once it finishes, unplug the internet. The library, search, maps and
-                assistant keep answering on your local network.
+                Outpost downloads everything once and checks every file. After that it needs no internet at all. The library, the maps and the
+                assistant keep answering on your Wi-Fi.
               </p>
+              <p className="spec">Starts by itself after a power cut</p>
             </li>
           </ol>
         </div>
@@ -108,8 +139,8 @@ export default function Home() {
           <div className="sec-head">
             <h2>Plan your library</h2>
             <p>
-              These are the same choices the setup wizard offers, with today&apos;s file sizes: {archives} curated archives, {regions} map regions
-              and AI models from 1.4 to 8 GB. Change your mind later; the node adds and removes content without starting over.
+              Try it here first. These are the same choices you get during setup, with the real size of today&apos;s files: {archives} titles,{" "}
+              {regions} map regions and {models} AI models. You can change your mind later without starting over.
             </p>
           </div>
           <Planner data={plannerData()} />
@@ -119,14 +150,14 @@ export default function Home() {
       <section id="inside">
         <div className="wrap flush">
           <div className="sec-head">
-            <h2>What runs on your node</h2>
-            <p>One machine on your network. Every phone and laptop reaches it with a browser.</p>
+            <h2>What you get</h2>
+            <p>One computer in your home does the work. Every phone, tablet and laptop on your Wi-Fi opens it in a browser, with nothing to install.</p>
           </div>
           <div className="inside">
             <div
               className="topology"
               role="img"
-              aria-label="Diagram: phones, laptops and tablets on your network connect to the Outpost node, the dashboard on port 8080 and the library on port 8081. The node needs the internet only to download."
+              aria-label="Diagram: phones, laptops and tablets on your Wi-Fi connect to the Outpost computer, the dashboard on port 8080 and the library on port 8081. Outpost needs the internet only to download."
             >
               <div className="topo-net">
                 <span className="topo-box dashed">Internet</span>
@@ -136,8 +167,8 @@ export default function Home() {
               </div>
               <div className="topo-node paper">
                 <p>
-                  <strong>Outpost node</strong>
-                  <span>Your hardware</span>
+                  <strong>Outpost</strong>
+                  <span>Your computer</span>
                 </p>
                 <ul>
                   <li>
@@ -154,7 +185,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="topo-bus">
-                <span>Your network</span>
+                <span>Your Wi-Fi</span>
               </div>
               <div className="topo-devices">
                 <span className="topo-box">Phone</span>
@@ -164,36 +195,36 @@ export default function Home() {
             </div>
             <div className="features">
               <div className="feature">
-                <p className="spec">Port 8081 // Full-text search</p>
+                <p className="spec">One search box // every book at once</p>
                 <h3>A library you can search</h3>
                 <p>
-                  Wikipedia from a {bytes(c.items.find((i) => i.id === "wikipedia_en_top_mini")?.size || 0)} pocket edition up to the full{" "}
-                  {bytes(wikiAll?.size || 0)} with pictures, plus WikiMed, iFixit, Project Gutenberg, Khan Academy, LibreTexts and practical Stack
-                  Exchange sites. Full-text search runs across all of it at once.
+                  Wikipedia, from a {bytes(c.items.find((i) => i.id === "wikipedia_en_top_mini")?.size || 0)} pocket edition up to all{" "}
+                  {bytes(wikiAll?.size || 0)} of it with pictures. Medical encyclopedias, iFixit repair guides, classic books, Khan Academy
+                  lessons, textbooks and practical how-to sites. Type a question once and it looks through all of them.
                 </p>
               </div>
               <div className="feature">
-                <p className="spec">{regions} regions // Zoom 15</p>
+                <p className="spec">{regions} regions // down to the street</p>
                 <h3>Street maps without a signal</h3>
                 <p>
-                  Choose countries, US states, Canadian provinces or whole continents, cut at street-level detail from the current OpenStreetMap
-                  planet build. A world overview is always included so you can pan between them.
+                  Pick the countries, US states, Canadian provinces or whole continents you care about. The maps go down to individual streets,
+                  and a map of the whole world always comes along so you can find your way between them.
                 </p>
               </div>
               <div className="feature">
-                <p className="spec">Local model // Cited answers</p>
-                <h3>An assistant that cites its sources</h3>
+                <p className="spec">Optional // runs on your computer</p>
+                <h3>An AI assistant that shows its sources</h3>
                 <p>
-                  Optional local AI through Ollama. It searches your library first and answers with numbered links to the articles it used, so you
-                  can read the original. On medical and electrical questions it points you to the text instead of paraphrasing doses or steps.
+                  Ask a question in plain words. It reads your library first and answers with links to the articles it used, so you can check
+                  them yourself. On medical and electrical questions it sends you to the text rather than guessing at doses or steps.
                 </p>
               </div>
               <div className="feature">
-                <p className="spec">Any browser // No app</p>
-                <h3>Made for the whole household</h3>
+                <p className="spec">Any browser // no app, no account</p>
+                <h3>For everyone in the house</h3>
                 <p>
-                  Anyone on your Wi-Fi opens it in a browser, no app needed. You decide whether visitors can read freely or need the admin
-                  password. Content management always needs it.
+                  Anyone on your Wi-Fi can open it. You decide whether guests read freely or need the password. Changing what is installed
+                  always needs it.
                 </p>
               </div>
             </div>
@@ -204,75 +235,102 @@ export default function Home() {
       <section id="hardware">
         <div className="wrap flush">
           <div className="sec-head">
-            <h2>Bring your own hardware</h2>
-            <p>Outpost has no box to buy. Anything that runs 64-bit Linux works; what you get depends on what you bring.</p>
+            <h2>Bring your own computer</h2>
+            <p>
+              There is nothing to buy from us. Outpost runs on a Mac, or on a PC running Linux, a free system. How much you can keep depends on the
+              disk and memory you bring.
+            </p>
           </div>
           <table className="hw">
             <thead>
               <tr>
                 <th scope="col">Setup</th>
-                <th scope="col">Typical machine</th>
+                <th scope="col">Typical computer</th>
                 <th scope="col">Good for</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row">Pocket</th>
-                <td data-label="Typical machine">Raspberry Pi 5 (8 GB) or an old laptop, 256 GB SSD or USB drive</td>
-                <td data-label="Good for">Essential collections, Wikipedia text, a few map regions. Skip the AI or use the 1.7B model.</td>
+                <td data-label="Typical computer">An old laptop or a Raspberry Pi 5, with a 256 GB drive</td>
+                <td data-label="Good for">The essentials, Wikipedia without pictures and a few map regions. Skip the AI or use the smallest model.</td>
               </tr>
               <tr>
                 <th scope="row">Household</th>
-                <td data-label="Typical machine">Used mini PC (Intel 8th gen or Ryzen 5, 16 GB RAM), 1 TB SSD</td>
+                <td data-label="Typical computer">A Mac mini or a used mini PC with 16 GB of memory and a 1 TB drive</td>
                 <td data-label="Good for">
-                  Standard collections, Wikipedia with pictures, your country&apos;s maps, a 3–4B model at conversational speed.
+                  The standard collections, Wikipedia with pictures, your country&apos;s maps and a mid-size AI model that answers at talking speed.
                 </td>
               </tr>
               <tr>
                 <th scope="row">Basecamp</th>
-                <td data-label="Typical machine">Recent mini PC or desktop with 32 GB RAM or a GPU, 2–4 TB SSD</td>
-                <td data-label="Good for">Everything: Khan Academy, all of Gutenberg, continents of maps, 8–12B models for the whole family.</td>
+                <td data-label="Typical computer">A recent Mac or PC with 32 GB of memory and a 2–4 TB drive</td>
+                <td data-label="Good for">Everything: Khan Academy, all of Project Gutenberg, whole continents of maps and the larger AI models.</td>
               </tr>
             </tbody>
           </table>
-          <p className="hw-note">
-            A small solar panel and battery keep a mini PC (15–35 W) running through an outage. Pair it with a Wi-Fi access point and everyone
-            nearby can connect.
-          </p>
+          <div className="hw-notes">
+            <p>
+              <strong>Which computers?</strong> Macs from about 2017 on (macOS 13 or later, Intel or Apple Silicon), and PCs or Raspberry Pis
+              running 64-bit Linux such as Ubuntu.
+            </p>
+            <p>
+              <strong>Only have Windows?</strong> You can read an Outpost from Windows, like from any other device. Running one on Windows
+              itself is not possible yet. A spare PC becomes an Outpost by putting Ubuntu on it, which is free; the{" "}
+              <Link href="/install#windows">install guide</Link> shows how.
+            </p>
+            <p>
+              <strong>Power cuts?</strong> A small solar panel and battery keep a mini PC (15–35 W) running. Add a Wi-Fi router and everyone
+              nearby can connect.
+            </p>
+          </div>
         </div>
       </section>
 
       <section id="trust">
         <div className="wrap">
           <div className="sec-head">
-            <h2>Built to be trusted offline</h2>
-            <p>Every release is signed, every file is checked, and nothing reports back.</p>
+            <h2>Built to be trusted</h2>
+            <p>You are putting this on your own network. Here is what stops it, and us, from doing anything you did not ask for.</p>
           </div>
           <div className="trust-grid">
             <ul className="trust">
               <li>
-                <h3>Signed from end to end</h3>
-                <p>
-                  Releases and the content catalog are signed with an Ed25519 key; the installer and the node refuse anything that does not verify.
-                </p>
+                <h3>You get what we published</h3>
+                <div>
+                  <p>Every release carries a digital signature. The installer checks it and refuses anything that was changed on the way to you.</p>
+                  <p className="spec">Ed25519 signatures on releases and the catalog</p>
+                </div>
               </li>
               <li>
-                <h3>Every file checked</h3>
-                <p>
-                  Each archive is compared with the SHA-256 its publisher lists before it is used. Interrupted downloads resume instead of
-                  restarting.
-                </p>
+                <h3>Every file is checked</h3>
+                <div>
+                  <p>
+                    Each download is compared with the fingerprint its publisher lists before it is used. A dropped connection picks up where
+                    it stopped.
+                  </p>
+                  <p className="spec">SHA-256 on every archive</p>
+                </div>
               </li>
               <li>
                 <h3>Yours from the first minute</h3>
-                <p>A one-time setup code printed on the machine claims the node, so a neighbour on the same Wi-Fi cannot get there first.</p>
+                <div>
+                  <p>
+                    To become the owner you need a one-time code shown on the computer itself, so a neighbour on the same Wi-Fi cannot get there
+                    first.
+                  </p>
+                  <p className="spec">Setup code, then a password only you know</p>
+                </div>
               </li>
               <li>
-                <h3>Nothing phones home</h3>
-                <p>
-                  No accounts, analytics or telemetry. The node contacts the internet only to download what you picked and, if you allow it, to
-                  check for updates.
-                </p>
+                <h3>Nothing reports back</h3>
+                <div>
+                  <p>
+                    No accounts, no analytics, no tracking. Outpost goes online only to download what you picked and, if you allow it, to check
+                    for updates.
+                  </p>
+                  <p className="spec">No telemetry, by design</p>
+                </div>
               </li>
             </ul>
             <aside className="paper file" aria-label="What Outpost holds on you">
@@ -292,11 +350,11 @@ export default function Home() {
                 </div>
                 <div>
                   <dt>Searches</dt>
-                  <dd>Stay on your node</dd>
+                  <dd>Stay on your Outpost</dd>
                 </div>
                 <div>
                   <dt>Reading history</dt>
-                  <dd>Stays on your node</dd>
+                  <dd>Stays on your Outpost</dd>
                 </div>
                 <div>
                   <dt>Analytics</dt>
@@ -312,7 +370,7 @@ export default function Home() {
           </div>
           {fingerprint && (
             <p className="keyline">
-              <span>Release signing key, Ed25519</span>
+              <span>For the technical: release signing key, Ed25519</span>
               <code>{fingerprint}</code>
               <Link href="/docs#security">How Outpost is secured</Link>
             </p>
@@ -323,12 +381,17 @@ export default function Home() {
       <section className="cta paper">
         <div className="wrap">
           <h2>Start with the computer in your closet</h2>
-          <p className="lede">Ubuntu, Debian, Fedora or Raspberry Pi OS, 64-bit. Add the AI assistant with one more flag.</p>
+          <p className="lede">A Mac or a Linux PC, about ten minutes of your time, and nothing to pay. The guide walks you through every step.</p>
+          <div className="row">
+            <Link href="/install" className="btn">
+              Open the install guide
+            </Link>
+            <Link href="/catalog" className="btn ghost">
+              See everything you can keep
+            </Link>
+          </div>
+          <p className="hero-or">Or paste this into Terminal:</p>
           <CopyCommand command={INSTALL} />
-          <p className="cta-note">
-            With the AI assistant: <code>… | sudo bash -s -- --with-ai</code>
-            <Link href="/install">Full install guide</Link>
-          </p>
         </div>
       </section>
     </>

@@ -32,8 +32,8 @@ export default function CatalogPage() {
         <div className="wrap">
           <h1>Content catalog</h1>
           <p className="lede">
-            Everything a node can install, with the exact size of today&apos;s files. Tiers add up: Standard includes Essential, Comprehensive
-            includes Standard, unless a tier replaces smaller editions with a larger one.
+            Everything you can keep on an Outpost, with the exact size of today&apos;s files. Each subject comes in three sizes that build on
+            each other: Standard includes Essential, and Comprehensive includes Standard, unless a larger edition replaces a smaller one.
           </p>
           <dl className="titleblock">
             <div>
@@ -44,7 +44,7 @@ export default function CatalogPage() {
               </dd>
             </div>
             <div>
-              <dt>Archives</dt>
+              <dt>Titles</dt>
               <dd>
                 {archives.length}
                 <small>{bytes(archives.reduce((n, i) => n + i.size, 0))} in all</small>
@@ -105,7 +105,7 @@ export default function CatalogPage() {
                 <thead>
                   <tr>
                     <th scope="col">Option</th>
-                    <th scope="col">Archive</th>
+                    <th scope="col">Title</th>
                     <th scope="col">Licence</th>
                     <th scope="col" style={{ textAlign: "right" }}>Size</th>
                   </tr>
@@ -133,7 +133,7 @@ export default function CatalogPage() {
                 <thead>
                   <tr>
                     <th scope="col">From</th>
-                    <th scope="col">Archive</th>
+                    <th scope="col">Title</th>
                     <th scope="col">Licence</th>
                     <th scope="col" style={{ textAlign: "right" }}>Size</th>
                   </tr>

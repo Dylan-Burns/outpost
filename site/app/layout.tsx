@@ -15,10 +15,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: { default: "Outpost: the offline library for hardware you own", template: "%s · Outpost" },
   description:
-    "Turn a spare computer into an offline server for Wikipedia, medical references, repair guides, street maps and a local AI. One command to install, a setup wizard to choose your content.",
+    "Outpost turns a spare Mac or Linux PC into an offline library for your home: Wikipedia, medical guides, repair manuals, street maps and an AI assistant that keep working when the internet does not.",
   openGraph: {
     title: "Outpost: the offline library for hardware you own",
-    description: "Wikipedia, medicine, repair guides, maps and a local AI on a computer you already have. Works when the internet doesn't.",
+    description: "When the world goes dark, information is power. Wikipedia, medical guides, repair manuals, maps and an AI assistant on a computer you already own.",
     url: SITE,
     siteName: "Outpost",
     type: "website",
@@ -75,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <nav aria-label="Footer">
                 <Link href="/catalog">Content catalog</Link>
                 <Link href="/install">Install guide</Link>
-                <Link href="/docs">Documentation</Link>
+                <Link href="/docs">Help and answers</Link>
                 <Link href="/docs#security">Security</Link>
               </nav>
             </div>

@@ -139,7 +139,7 @@ export default function Planner({ data }: { data: PlannerData }) {
         <div className="pl-row">
           <div className="collection-head">
             <h3>AI models</h3>
-            <p>Optional. Each runs on the node itself, through Ollama.</p>
+            <p>Optional. Each runs on your own computer; bigger ones need more memory.</p>
           </div>
           <div className="models">
             {modelList.map(([id, v]) => (
@@ -178,7 +178,7 @@ export default function Planner({ data }: { data: PlannerData }) {
               <i key={i} className={i < lit ? "on" : ""} />
             ))}
           </div>
-          <p>Sizes are the real files in today&apos;s catalog. The setup wizard on your machine shows the same choices.</p>
+          <p>These are the real file sizes in today&apos;s catalog. Setup on your own computer offers the same choices.</p>
         </div>
       </aside>
     </div>
