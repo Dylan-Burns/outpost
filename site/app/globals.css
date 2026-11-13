@@ -124,36 +124,57 @@ section > .wrap { padding-block: var(--sec); }
 .site-header .btn { padding: 0.62rem 1rem; font-size: 0.66rem; letter-spacing: 0.1em; }
 .row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
-/* Hero */
-.hero { position: relative; isolation: isolate; overflow: hidden; border-top: 0; }
-.hero .wrap { position: relative; display: flex; flex-direction: column; min-height: clamp(34rem, calc(100svh - 5.6rem), 58rem); padding-block: 0; pointer-events: none; }
-.hero-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-block: clamp(2.5rem, 4.6vw, 3.5rem); }
+/* Hero: a stage holding the top half of a globe as wide as the screen, with
+   the words laid over it, and the title block under it. */
+.hero { display: flex; flex-direction: column; min-height: clamp(34rem, calc(100svh - 5.6rem), calc(50vw + 9.5rem)); border-top: 0; }
+.hero > .wrap { padding-block: 0; }
+.hero-stage { flex: 1; display: flex; flex-direction: column; position: relative; isolation: isolate; overflow: hidden; }
+.hero-stage > .wrap { flex: 1; position: relative; display: flex; flex-direction: column; pointer-events: none; }
+.hero-body { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-block: clamp(3.75rem, 6.4vw, 5.75rem) clamp(2.5rem, 4vw, 3.25rem); }
 .hero h1 {
   /* Sized so the longest word, "information", spans the sheet. */
   font-size: min(calc(var(--content) * 0.105), 6.9rem);
   margin-bottom: clamp(1.25rem, 2.2vw, 1.75rem);
-  /* Where the letters cross the globe its lines show through them in black. */
-  mix-blend-mode: difference;
 }
-/* The setting is said quietly; the answer is the headline. */
-.hero h1 .setup { display: block; width: fit-content; margin-bottom: 0.42em; font-size: 0.3em; font-weight: 700; letter-spacing: 0.02em; line-height: 1.1; pointer-events: auto; }
-.hero h1 .line { display: block; width: fit-content; position: relative; white-space: nowrap; pointer-events: auto; }
-.hero .lede { margin: 0; max-width: 41rem; text-wrap: pretty; pointer-events: auto; }
+/* The setting is said quietly; the answer is the headline. It gets what a
+   map label gets, a casing in the colour of the ground, so the globe's lines
+   pass behind it. */
+.hero h1 .setup { display: block; width: fit-content; margin: 0 auto 0.42em; font-size: 0.3em; font-weight: 700; letter-spacing: 0.02em; line-height: 1.1; pointer-events: auto; text-shadow: 0.09em 0 var(--bg), -0.09em 0 var(--bg), 0 0.09em var(--bg), 0 -0.09em var(--bg), 0.065em 0.065em var(--bg), -0.065em 0.065em var(--bg), 0.065em -0.065em var(--bg), -0.065em -0.065em var(--bg), 0 0 0.3em var(--bg), 0 0 0.3em var(--bg), 0 0 0.6em var(--bg); }
+/* Where the big letters cross the globe its lines show through them in black. */
+.hero h1 .line { display: block; width: fit-content; margin-inline: auto; position: relative; white-space: nowrap; pointer-events: auto; mix-blend-mode: difference; }
+/* Everything smaller sits on a plate of the ground colour, like the buttons
+   and the command, so the map never runs through words meant to be read. */
+.hero .lede { margin: 0; max-width: 47rem; text-wrap: balance; pointer-events: auto; }
+.hero .lede > span { padding: 0.3em 0.7em; background: var(--bg); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.nw { white-space: nowrap; }
 .hero-actions { width: fit-content; max-width: 100%; margin-top: clamp(1.4rem, 2.2vw, 1.75rem); pointer-events: auto; }
+.hero-actions .row { justify-content: center; }
 .hero-or { margin: 1.25rem 0 0.6rem; font-size: 0.88rem; line-height: 1.4; color: var(--dim); max-width: 34rem; }
+/* In the hero the line that introduces the command is the command's own
+   title strip. */
+.hero-actions .hero-or { max-width: none; margin-bottom: 0; padding: 0.5rem 1.1rem; border: 1px solid var(--fg); border-bottom: 0; background: var(--bg); color: var(--text); text-align: left; }
 @media (prefers-reduced-motion: no-preference) {
-  /* The one staged moment: the headline is released line by line. */
+  /* The one staged moment: the headline is released line by line while the
+     globe rises behind it. */
   .hero h1 .line::after { content: ""; position: absolute; inset: 0.02em -0.05em; background: var(--fg); transform: scaleX(0); transform-origin: 100% 50%; animation: release 0.85s cubic-bezier(0.76, 0, 0.24, 1) 0.2s backwards; }
   .hero h1 .line:nth-child(2)::after { animation-delay: 0.38s; }
   @keyframes release { from { transform: scaleX(1); } }
+  @media (min-width: 861px) {
+    .globe { transition: opacity 1.6s ease 0.25s, translate 2.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s; }
+    .globe:not([data-ready]) { translate: 0 3.5rem; }
+  }
 }
 
-.globe { position: absolute; z-index: 0; top: calc(50% - 4.6rem); right: max(-4rem, -4vw); width: min(48vw, 44rem, 100svh - 18.5rem); aspect-ratio: 1; translate: 0 -50%; opacity: 0; transition: opacity 1.6s ease 0.25s; }
+/* The script reads --shape to know what to draw in this box. */
+.globe { --shape: half; position: absolute; z-index: 0; inset: 0; opacity: 0; transition: opacity 1.6s ease 0.25s; }
 .globe[data-ready] { opacity: 1; }
-.globe canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
+.globe canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+.globe[data-over] canvas { cursor: grab; }
 .globe[data-dragging] canvas { cursor: grabbing; }
-/* What the picture is showing, in words, and the control that stops it. */
-.globe-panel { position: absolute; left: 50%; top: calc(100% + 0.3rem); translate: -50% 0; display: flex; align-items: center; gap: 1.1rem; }
+/* What the picture is showing, in words, and the control that stops it: in
+   the stage's top corners, which the dome leaves empty. */
+.globe-panel { position: absolute; top: 0.9rem; left: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2 + var(--pad)); right: calc((100% - min(var(--max), 100% - 2 * var(--gutter))) / 2 + var(--pad)); display: flex; align-items: center; justify-content: space-between; gap: 1.1rem; pointer-events: none; }
+.globe-panel > * { pointer-events: auto; }
 .globe-readout { margin: 0; display: flex; align-items: center; gap: 0.55em; white-space: nowrap; color: var(--fg); }
 .globe-readout span:nth-child(odd) { color: var(--dim); }
 .globe-readout span:nth-child(even) { min-width: 3.4em; padding: 0.1em 0.45em; border: 1px solid var(--line-2); text-align: center; }
@@ -172,10 +193,10 @@ section > .wrap { padding-block: var(--sec); }
 
 /* The title block along the bottom edge of the first sheet. */
 .titleblock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 calc(-1 * var(--pad)); border-top: 1px solid var(--line); background: var(--bg); pointer-events: auto; }
-.titleblock > div { padding: 1rem var(--pad) 1.15rem; border-left: 1px solid var(--line); min-width: 0; }
+.titleblock > div { padding: 1rem 1rem 1.15rem var(--pad); border-left: 1px solid var(--line); min-width: 0; }
 .titleblock > div:first-child { border-left: 0; }
 .titleblock dt { color: var(--dim); }
-.titleblock dd { margin: 0.35rem 0 0; font: 800 clamp(1.3rem, 2.3vw, 1.9rem)/1.05 var(--sans); font-stretch: 125%; color: var(--fg); overflow-wrap: anywhere; }
+.titleblock dd { margin: 0.35rem 0 0; font: 800 clamp(1.2rem, 2.1vw, 1.9rem)/1.05 var(--sans); font-stretch: 125%; color: var(--fg); overflow-wrap: anywhere; }
 .titleblock small { display: block; margin-top: 0.5rem; color: var(--dim); font-stretch: normal; }
 
 .sec-head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1.25rem 3rem; align-items: end; margin-bottom: clamp(2.25rem, 5vw, 4rem); }
@@ -471,14 +492,20 @@ table.hw { width: calc(100% + 2 * var(--pad)); margin: 0 calc(-1 * var(--pad)); 
   .titleblock { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .titleblock > div:nth-child(odd) { border-left: 0; }
   .titleblock > div:nth-child(n + 3) { border-top: 1px solid var(--line); }
-  .globe { top: 0; right: -34vw; width: min(124vw, 36rem); translate: 0 -12%; -webkit-mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); }
-  /* On a small screen the letters cover the globe rather than show it through. */
-  .hero h1 { mix-blend-mode: normal; }
+  /* A small screen gets a whole globe in the top corner, fading out behind
+     the words, which go back to the left edge and cover it. */
+  .hero { min-height: 0; }
+  .globe { --shape: whole; inset: 0 -34vw auto auto; width: min(124vw, 36rem); aspect-ratio: 1; translate: 0 -12%; -webkit-mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); mask-image: linear-gradient(to bottom, #000 26%, transparent 57%); }
+  .hero-body { align-items: flex-start; text-align: left; padding-block: clamp(5rem, 24vw, 10rem) 2.5rem; }
+  .hero h1 .setup,
+  .hero h1 .line { margin-inline: 0; }
+  .hero h1 .line { mix-blend-mode: normal; }
+  .hero .lede { max-width: 41rem; text-wrap: pretty; }
+  .hero .lede > span { padding: 0; background: none; }
+  .hero-actions .row { justify-content: flex-start; }
+  .hero-actions .hero-or { max-width: 34rem; margin-bottom: 0.6rem; padding: 0; border: 0; background: none; color: var(--dim); }
   .globe-readout { display: none; }
-  /* Top right of the hero, wherever the oversized globe happens to sit. */
-  .globe-panel { left: auto; translate: none; right: calc(34vw + 1rem); top: calc(12% + 0.75rem); }
-  .hero .wrap { min-height: 0; }
-  .hero-body { padding-top: clamp(5rem, 24vw, 10rem); }
+  .globe-panel { top: 0.75rem; left: auto; right: 1rem; }
   .wrap.doc { grid-template-columns: minmax(0, 1fr); }
   .index { margin: 0 calc(-1 * var(--pad)); padding: 1rem var(--pad); border-right: 0; border-bottom: 1px solid var(--line); }
   .index ol { position: static; display: flex; flex-wrap: wrap; gap: 0 1.4rem; }

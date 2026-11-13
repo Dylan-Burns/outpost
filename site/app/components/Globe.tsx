@@ -4,7 +4,12 @@ import { useEffect, useRef } from "react";
 // The hero's moving picture, and the headline acted out: a globe drawn from
 // the catalog's own country outlines turns while links between cities carry
 // traffic. Then the links fail one by one and the world goes dim, and the
-// mark at the centre, the library, keeps pulsing. Then the lights come back.
+// library's mark keeps pulsing: each pulse lights the coast it passes over.
+// Then the lights come back.
+//
+// The stylesheet says which shape to draw, through the --shape property. On a
+// phone it is a whole globe in a square box. On a desktop it is the top half
+// of one, as wide as the screen, filling the hero with the words laid over it.
 //
 // It is an illustration, so the drawing is hidden from assistive tech; the
 // one real control, the pause button, is not.
@@ -187,13 +192,31 @@ export default function Globe() {
     let visible = true;
     let frame = 0;
     let last = 0;
-    let size = 0; // CSS pixels
+    let wide = 0; // the box, in CSS pixels
+    let tall = 0;
     let dpr = 1;
+    let half = false; // drawing the top half only
+    let turned = false; // someone has dragged it
+    // The circle, in canvas pixels.
+    let cx = 0;
+    let cy = 0;
+    let r = 0;
     let gone = false;
     let shownDown: boolean | null = null;
     const p = [0, 0];
+    const pulses: number[] = [];
+    // Keeping up: see pace().
+    let coarse = 1; // the share of the full pixel density in use
+    let settled = false;
+    let gaps = 0; // frame gaps being averaged, in milliseconds
+    let counted = 0;
+    let skip = 90; // frames left out of the count while the page settles
+    let before = 0; // the average before the last step down, while it is on trial
 
-    const stroke = (set: LineSet, r: number, c: number, m: number[], front: boolean) => {
+    /** Which shape the stylesheet asks for at this width. */
+    const wantsHalf = () => getComputedStyle(holder).getPropertyValue("--shape").trim() === "half";
+
+    const stroke = (set: LineSet, m: number[], front: boolean) => {
       const { xyz, starts } = set;
       const [cl, sl, ct, st] = m;
       ctx.beginPath();
@@ -207,8 +230,8 @@ export default function Globe() {
           const z1 = z * cl + x * sl;
           const z2 = y * st + z1 * ct;
           if (z2 > 0 === front) {
-            const px = c + x1 * r;
-            const py = c - (y * ct - z1 * st) * r;
+            const px = cx + x1 * r;
+            const py = cy - (y * ct - z1 * st) * r;
             if (pen) ctx.lineTo(px, py);
             else {
               ctx.moveTo(px, py);
@@ -223,7 +246,7 @@ export default function Globe() {
     /** Puts the screen position of the point at index i into p, or returns
      *  false when the globe hides it. A point above the surface can still
      *  show past the edge. */
-    const place = (xyz: Float32Array, i: number, r: number, c: number, m: number[]) => {
+    const place = (xyz: Float32Array, i: number, m: number[]) => {
       const [cl, sl, ct, st] = m;
       const x = xyz[i];
       const y = xyz[i + 1];
@@ -232,40 +255,85 @@ export default function Globe() {
       const z1 = z * cl + x * sl;
       const y2 = y * ct - z1 * st;
       if (y * st + z1 * ct < 0 && x1 * x1 + y2 * y2 < 1) return false;
-      p[0] = c + x1 * r;
-      p[1] = c - y2 * r;
+      p[0] = cx + x1 * r;
+      p[1] = cy - y2 * r;
       return true;
+    };
+
+    /** The paint for the half globe's map: white at strength `base`, lifted by
+     *  `glow` in the wake of each pulse, and thinning toward the globe's edge,
+     *  where the surface turns away and its lines crowd together. One paint
+     *  does all three so the map is one stroke. */
+    const mapPaint = (base: number, glow: number) => {
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      const wake = Math.min(0.24, (150 * dpr) / r);
+      const stops = [0, 0.8, 1];
+      if (glow > 0) for (const at of pulses) stops.push(Math.max(0, at - wake), at, Math.min(1, at + 0.003));
+      for (const x of stops) {
+        let lift = 0;
+        for (const at of pulses) if (x <= at && x > at - wake) lift = Math.max(lift, Math.sqrt(1 - at) * (1 - (at - x) / wake));
+        const edge = x <= 0.8 ? 1 : 1 - 4.25 * (x - 0.8);
+        g.addColorStop(x, `rgba(255,255,255,${Math.min(1, base + glow * lift) * edge})`);
+      }
+      return g;
     };
 
     const draw = () => {
       const w = canvas.width;
-      if (!w) return;
-      const c = w / 2;
-      const r = c - 26 * dpr;
+      const h = canvas.height;
+      if (!w || !h || r <= 0) return; // a box too small to hold a globe
       const m = [Math.cos(lon), Math.sin(lon), Math.cos(tilt), Math.sin(tilt)];
       const t = clock % CYCLE;
       // How lit the world is: 1 in daylight, 0 once everything has failed.
       const lit = t < CUT ? 1 : t < DARK ? 1 - smooth((t - CUT) / (DARK - CUT)) : t < BACK ? 0 : smooth((t - BACK) / (CYCLE - BACK - 0.6));
-      ctx.clearRect(0, 0, w, w);
-      ctx.lineWidth = dpr;
+      ctx.clearRect(0, 0, w, h);
       ctx.lineJoin = "round";
 
-      // Far side first, faint, so the sphere reads as glass.
-      if (land) {
-        ctx.strokeStyle = `rgba(255,255,255,${0.04 + 0.07 * lit})`;
-        stroke(land, r, c, m, false);
-      }
-      ctx.strokeStyle = `rgba(255,255,255,${0.08 + 0.07 * lit})`;
-      stroke(grid, r, c, m, true);
-      if (land) {
-        ctx.strokeStyle = `rgba(255,255,255,${0.24 + 0.68 * lit})`;
-        stroke(land, r, c, m, true);
+      // The library sends out a steady pulse from the globe's centre: the
+      // middle of the whole globe, the foot of the half one.
+      const count = half ? 3 : 2;
+      const reach = half ? r : r * 0.4;
+      for (let i = 0; i < count; i++) pulses[i] = (clock / (half ? 5.4 : 2.6) + i / count) % 1;
+      pulses.length = count;
+
+      if (half) {
+        // The half globe is as wide as the window, and a browser's cost for a
+        // stroke that spans the canvas grows with the canvas, not with the
+        // line. Measured in Chrome on a 2019 MacBook Pro at 2880 pixels wide:
+        // about 3ms for a stroke one canvas pixel wide, 14ms for a wider one.
+        // So the map is two strokes, grid and land, one canvas pixel wide
+        // whatever the screen's density; on a dense screen that is finer, so
+        // it is given a little more strength there. The far side is left out:
+        // behind a page of words it only added noise. In the dark each pulse
+        // lights the coast it has just passed over, and that is in the paint.
+        const ink = Math.min(1, 0.85 + 0.15 * (dpr - 1));
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = mapPaint((0.08 + 0.07 * lit) * ink, 0);
+        stroke(grid, m, true);
+        if (land) {
+          ctx.strokeStyle = mapPaint((0.24 + 0.68 * lit) * ink, 0.9 * (1 - lit));
+          stroke(land, m, true);
+        }
+      } else {
+        // The whole globe: far side first, faint, so the sphere reads as glass.
+        ctx.lineWidth = dpr;
+        if (land) {
+          ctx.strokeStyle = `rgba(255,255,255,${0.04 + 0.07 * lit})`;
+          stroke(land, m, false);
+        }
+        ctx.strokeStyle = `rgba(255,255,255,${0.08 + 0.07 * lit})`;
+        stroke(grid, m, true);
+        if (land) {
+          ctx.strokeStyle = `rgba(255,255,255,${0.24 + 0.68 * lit})`;
+          stroke(land, m, true);
+        }
       }
 
       // Limb, then an instrument bezel: a tick every 5 degrees, longer every 30.
+      ctx.lineWidth = dpr;
       ctx.strokeStyle = "rgba(255,255,255,0.7)";
       ctx.beginPath();
-      ctx.arc(c, c, r, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.stroke();
       ctx.strokeStyle = "rgba(255,255,255,0.5)";
       ctx.beginPath();
@@ -274,13 +342,13 @@ export default function Globe() {
         const ca = Math.cos(a * RAD);
         const sa = Math.sin(a * RAD);
         const r0 = r + 7 * dpr;
-        ctx.moveTo(c + ca * r0, c + sa * r0);
-        ctx.lineTo(c + ca * (r0 + len), c + sa * (r0 + len));
+        ctx.moveTo(cx + ca * r0, cy + sa * r0);
+        ctx.lineTo(cx + ca * (r0 + len), cy + sa * (r0 + len));
       }
       ctx.stroke();
 
       // The links, each in its own state: carrying traffic, failing, gone, or
-      // being drawn back in.
+      // being drawn back in. Each is its own short stroke, which stays cheap.
       ctx.lineWidth = 1.25 * dpr;
       ctx.fillStyle = "#fff";
       for (const link of routes) {
@@ -298,7 +366,7 @@ export default function Globe() {
         let pen = false;
         const stop = Math.floor(upTo * ARC_STEPS);
         for (let s = 0; s <= stop; s++) {
-          if (place(link.xyz, s * 3, r, c, m)) {
+          if (place(link.xyz, s * 3, m)) {
             if (pen) ctx.lineTo(p[0], p[1]);
             else {
               ctx.moveTo(p[0], p[1]);
@@ -310,7 +378,7 @@ export default function Globe() {
         // Traffic: one bright mark running the length of a working link.
         if (upTo === 1 && alpha > 0.5) {
           const at = Math.floor(((clock * link.speed + link.phase) % 1) * ARC_STEPS);
-          if (place(link.xyz, at * 3, r, c, m)) {
+          if (place(link.xyz, at * 3, m)) {
             const k = 2.2 * dpr;
             ctx.fillRect(p[0] - k, p[1] - k, k * 2, k * 2);
           }
@@ -319,24 +387,25 @@ export default function Globe() {
       // The cities stay on the map; they just have nothing to talk to.
       ctx.fillStyle = `rgba(255,255,255,${0.35 + 0.65 * lit})`;
       for (let i = 0; i < cities.length; i += 3) {
-        if (place(cities, i, r, c, m)) {
+        if (place(cities, i, m)) {
           const k = 1.6 * dpr;
           ctx.fillRect(p[0] - k, p[1] - k, k * 2, k * 2);
         }
       }
 
-      // The library, at the centre: a steady pulse that is brightest in the dark.
+      // The pulses themselves, brightest in the dark, and the library's mark:
+      // at the centre of the whole globe, at the foot of the half one.
       ctx.lineWidth = dpr;
-      for (let ring = 0; ring < 2; ring++) {
-        const phase = (clock / 2.6 + ring / 2) % 1;
-        ctx.strokeStyle = `rgba(255,255,255,${(1 - phase) * (0.3 + 0.6 * (1 - lit))})`;
+      for (const at of pulses) {
+        ctx.strokeStyle = `rgba(255,255,255,${(1 - at) * (0.3 + 0.6 * (1 - lit))})`;
         ctx.beginPath();
-        ctx.arc(c, c, 6 * dpr + phase * r * 0.4, 0, Math.PI * 2);
+        ctx.arc(cx, cy, at * reach, 0, Math.PI * 2);
         ctx.stroke();
       }
       const k = 3.5 * dpr;
+      const by = half ? h - 12 * dpr : cy;
       ctx.fillStyle = "#fff";
-      ctx.fillRect(c - k, c - k, k * 2, k * 2);
+      ctx.fillRect(cx - k, by - k, k * 2, k * 2);
 
       const down = t >= CUT + 0.4 && t < BACK + 0.6;
       if (down !== shownDown && netRef.current) {
@@ -348,8 +417,40 @@ export default function Globe() {
 
     const moving = () => run || dragging || Math.abs(speed) > 0.0006;
 
+    /** The half globe's canvas is big. Where frames come slowly for a while it
+     *  is made coarser, since the time goes with its size. If that does not
+     *  help (a browser saving power draws at half speed whatever it is given)
+     *  the canvas is put back and left alone. */
+    const pace = (gap: number) => {
+      if (settled || !half || gap <= 0 || gap > 100) return; // a long gap is a hidden tab, not a slow machine
+      if (skip > 0) {
+        skip--;
+        return;
+      }
+      gaps += gap;
+      if (++counted < 45) return;
+      const mean = gaps / counted;
+      gaps = counted = 0;
+      if (before) {
+        if (mean > before * 0.9) {
+          coarse /= 0.75;
+          settled = true;
+          before = 0;
+          fit();
+          return;
+        }
+        before = 0;
+      }
+      if (mean > 24 && dpr > 1) {
+        before = mean;
+        coarse *= 0.75;
+        fit();
+      }
+    };
+
     const tick = (now: number) => {
       frame = 0;
+      pace(now - last);
       const dt = Math.min(0.06, (now - last) / 1000 || 0);
       last = now;
       if (!dragging) {
@@ -382,13 +483,43 @@ export default function Globe() {
     };
     label();
 
-    const resize = () => {
-      const next = Math.round(holder.clientWidth);
-      if (!next || next === size) return;
-      size = next;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = canvas.height = Math.round(size * dpr);
+    /** Sizes the canvas for the box and places the circle in it. */
+    const fit = () => {
+      // Sharp on a dense screen, but never more than 2880 pixels across: the
+      // half globe is as wide as the window, and a 4K canvas redrawn sixty
+      // times a second is work nobody would see.
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2, 2880 / wide) * coarse);
+      canvas.width = Math.round(wide * dpr);
+      canvas.height = Math.round(tall * dpr);
+      const edge = 26 * dpr; // room for the bezel's ticks
+      cx = canvas.width / 2;
+      if (half) {
+        // As wide as the box. It sits on the bottom edge when the box is tall
+        // enough to show the whole half; otherwise it hangs from the top and
+        // the bottom edge cuts it a little short.
+        r = canvas.width / 2 - edge;
+        cy = Math.max(canvas.height, 12 * dpr + edge + r);
+      } else {
+        r = Math.min(canvas.width, canvas.height) / 2 - edge;
+        cy = canvas.height / 2;
+      }
+      skip = Math.max(skip, 12);
+      gaps = counted = 0;
       draw();
+    };
+
+    const resize = () => {
+      const w = Math.round(holder.clientWidth);
+      const h = Math.round(holder.clientHeight);
+      const shape = wantsHalf();
+      if (!w || !h || (w === wide && h === tall && shape === half)) return;
+      // The half globe is seen from nearer the equator, so the half that shows
+      // holds most of the land people live on, with the pole tipped into view.
+      if (!turned && (!wide || shape !== half)) tilt = (shape ? 9 : 24) * RAD;
+      wide = w;
+      tall = h;
+      half = shape;
+      fit();
       wake();
     };
 
@@ -400,12 +531,22 @@ export default function Globe() {
     });
     io.observe(holder);
 
-    // Drag to turn it.
+    // Drag to turn it. The canvas is wider than the globe, so only the globe
+    // itself takes hold.
     let px = 0;
     let py = 0;
     let pt = 0;
+    const onGlobe = (e: PointerEvent) => {
+      const b = canvas.getBoundingClientRect();
+      const x = (e.clientX - b.left) * dpr - cx;
+      const y = (e.clientY - b.top) * dpr - cy;
+      const hold = r + 30 * dpr;
+      return x * x + y * y < hold * hold;
+    };
     const down = (e: PointerEvent) => {
+      if (!onGlobe(e)) return;
       dragging = true;
+      turned = true;
       px = e.clientX;
       py = e.clientY;
       pt = performance.now();
@@ -415,9 +556,16 @@ export default function Globe() {
       wake();
     };
     const move = (e: PointerEvent) => {
-      if (!dragging) return;
+      if (!dragging) {
+        // Show the hand only where a drag would take hold.
+        if (onGlobe(e) !== "over" in holder.dataset) {
+          if ("over" in holder.dataset) delete holder.dataset.over;
+          else holder.dataset.over = "";
+        }
+        return;
+      }
       const now = performance.now();
-      const per = 1 / Math.max(1, size / 2 - 26);
+      const per = dpr / Math.max(1, r);
       const dx = (e.clientX - px) * per;
       lon -= dx;
       tilt = Math.max(-MAX_TILT, Math.min(MAX_TILT, tilt + (e.clientY - py) * per));
@@ -438,9 +586,13 @@ export default function Globe() {
     canvas.addEventListener("pointermove", move);
     canvas.addEventListener("pointerup", up);
     canvas.addEventListener("pointercancel", up);
+    const leave = () => delete holder.dataset.over;
+    canvas.addEventListener("pointerleave", leave);
 
-    fetch("/globe.json")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+    // The half globe is several times the size of the whole one and gets
+    // outlines cut finer to match.
+    fetch(wantsHalf() ? "/globe-wide.json" : "/globe.json")
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error(String(res.status)))))
       .then((d: Packed) => {
         if (gone) return;
         land = unpack(d);
@@ -465,12 +617,15 @@ export default function Globe() {
       canvas.removeEventListener("pointermove", move);
       canvas.removeEventListener("pointerup", up);
       canvas.removeEventListener("pointercancel", up);
+      canvas.removeEventListener("pointerleave", leave);
     };
   }, []);
 
   return (
-    <div className="globe" ref={box}>
-      <canvas ref={canvasRef} aria-hidden="true" />
+    <>
+      <div className="globe" ref={box}>
+        <canvas ref={canvasRef} aria-hidden="true" />
+      </div>
       <div className="globe-panel">
         <p className="globe-readout" aria-hidden="true">
           <span>Internet</span>
@@ -484,6 +639,6 @@ export default function Globe() {
           Pause
         </button>
       </div>
-    </div>
+    </>
   );
 }

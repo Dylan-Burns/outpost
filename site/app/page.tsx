@@ -17,30 +17,37 @@ export default function Home() {
   return (
     <>
       <section className="hero">
-        <Globe />
-        <div className="wrap">
-          <div className="hero-body">
-            <h1>
-              <span className="setup">When the world goes dark,</span> <span className="line">information</span>{" "}
-              <span className="line">is power.</span>
-            </h1>
-            <p className="lede">
-              Outpost keeps Wikipedia, medical guides, repair manuals, street maps and an AI assistant on a computer you already own. When the
-              internet goes out, everyone on your Wi-Fi can still look things up, from any phone or laptop.
-            </p>
-            <div className="hero-actions">
-              <div className="row">
-                <Link href="/install" className="btn">
-                  Set it up in ten minutes
-                </Link>
-                <a href="#plan" className="btn ghost">
-                  See what fits on your drive
-                </a>
+        {/* The stage holds the globe and the words laid over it; the title block sits under it. */}
+        <div className="hero-stage">
+          <Globe />
+          <div className="wrap">
+            <div className="hero-body">
+              <h1>
+                <span className="setup">When the world goes dark,</span> <span className="line">information</span>{" "}
+                <span className="line">is power.</span>
+              </h1>
+              <p className="lede">
+                <span>
+                  Outpost keeps Wikipedia, medical guides, repair manuals, street maps and an AI assistant on a computer you already own. When
+                  the internet goes out, everyone on your <span className="nw">Wi-Fi</span> can still look things up, from any phone or laptop.
+                </span>
+              </p>
+              <div className="hero-actions">
+                <div className="row">
+                  <Link href="/install" className="btn">
+                    Set it up in ten minutes
+                  </Link>
+                  <a href="#plan" className="btn ghost">
+                    See what fits on your drive
+                  </a>
+                </div>
+                <p className="hero-or">Know your way around a terminal? On a Mac or a Linux PC, this one line installs it:</p>
+                <CopyCommand command={INSTALL} />
               </div>
-              <p className="hero-or">Know your way around a terminal? On a Mac or a Linux PC, this one line installs it:</p>
-              <CopyCommand command={INSTALL} />
             </div>
           </div>
+        </div>
+        <div className="wrap">
           <dl className="titleblock">
             <div>
               <dt>Cost</dt>

@@ -4,7 +4,7 @@ import path from "node:path";
 /**
  * The hero globe is drawn from the same region outlines a node uses to cut
  * its maps, so the picture is the catalog. This runs at build time: it reads
- * every outline, drops detail a few hundred pixels cannot show, and packs the
+ * every outline, drops detail a screen-wide globe cannot show, and packs the
  * rings as small integers.
  */
 
@@ -13,8 +13,13 @@ type Ring = [number, number][];
 /** Units per degree in the packed output. 20 means 0.05 degree steps. */
 export const GLOBE_SCALE = 20;
 
-const TOLERANCE = 0.16; // degrees; under a pixel on a 700px globe
-const MIN_SPAN = 0.55; // rings smaller than this in both directions are dust
+// Two cuts of the same outlines. A phone shows a whole globe a few hundred
+// pixels across; a desktop shows half of one as wide as the screen.
+const DETAIL = {
+  small: { tolerance: 0.16, minSpan: 0.55 }, // degrees; under a pixel on a 700px globe
+  wide: { tolerance: 0.07, minSpan: 0.5 }, // about a pixel on a globe 1500px across
+};
+export type GlobeDetail = keyof typeof DETAIL;
 
 function simplify(ring: Ring, tol: number): Ring {
   const n = ring.length;
@@ -64,9 +69,11 @@ function ringsOf(file: string): Ring[] {
 
 export type GlobeData = { scale: number; regions: number; rings: number[][] };
 
-let cached: GlobeData | null = null;
-export function globeData(): GlobeData {
-  if (cached) return cached;
+const cached: Partial<Record<GlobeDetail, GlobeData>> = {};
+export function globeData(detail: GlobeDetail = "small"): GlobeData {
+  const made = cached[detail];
+  if (made) return made;
+  const { tolerance, minSpan } = DETAIL[detail];
   const dir = path.join(process.cwd(), "public", "catalog", "v1", "regions");
   // Countries only. Continents repeat them, and states inside a country turn
   // it into a mesh that the headline cannot be read through.
@@ -81,8 +88,8 @@ export function globeData(): GlobeData {
         if (y < minY) minY = y;
         if (y > maxY) maxY = y;
       }
-      if (maxX - minX < MIN_SPAN && maxY - minY < MIN_SPAN) continue;
-      const s = simplify(ring, TOLERANCE);
+      if (maxX - minX < minSpan && maxY - minY < minSpan) continue;
+      const s = simplify(ring, tolerance);
       if (s.length < 4) continue;
       // First point absolute, the rest as steps from the one before.
       const packed: number[] = [];
@@ -98,6 +105,5 @@ export function globeData(): GlobeData {
       if (packed.length >= 8) rings.push(packed);
     }
   }
-  cached = { scale: GLOBE_SCALE, regions: files.length, rings };
-  return cached;
+  return (cached[detail] = { scale: GLOBE_SCALE, regions: files.length, rings });
 }
