@@ -27,9 +27,9 @@ export default function Home() {
               </h1>
               <p className="lede">
                 <span>
-                  No internet. No cell service. No help on the way. Outpost keeps Wikipedia, medical and survival guides, repair manuals, street
-                  maps and an AI assistant on a computer you own, and serves them to every phone and laptop under your roof. Stock it now, while
-                  you still can.
+                  A tool for emergency preparedness and off-grid living. Outpost keeps Wikipedia, medical and survival guides, repair manuals,
+                  street maps and an AI assistant on a computer you own, and shares them with every phone and laptop on your network. No
+                  internet required.
                 </span>
               </p>
               <div className="hero-actions">
