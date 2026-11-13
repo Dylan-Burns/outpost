@@ -7,7 +7,13 @@ export default function CopyCommand({ command, label = "Copy" }: { command: stri
     <div className="command">
       <code>
         <span className="prompt" aria-hidden="true">$ </span>
-        {command}
+        {/* One span per word, so a wrapped command breaks between flags and never inside one. */}
+        {command.split(" ").map((word, i) => (
+          <span key={i}>
+            {i > 0 && " "}
+            <span className="word">{word}</span>
+          </span>
+        ))}
       </code>
       <button
         type="button"
@@ -21,6 +27,7 @@ export default function CopyCommand({ command, label = "Copy" }: { command: stri
           }
         }}
         aria-label={copied ? "Copied" : `Copy command: ${command}`}
+        data-copied={copied || undefined}
       >
         {copied ? "Copied" : label}
       </button>

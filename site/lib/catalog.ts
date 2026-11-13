@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -42,6 +43,20 @@ export function loadRelease(): Release {
   } catch {
     return { version: "unreleased", date: "" };
   }
+}
+
+/** The release signing key the installer pins, as OpenSSH prints its fingerprint. */
+export function releaseKeyFingerprint(): string {
+  const sh = readFileSync(path.join(process.cwd(), "public", "install.sh"), "utf8");
+  const m = sh.match(/RELEASE_KEY="ssh-ed25519 ([A-Za-z0-9+/=]+)/);
+  if (!m) return "";
+  const digest = createHash("sha256").update(Buffer.from(m[1], "base64")).digest("base64").replace(/=+$/, "");
+  return `SHA256:${digest}`;
+}
+
+/** SHA-256 of the installer exactly as this site serves it. */
+export function installerDigest(): string {
+  return createHash("sha256").update(readFileSync(path.join(process.cwd(), "public", "install.sh"))).digest("hex");
 }
 
 export function bytes(n: number): string {
