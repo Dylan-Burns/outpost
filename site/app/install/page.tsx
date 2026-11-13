@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import CopyCommand from "../components/CopyCommand";
 import { installerDigest, loadRelease } from "@/lib/catalog";
+import { INSTALL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Install",
   description: "Install Outpost on a Mac or a Linux PC with one line, then choose what to keep. A step-by-step guide for everyone.",
 };
 
-const INSTALL = "curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash";
 const CLI = "sudo /opt/outpost/cli/outpost";
 
 export default function Install() {

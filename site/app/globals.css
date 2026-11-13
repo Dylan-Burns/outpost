@@ -146,9 +146,7 @@ section > .wrap { padding-block: var(--sec); }
    and the command, so the map never runs through words meant to be read. */
 .hero .lede { margin: 0; max-width: 47rem; text-wrap: balance; pointer-events: auto; }
 .hero .lede > span { padding: 0.3em 0.7em; background: var(--bg); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.nw { white-space: nowrap; }
 .hero-actions { width: fit-content; max-width: 100%; margin-top: clamp(1.4rem, 2.2vw, 1.75rem); pointer-events: auto; }
-.hero-actions .row { justify-content: center; }
 .hero-or { margin: 1.25rem 0 0.6rem; font-size: 0.88rem; line-height: 1.4; color: var(--dim); max-width: 34rem; }
 /* In the hero the line that introduces the command is the command's own
    title strip. */
@@ -502,7 +500,6 @@ table.hw { width: calc(100% + 2 * var(--pad)); margin: 0 calc(-1 * var(--pad)); 
   .hero h1 .line { mix-blend-mode: normal; }
   .hero .lede { max-width: 41rem; text-wrap: pretty; }
   .hero .lede > span { padding: 0; background: none; }
-  .hero-actions .row { justify-content: flex-start; }
   .hero-actions .hero-or { max-width: 34rem; margin-bottom: 0.6rem; padding: 0; border: 0; background: none; color: var(--dim); }
   .globe-readout { display: none; }
   .globe-panel { top: 0.75rem; left: auto; right: 1rem; }

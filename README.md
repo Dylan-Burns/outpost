@@ -6,10 +6,10 @@ choose (cut from the Protomaps OpenStreetMap build), and an optional local AI as
 answers from your library and cites it. You bring the hardware; Outpost provides the installer, a
 setup wizard and a curated, signed content catalog.
 
-Website: https://outpost-offline.vercel.app
+Website: https://projectoutpost.org
 
 ```
-curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash            # add -s -- --with-ai for the assistant
+curl -fsSL https://projectoutpost.org/install.sh | sudo bash            # add -s -- --with-ai for the assistant
 ```
 
 The same line works on macOS 13 or later (Intel and Apple Silicon) and on 64-bit Linux (amd64 and arm64).

@@ -3,13 +3,12 @@ import Link from "next/link";
 import { Archivo, Martian_Mono } from "next/font/google";
 import NavLinks from "./components/NavLinks";
 import { loadCatalog, loadRelease } from "@/lib/catalog";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
 // One family in two widths: wide for display, normal for reading.
 const sans = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-sans", display: "swap" });
 const mono = Martian_Mono({ subsets: ["latin"], axes: ["wdth"], variable: "--font-mono", display: "swap" });
-
-const SITE = "https://outpost-offline.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),

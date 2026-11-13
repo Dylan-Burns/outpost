@@ -178,15 +178,19 @@ export default function Globe() {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !holder || !ctx) return;
 
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)");
     const grid = graticule();
     const routes = links();
     const cities = new Float32Array(CITIES.flatMap(([lat, lon]) => unit(lat, lon)));
     let land: LineSet | null = null;
     let lon = -30 * RAD;
     let tilt = 24 * RAD;
-    let run = !still.matches; // people who asked for less motion start it themselves
-    let speed = run ? SPIN : 0;
+    // It plays on its own everywhere, including where the system says to
+    // reduce motion. On Windows that signal is the "animation effects"
+    // switch, which many people turn off to make the desktop quicker, and
+    // there the globe sat still and looked broken. The Pause button is the
+    // way to stop it; the page's other flourishes still honour the setting.
+    let run = true;
+    let speed = SPIN;
     let clock = 1.5; // seconds into the loop
     let dragging = false;
     let visible = true;

@@ -4,8 +4,7 @@ import Globe from "./components/Globe";
 import Planner from "./components/Planner";
 import Screens from "./components/Screens";
 import { bytes, loadCatalog, plannerData, releaseKeyFingerprint } from "@/lib/catalog";
-
-const INSTALL = "curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash";
+import { INSTALL } from "@/lib/site";
 
 export default function Home() {
   const c = loadCatalog();
@@ -28,20 +27,13 @@ export default function Home() {
               </h1>
               <p className="lede">
                 <span>
-                  Outpost keeps Wikipedia, medical guides, repair manuals, street maps and an AI assistant on a computer you already own. When
-                  the internet goes out, everyone on your <span className="nw">Wi-Fi</span> can still look things up, from any phone or laptop.
+                  No internet. No cell service. No help on the way. Outpost keeps Wikipedia, medical and survival guides, repair manuals, street
+                  maps and an AI assistant on a computer you own, and serves them to every phone and laptop under your roof. Stock it now, while
+                  you still can.
                 </span>
               </p>
               <div className="hero-actions">
-                <div className="row">
-                  <Link href="/install" className="btn">
-                    Set it up in ten minutes
-                  </Link>
-                  <a href="#plan" className="btn ghost">
-                    See what fits on your drive
-                  </a>
-                </div>
-                <p className="hero-or">Know your way around a terminal? On a Mac or a Linux PC, this one line installs it:</p>
+                <p className="hero-or">To install, paste this line into Terminal on a Mac or a Linux PC:</p>
                 <CopyCommand command={INSTALL} />
               </div>
             </div>
