@@ -65,7 +65,7 @@ const (
 
 func (s *Server) init() {
 	s.once.Do(func() {
-		s.loginLimit = auth.NewLimiter(15*time.Minute, 10, 100)
+		s.loginLimit = auth.NewLimiter(15*time.Minute, 10)
 	})
 }
 
@@ -189,12 +189,21 @@ func readJSON(w http.ResponseWriter, r *http.Request, v any) bool {
 	return true
 }
 
+// clientKey groups requests by client network: the address for IPv4, the
+// /64 prefix for IPv6 (a single host usually controls a whole /64).
 func clientKey(r *http.Request) string {
 	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
-		return r.RemoteAddr
+		host = r.RemoteAddr
 	}
-	return host
+	ip := net.ParseIP(host)
+	if ip == nil {
+		return host
+	}
+	if ip.To4() == nil {
+		return ip.Mask(net.CIDRMask(64, 128)).String() + "/64"
+	}
+	return ip.String()
 }
 
 // session returns the valid session for the request, if any.

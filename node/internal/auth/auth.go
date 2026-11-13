@@ -140,53 +140,66 @@ func TokenKey(token string) string {
 	return hex.EncodeToString(h[:])
 }
 
-// Limiter is a fixed-window failure counter per key (client address) plus a
-// global ceiling, to slow down password and setup-code guessing.
+// Limiter is a fixed-window attempt counter per key (client network). An
+// attempt is counted when it is admitted, before the credential is checked,
+// so parallel requests cannot slip past the limit. There is deliberately no
+// global ceiling: one noisy client must not lock the owner out.
 type Limiter struct {
 	mu     sync.Mutex
 	window time.Duration
 	perKey int
-	global int
 	start  time.Time
 	counts map[string]int
-	total  int
 	now    func() time.Time
 }
 
-// NewLimiter allows perKey failures per key and global failures overall in
-// each window.
-func NewLimiter(window time.Duration, perKey, global int) *Limiter {
-	return &Limiter{window: window, perKey: perKey, global: global, counts: map[string]int{}, now: time.Now}
+// NewLimiter allows perKey attempts per key in each window.
+func NewLimiter(window time.Duration, perKey int) *Limiter {
+	return &Limiter{window: window, perKey: perKey, counts: map[string]int{}, now: time.Now}
 }
 
 func (l *Limiter) roll() {
 	if now := l.now(); now.Sub(l.start) >= l.window {
 		l.start = now
 		l.counts = map[string]int{}
-		l.total = 0
 	}
 }
 
-// Allowed reports whether key may try again now.
-func (l *Limiter) Allowed(key string) bool {
+// Begin admits and counts an attempt, or reports false when key is over
+// its limit.
+func (l *Limiter) Begin(key string) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.roll()
-	return l.counts[key] < l.perKey && l.total < l.global
-}
-
-// Fail records a failed attempt.
-func (l *Limiter) Fail(key string) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	l.roll()
+	if l.counts[key] >= l.perKey {
+		return false
+	}
 	l.counts[key]++
-	l.total++
+	return true
 }
 
-// Reset clears a key after a success.
+// Reset clears a key after a successful attempt.
 func (l *Limiter) Reset(key string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	delete(l.counts, key)
+}
+
+// hashSlots bounds concurrent argon2 computations (19 MiB each).
+var hashSlots = make(chan struct{}, 4)
+
+// ErrBusy means too many password checks are already running.
+var ErrBusy = errors.New("busy")
+
+// WithHashSlot runs fn while holding one of a few argon2 slots, or returns
+// ErrBusy at once when all are taken.
+func WithHashSlot(fn func()) error {
+	select {
+	case hashSlots <- struct{}{}:
+		defer func() { <-hashSlots }()
+		fn()
+		return nil
+	default:
+		return ErrBusy
+	}
 }

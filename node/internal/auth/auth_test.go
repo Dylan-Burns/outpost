@@ -48,22 +48,39 @@ func TestSetupCode(t *testing.T) {
 
 func TestLimiter(t *testing.T) {
 	now := time.Unix(0, 0)
-	l := NewLimiter(time.Minute, 2, 3)
+	l := NewLimiter(time.Minute, 2)
 	l.now = func() time.Time { return now }
-	l.Fail("a")
-	l.Fail("a")
-	if l.Allowed("a") {
+	if !l.Begin("a") || !l.Begin("a") {
+		t.Fatal("first attempts refused")
+	}
+	if l.Begin("a") {
 		t.Fatal("a should be limited")
 	}
-	if !l.Allowed("b") {
-		t.Fatal("b should be allowed")
+	if !l.Begin("b") {
+		t.Fatal("another client must not be locked out")
 	}
-	l.Fail("b")
-	if l.Allowed("c") {
-		t.Fatal("global ceiling not enforced")
+	l.Reset("a")
+	if !l.Begin("a") {
+		t.Fatal("reset did not clear")
 	}
 	now = now.Add(time.Minute)
-	if !l.Allowed("a") {
+	l.Begin("b")
+	if !l.Begin("b") {
 		t.Fatal("window did not roll")
 	}
+}
+
+func TestWithHashSlot(t *testing.T) {
+	release := make(chan struct{})
+	started := make(chan struct{}, 4)
+	for i := 0; i < 4; i++ {
+		go WithHashSlot(func() { started <- struct{}{}; <-release })
+	}
+	for i := 0; i < 4; i++ {
+		<-started
+	}
+	if err := WithHashSlot(func() {}); err != ErrBusy {
+		t.Fatal("fifth concurrent hash admitted")
+	}
+	close(release)
 }

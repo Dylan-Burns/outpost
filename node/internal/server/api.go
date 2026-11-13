@@ -269,7 +269,7 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := clientKey(r)
-	if !s.loginLimit.Allowed(key) {
+	if !s.loginLimit.Begin(key) {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts; wait 15 minutes")
 		return
 	}
@@ -284,16 +284,24 @@ func (s *Server) handleClaim(w http.ResponseWriter, r *http.Request) {
 		code = s.SetupCode()
 	}
 	if !auth.SetupCodeMatches(code, req.Code) {
-		s.loginLimit.Fail(key)
 		writeErr(w, http.StatusForbidden, "that setup code is not right")
 		return
 	}
-	hash, err := auth.HashPassword(req.Password)
-	if err != nil {
+	var hash string
+	if err := auth.CheckPasswordPolicy(req.Password); err != nil {
 		writeErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	err = s.Store.Update(func(st *state.State) error {
+	var herr error
+	if err := auth.WithHashSlot(func() { hash, herr = auth.HashPassword(req.Password) }); err != nil {
+		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
+		return
+	}
+	if herr != nil {
+		writeErr(w, http.StatusBadRequest, herr.Error())
+		return
+	}
+	err := s.Store.Update(func(st *state.State) error {
 		if st.AdminHash != "" {
 			return errors.New("already claimed")
 		}
@@ -325,14 +333,18 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := clientKey(r)
-	if !s.loginLimit.Allowed(key) {
+	if !s.loginLimit.Begin(key) {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts; wait 15 minutes")
 		return
 	}
 	var hash string
 	s.Store.View(func(st *state.State) { hash = st.AdminHash })
-	if hash == "" || !auth.VerifyPassword(hash, req.Password) {
-		s.loginLimit.Fail(key)
+	ok := false
+	if err := auth.WithHashSlot(func() { ok = hash != "" && auth.VerifyPassword(hash, req.Password) }); err != nil {
+		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
+		return
+	}
+	if !ok {
 		writeErr(w, http.StatusUnauthorized, "wrong password")
 		return
 	}
@@ -362,22 +374,35 @@ func (s *Server) handlePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	key := clientKey(r)
-	if !s.loginLimit.Allowed(key) {
+	if !s.loginLimit.Begin(key) {
 		writeErr(w, http.StatusTooManyRequests, "too many attempts; wait 15 minutes")
 		return
 	}
-	var hash string
-	s.Store.View(func(st *state.State) { hash = st.AdminHash })
-	if !auth.VerifyPassword(hash, req.Current) {
-		s.loginLimit.Fail(key)
-		writeErr(w, http.StatusUnauthorized, "the current password is wrong")
-		return
-	}
-	nh, err := auth.HashPassword(req.New)
-	if err != nil {
+	if err := auth.CheckPasswordPolicy(req.New); err != nil {
 		writeErr(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	var hash, nh string
+	s.Store.View(func(st *state.State) { hash = st.AdminHash })
+	ok := false
+	var herr error
+	if err := auth.WithHashSlot(func() {
+		if ok = auth.VerifyPassword(hash, req.Current); ok {
+			nh, herr = auth.HashPassword(req.New)
+		}
+	}); err != nil {
+		writeErr(w, http.StatusTooManyRequests, "the node is busy; try again in a moment")
+		return
+	}
+	if !ok {
+		writeErr(w, http.StatusUnauthorized, "the current password is wrong")
+		return
+	}
+	if herr != nil {
+		writeErr(w, http.StatusBadRequest, herr.Error())
+		return
+	}
+	s.loginLimit.Reset(key)
 	// Changing the password signs out every other browser.
 	cur, _, _ := s.session(r)
 	s.Store.Update(func(st *state.State) error {
