@@ -2,6 +2,7 @@ import Link from "next/link";
 import CopyCommand from "./components/CopyCommand";
 import Globe from "./components/Globe";
 import Planner from "./components/Planner";
+import Screens from "./components/Screens";
 import { bytes, loadCatalog, plannerData, releaseKeyFingerprint } from "@/lib/catalog";
 
 const INSTALL = "curl -fsSL https://outpost-offline.vercel.app/install.sh | sudo bash";
@@ -109,28 +110,41 @@ export default function Home() {
             <li>
               <h3>Install it on a spare computer</h3>
               <p>
-                An old laptop, a Mac mini or a small PC will do. Open the Terminal app, paste one line and press Return. The installer does the
-                rest and tells you what to open next.
+                An old laptop, a Mac mini or a small PC will do. Open the Terminal app, paste one line and press Return. That is the only typing
+                there is: the installer does the rest, and on a Mac it opens the setup page for you.
               </p>
               <p className="spec">macOS 13+ or 64-bit Linux // signed release</p>
             </li>
             <li>
               <h3>Choose what to keep</h3>
               <p>
-                Open the setup page from your phone or laptop and pick what you want: how much of Wikipedia, which medical and repair guides,
-                which maps. A bar shows what fits on your drive.
+                On the setup page, from your phone or laptop, pick what you want: how much of Wikipedia, which medical and repair guides, which
+                maps. A bar shows what fits on your drive.
               </p>
               <p className="spec">Three sizes per subject // change any time</p>
             </li>
             <li>
               <h3>Unplug and carry on</h3>
               <p>
-                Outpost downloads everything once and checks every file. After that it needs no internet at all. The library, the maps and the
-                assistant keep answering on your Wi-Fi.
+                Outpost downloads everything once, shows you each file arriving, and checks every one. After that it needs no internet at all.
+                The library, the maps and the assistant keep answering on your Wi-Fi.
               </p>
               <p className="spec">Starts by itself after a power cut</p>
             </li>
           </ol>
+        </div>
+      </section>
+
+      <section id="screens">
+        <div className="wrap">
+          <div className="sec-head">
+            <h2>The rest is point and click</h2>
+            <p>
+              After that one pasted line there is no more Terminal. Setup, and everything after it, happens on ordinary web pages like these, from
+              your phone or your laptop.
+            </p>
+          </div>
+          <Screens />
         </div>
       </section>
 

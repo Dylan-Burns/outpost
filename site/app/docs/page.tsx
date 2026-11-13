@@ -64,8 +64,8 @@ export default function Docs() {
             <dl>
               <dt>Do I need to be good with computers?</dt>
               <dd>
-                No. You paste one line into an app called Terminal, then make your choices on an ordinary web page. The{" "}
-                <Link href="/install">install guide</Link> writes out every step.
+                No. You paste one line into an app called Terminal, once. After that everything is an ordinary web page: you tick what you want
+                and watch it download. The <Link href="/install">install guide</Link> writes out every step.
               </dd>
               <dt>Does it need the internet?</dt>
               <dd>Only to download. Once your content is on the Outpost computer, everything works with no connection at all.</dd>
@@ -167,7 +167,8 @@ export default function Docs() {
               <dt>Claiming a new Outpost</dt>
               <dd>
                 A fresh install accepts an owner&apos;s password only together with the setup code printed on the machine, so nobody else on the
-                network can claim it first.
+                network can claim it first. On a Mac the installer also hands the code to the browser of the person sitting at that Mac, in the
+                part of the address after the “#”, which a browser keeps to itself and never sends anywhere.
               </dd>
               <dt>Passwords and sessions</dt>
               <dd>
@@ -213,7 +214,7 @@ export default function Docs() {
             <p>
               Archives keep their publishers&apos; licences, listed for each item in the <Link href="/catalog">catalog</Link>; several (iFixit, TED,
               Khan Academy) allow only non-commercial use. Map data © OpenStreetMap contributors, available under the Open Database Licence;
-              tiles by Protomaps. Fonts: Noto Sans (SIL Open Font Licence). kiwix-tools is GPL-3.0 software by the Kiwix project; pmtiles is
+              tiles by Protomaps. Fonts: Noto Sans on the maps, Archivo and Martian Mono in the dashboard (all SIL Open Font Licence). kiwix-tools is GPL-3.0 software by the Kiwix project; pmtiles is
               BSD-3-Clause; Ollama is MIT. AI models carry their makers&apos; licences.
             </p>
           </article>

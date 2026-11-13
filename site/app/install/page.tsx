@@ -147,6 +147,8 @@ export default function Install() {
               <dd>Change the dashboard and library ports if something else uses them.</dd>
               <dt><code>--version 1.1.0</code></dt>
               <dd>Install a particular release instead of the latest.</dd>
+              <dt><code>--no-open</code></dt>
+              <dd>On a Mac, do not open the setup page in the browser when the install finishes.</dd>
               <dt><code>--no-firewall</code></dt>
               <dd>Leave the firewall alone. Otherwise the installer opens the two ports in ufw or firewalld, or allows Outpost in the macOS firewall, when one is on.</dd>
             </dl>
@@ -162,26 +164,32 @@ export default function Install() {
             <pre>{installerDigest()}</pre>
 
             <h2 id="claim">3. Choose your content</h2>
+            <p>From here on there is no more Terminal. Everything happens on ordinary web pages.</p>
             <ol>
-              <li>On your phone or laptop, connected to the same Wi-Fi, open the address the installer showed.</li>
               <li>
-                Type the setup code and choose a password. This makes you the owner. The page calls the computer a “node”; that is just
-                Outpost&apos;s word for it.
+                <strong>Open the setup page.</strong> On a Mac it opens in your browser by itself when the installer finishes, with the setup
+                code already filled in. On Linux, or from another device on the same Wi-Fi, open the address the installer showed and type the
+                setup code.
+              </li>
+              <li>
+                Choose a password and select <strong>Start setup</strong>. This makes you the owner.
               </li>
               <li>Pick what you want it to be: a library, maps, an assistant, or all three.</li>
               <li>Choose how much Wikipedia, a size for each subject, your map regions and any AI models. A bar shows what fits on the drive.</li>
               <li>
-                Select <strong>Complete setup</strong>. Downloads start at once, smallest first, so there is something to read within minutes.
+                Select <strong>Start downloading</strong>. The Downloads page shows every file as it arrives: what it is doing, how far it has
+                got, how fast, and how long is left. The smallest come first, so there is something to read within minutes.
               </li>
             </ol>
+            <p>You can close the page, or the laptop you opened it on. The Outpost computer keeps downloading by itself.</p>
             <p>
               Lost the setup code? In Terminal on the Outpost computer, run <code>{CLI} setup-code</code>.
             </p>
 
             <h2 id="offline">4. Go offline</h2>
             <p>
-              The Downloads page shows progress. When it is done you can unplug the internet. Everyone on your Wi-Fi opens the same address. Tell
-              them to save it as a bookmark.
+              When the Downloads page says <strong>Everything is ready</strong>, you can unplug the internet. Everyone on your Wi-Fi opens the
+              same address. Tell them to save it as a bookmark.
             </p>
             <p>
               Outpost starts by itself after a restart or a power cut. If a download was interrupted, it carries on from where it stopped the
