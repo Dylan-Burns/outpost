@@ -1,0 +1,18 @@
+import { chromium } from "playwright";
+const [base, out] = process.argv.slice(2);
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1100, height: 900 } });
+const errors = [];
+p.on("pageerror", (e) => errors.push(String(e)));
+await p.goto(base + "/assistant");
+await p.getByLabel("Question").fill("What catalyst does the contact process use?");
+await p.getByRole("button", { name: "Ask" }).click();
+await p.locator(".sources a").first().waitFor({ timeout: 120000 });
+await p.getByRole("button", { name: "Ask" }).waitFor({ timeout: 240000 });
+const answer = await p.locator(".msg.a").first().innerText();
+await p.screenshot({ path: out });
+console.log(answer.slice(0, 600));
+if (!/\[S\d\]/.test(answer)) throw new Error("no citations");
+if (errors.length) throw new Error(errors.join(" | "));
+console.log("PASS: assistant streamed a cited answer");
+await b.close();

@@ -190,14 +190,19 @@ type rss struct {
 	Channel struct {
 		Total string `xml:"http://a9.com/-/spec/opensearch/1.1/ totalResults"`
 		Items []struct {
-			Title       string `xml:"title"`
-			Link        string `xml:"link"`
-			Description string `xml:"description"`
+			Title       innerXML `xml:"title"`
+			Link        string   `xml:"link"`
+			Description innerXML `xml:"description"`
 			Book        struct {
 				Title string `xml:"title"`
 			} `xml:"book"`
 		} `xml:"item"`
 	} `xml:"channel"`
+}
+
+// innerXML keeps an element's markup, so highlighted words in <b> survive.
+type innerXML struct {
+	Inner string `xml:",innerxml"`
 }
 
 var tagRE = regexp.MustCompile(`<[^>]*>`)
@@ -251,9 +256,9 @@ func (m *Manager) Search(ctx context.Context, query string, start, limit int) ([
 			continue
 		}
 		out = append(out, Result{
-			Title:   StripTags(it.Title),
+			Title:   StripTags(it.Title.Inner),
 			Path:    it.Link,
-			Snippet: StripTags(it.Description),
+			Snippet: StripTags(it.Description.Inner),
 			Book:    StripTags(it.Book.Title),
 		})
 	}
