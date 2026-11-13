@@ -158,7 +158,7 @@ func serve(args []string) int {
 		return 1
 	}
 	if code != "" {
-		logger.Printf("this node is not claimed yet; open the dashboard and enter the setup code (run: sudo outpost setup-code)")
+		logger.Printf("this node is not claimed yet; open the dashboard and enter the setup code (run: sudo " + cliPath + " setup-code)")
 	}
 
 	kw := &kiwix.Manager{
@@ -241,7 +241,7 @@ func printSetupCode(args []string) int {
 	b, err := os.ReadFile(setupCodePath(p.data))
 	if errors.Is(err, os.ErrNotExist) {
 		fmt.Fprintln(os.Stderr, "This node has already been claimed (or has not started yet).")
-		fmt.Fprintln(os.Stderr, "To start over with a new administrator, run: sudo outpost reset-admin")
+		fmt.Fprintln(os.Stderr, "To start over with a new administrator, run: sudo "+cliPath+" reset-admin")
 		return 1
 	}
 	if err != nil {
@@ -254,6 +254,12 @@ func printSetupCode(args []string) int {
 
 // launchdLabel names the macOS job. It must match LABEL in install.sh.
 const launchdLabel = "org.outpost-offline.node"
+
+// cliPath is the command the installer puts in a folder only root can change
+// (CLI_DIR in install.sh). Messages name it in full: a short "outpost" is
+// looked up along the PATH, and on some machines the folders early in the
+// PATH can be written without a password.
+const cliPath = "/opt/outpost/cli/outpost"
 
 // systemService reports how to stop and start the installed service, when
 // this command runs as root on a machine where that service is running.

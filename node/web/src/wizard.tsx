@@ -40,7 +40,7 @@ export function Claim({ onDone }: { onDone: () => void }) {
           <span>Setup code</span>
           <input type="text" autocomplete="one-time-code" placeholder="XXXX-XXXX-XXXX" value={code} onInput={(e) => setCode((e.target as HTMLInputElement).value)} required />
           <div class="hint">
-            The installer printed it. On the node, run <code>sudo outpost setup-code</code> to see it again.
+            The installer printed it. To see it again, run <code>sudo /opt/outpost/cli/outpost setup-code</code> on the computer where Outpost is installed.
           </div>
         </label>
         <label class="field">
@@ -92,7 +92,7 @@ export function Login({ onDone, title }: { onDone: () => void; title?: string })
         <button class="btn primary" disabled={busy} style={{ width: "100%", justifyContent: "center" }}>
           {busy ? <span class="spinner" /> : "Sign in"}
         </button>
-        <p class="hint" style={{ marginTop: "1rem" }}>Forgot it? On the node, run <code>sudo outpost reset-admin</code>. Your content stays.</p>
+        <p class="hint" style={{ marginTop: "1rem" }}>Forgot it? On the computer where Outpost is installed, run <code>sudo /opt/outpost/cli/outpost reset-admin</code>. Your content stays.</p>
       </form>
     </div>
   );

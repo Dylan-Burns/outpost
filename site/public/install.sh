@@ -197,7 +197,16 @@ root_only_dir() { # true when DIR is a real folder that only root can change
   [[ "$mode" =~ ^[0-7]{3,4}$ ]] || return 1
   # The last two digits are the group's and everyone else's rights; 2 is "write".
   case "${mode: -2}" in *[2367]*) return 1 ;; esac
+  # An access list can grant rights the mode does not show; "+" marks one.
+  case "$(ls -ld "$d" 2>/dev/null | cut -c11)" in +) return 1 ;; esac
   return 0
+}
+
+root_owned() { # root_owned PATH...: root's, and nobody else may change it
+  # Folders are otherwise created with whatever the system's defaults give,
+  # and some systems default to letting everyone write.
+  chown 0:0 "$@"
+  chmod 755 "$@"
 }
 
 unlink_cli() { # take away only the links and files this installer put in place
@@ -208,7 +217,6 @@ unlink_cli() { # take away only the links and files this installer put in place
   elif [ -f /usr/local/bin/outpost ] && grep -q '^exec /opt/outpost/bin/outpost "\$@"$' /usr/local/bin/outpost 2>/dev/null; then
     unlink /usr/local/bin/outpost # the wrapper file that releases before 1.1.0 wrote
   fi
-  if [ "$OS" = "Darwin" ] && [ -f /etc/paths.d/outpost ] && [ ! -L /etc/paths.d/outpost ]; then unlink /etc/paths.d/outpost; fi
 }
 
 lan_ip() {
@@ -394,6 +402,7 @@ done
 
 # ---------------------------------------------------------------- settings
 mkdir -p "$ETC"
+root_owned "$ETC"
 ENVF="$ETC/outpost.env"
 cur() { [ -f "$ENVF" ] && sed -n "s/^$1=//p" "$ENVF" | tail -1 || true; }
 DATA_DIR="${DATA_DIR:-$(cur OUTPOST_DATA_DIR)}"; DATA_DIR="${DATA_DIR:-/var/lib/outpost}"
@@ -432,6 +441,7 @@ chmod 644 "$ENVF"
 # ---------------------------------------------------------------- install
 say "Installing to $PREFIX"
 mkdir -p "$PREFIX/bin.new"
+root_owned "$PREFIX" "$PREFIX/bin.new"
 install -m 0755 "$WORK/x/outpost/outpost" "$PREFIX/bin.new/outpost"
 install -m 0755 "$WORK/x/kiwix/kiwix-serve" "$PREFIX/bin.new/kiwix-serve"
 install -m 0755 "$WORK/x/kiwix/kiwix-manage" "$PREFIX/bin.new/kiwix-manage"
@@ -444,11 +454,13 @@ rm -rf "$PREFIX/bin.old"
 mv "$PREFIX/bin.new" "$PREFIX/bin"
 rm -rf "$PREFIX/bin.old"
 
-# The command people type with sudo. It lives in a folder only root can
+# The command people run with sudo. It lives in a folder only root can
 # change. /usr/local/bin gets a link to it only when that folder is just as
-# safe: on many Macs it belongs to the user, and anything placed there could be
-# swapped for something else before the next "sudo outpost".
+# safe. On many Macs it belongs to the user, and a short name found there
+# could be swapped for something else before the next "sudo outpost"; those
+# machines are given the full path and nothing is added to their PATH.
 mkdir -p "$CLI_DIR"
+root_owned "$CLI_DIR"
 cat > "$CLI_DIR/outpost.new" <<'WRAP'
 #!/bin/sh
 # Runs the Outpost command with the node's settings.
@@ -457,20 +469,19 @@ set -a
 set +a
 exec /opt/outpost/bin/outpost "$@"
 WRAP
-chmod 755 "$CLI_DIR/outpost.new"
+root_owned "$CLI_DIR/outpost.new"
 mv -f "$CLI_DIR/outpost.new" "$CLI_DIR/outpost"
 CLI="$CLI_DIR/outpost"
 unlink_cli
 if root_only_dir /usr/local && root_only_dir /usr/local/bin; then
   ln -s "$CLI_DIR/outpost" /usr/local/bin/outpost
   CLI="outpost"
-elif [ "$OS" = "Darwin" ] && root_only_dir /etc/paths.d; then
-  # macOS adds the folders listed here to the PATH of every new Terminal window.
-  printf '%s\n' "$CLI_DIR" > /etc/paths.d/outpost.new
-  chmod 644 /etc/paths.d/outpost.new
-  mv -f /etc/paths.d/outpost.new /etc/paths.d/outpost
-  note "/usr/local/bin can be changed without a password on this Mac, so the command was not put there."
-  note "Use $CLI_DIR/outpost, or just 'outpost' in a new Terminal window."
+else
+  note "/usr/local/bin can be changed without a password on this machine, so no short command was put there."
+  note "Always use the full name: sudo $CLI_DIR/outpost"
+  if [ -e /usr/local/bin/outpost ] || [ -L /usr/local/bin/outpost ]; then
+    note "Careful: /usr/local/bin/outpost exists but is not Outpost's command. Do not run it with sudo."
+  fi
 fi
 
 if [ "$OS" = "Linux" ]; then
@@ -520,6 +531,8 @@ UMask=0022
 [Install]
 WantedBy=multi-user.target
 UNIT
+chown 0:0 /etc/systemd/system/outpost.service
+chmod 644 /etc/systemd/system/outpost.service
 else
 # macOS: a launchd job that starts at boot, before anyone signs in, and runs
 # as the service account. It reads the same settings file as on Linux.

@@ -87,17 +87,28 @@ else
 fi
 # The command people run with sudo must come from a folder only root can change.
 [ -x /opt/outpost/cli/outpost ] || fail "the outpost command is missing"
-CLI_OWNER="$(ls -ld /opt/outpost/cli | awk '{print $1, $3}')"
-case "$CLI_OWNER" in "drwxr-xr-x"*" root") ;; *) fail "the command folder is not root-only: $CLI_OWNER" ;; esac
+for d in /opt/outpost /opt/outpost/bin /opt/outpost/cli /etc/outpost; do
+  D_OWNER="$(ls -ld "$d" | awk '{print $1, $3}')"
+  case "$D_OWNER" in "drwxr-xr-x"*" root") ;; *) fail "$d is not root-only: $D_OWNER" ;; esac
+done
+for f in /opt/outpost/bin/outpost /opt/outpost/bin/kiwix-serve /opt/outpost/bin/pmtiles /opt/outpost/cli/outpost; do
+  F_OWNER="$(ls -l "$f" | awk '{print $1, $3}')"
+  case "$F_OWNER" in "-rwxr-xr-x"*" root") ;; *) fail "$f is not root-only: $F_OWNER" ;; esac
+done
+ok "program folders and files can only be changed by root"
 if [ -L /usr/local/bin/outpost ] || [ -e /usr/local/bin/outpost ]; then
   [ "$(readlink /usr/local/bin/outpost)" = "/opt/outpost/cli/outpost" ] || fail "/usr/local/bin/outpost is not a link to the installed command"
   BIN_OWNER="$(ls -ld /usr/local/bin | awk '{print $1, $3}')"
   case "$BIN_OWNER" in "drwxr-xr-x"*" root") ok "linked from /usr/local/bin, which only root can change" ;; *) fail "a link was placed in a folder others can change: $BIN_OWNER" ;; esac
-elif [ "$OS" = "Darwin" ]; then
-  [ "$(cat /etc/paths.d/outpost 2>/dev/null)" = "/opt/outpost/cli" ] || fail "neither a link nor a PATH entry was set up"
-  ok "/usr/local/bin is user-writable here, so the command is offered through /etc/paths.d instead"
 else
-  fail "the outpost command was not linked into /usr/local/bin"
+  # No short name: that is only right when /usr/local/bin is not root-only,
+  # and then the installer must have said to use the full path and must not
+  # have added anything to the PATH.
+  BIN_OWNER="$(ls -ld /usr/local/bin 2>/dev/null | awk '{print $1, $3}')"
+  case "$BIN_OWNER" in "drwxr-xr-x"*" root") fail "/usr/local/bin is root-only but the command was not linked there" ;; esac
+  grep -q "sudo /opt/outpost/cli/outpost" "$WORK/install.log" || fail "the installer did not give the full path of the command"
+  [ ! -e /etc/paths.d/outpost ] || fail "a PATH entry was added below a folder others can change"
+  ok "/usr/local/bin is user-writable here ($BIN_OWNER): no short command, full path given"
 fi
 ok "installed and running"
 
