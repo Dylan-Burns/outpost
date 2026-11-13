@@ -139,8 +139,8 @@ func (c *Catalog) validate() error {
 	if c.Schema != 1 {
 		return fmt.Errorf("catalog: unsupported schema %d", c.Schema)
 	}
-	if c.MapBuild != "" && !httpsURL(c.MapBuild) {
-		return errors.New("catalog: map build must be an https URL")
+	if c.MapBuild != "" && (!httpsURL(c.MapBuild) || !strings.HasSuffix(c.MapBuild, ".pmtiles")) {
+		return errors.New("catalog: map build must be an https .pmtiles URL")
 	}
 	c.byID = make(map[string]*Item, len(c.Items))
 	for i := range c.Items {

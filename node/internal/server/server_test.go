@@ -279,3 +279,26 @@ func TestEmptyListsAreArrays(t *testing.T) {
 		}
 	}
 }
+
+func TestPlantedCookieDoesNotLockOut(t *testing.T) {
+	e := newEnv(t)
+	e.claim()
+	var real string
+	u, _ := http.NewRequest("GET", e.srv.URL, nil)
+	for _, c := range e.client.Jar.Cookies(u.URL) {
+		if c.Name == cookieName {
+			real = c.Value
+		}
+	}
+	req, _ := http.NewRequest("GET", e.srv.URL+"/api/catalog", nil)
+	// A junk cookie of the same name arrives first, as a longer path would.
+	req.Header.Set("Cookie", cookieName+"=junkjunkjunkjunkjunkjunkjunk; "+cookieName+"="+real)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode != 200 {
+		t.Fatalf("planted cookie locked the admin out: %d", resp.StatusCode)
+	}
+}

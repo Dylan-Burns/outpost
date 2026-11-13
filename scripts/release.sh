@@ -36,6 +36,8 @@ ssh-keygen -Y verify -f "$BUILD/allowed" -I outpost-release -n outpost-release -
 cat > "$ROOT/site/public/releases/latest.json" <<JSON
 {"version":"$VERSION","date":"$(date -u +%Y-%m-%d)","files":["outpost-$VERSION-linux-amd64.tar.gz","outpost-$VERSION-linux-arm64.tar.gz"]}
 JSON
+rm -f "$ROOT/site/public/releases/latest.json.sig"
+ssh-keygen -Y sign -q -f "$KEY" -n outpost-release-index "$ROOT/site/public/releases/latest.json"
 cp "$ROOT/install/install.sh" "$ROOT/site/public/install.sh"
 echo "==> staged $OUT"
 cat "$OUT/SHA256SUMS"

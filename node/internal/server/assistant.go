@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/Dylan-Burns/outpost/node/internal/ai"
@@ -17,6 +18,30 @@ import (
 // genSlots bounds concurrent generations: small machines run one model at
 // a time, and queued visitors wait their turn.
 var genSlots = make(chan struct{}, 1)
+
+// Each client may have one question in flight, and only a few may wait.
+const maxWaiting = 6
+
+var (
+	chatMu      sync.Mutex
+	chatClients = map[string]bool{}
+)
+
+func admitChat(key string) bool {
+	chatMu.Lock()
+	defer chatMu.Unlock()
+	if chatClients[key] || len(chatClients) >= maxWaiting+cap(genSlots) {
+		return false
+	}
+	chatClients[key] = true
+	return true
+}
+
+func releaseChat(key string) {
+	chatMu.Lock()
+	defer chatMu.Unlock()
+	delete(chatClients, key)
+}
 
 type modelView struct {
 	ID    string `json:"id"`
@@ -83,6 +108,12 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	useLibrary := req.Library == nil || *req.Library
+	ck := clientKey(r)
+	if !admitChat(ck) {
+		writeErr(w, http.StatusTooManyRequests, "the assistant is busy; wait for the current answer and try again")
+		return
+	}
+	defer releaseChat(ck)
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
@@ -151,6 +182,17 @@ func (s *Server) gatherSources(ctx context.Context, q string) []ai.Source {
 	if err != nil || len(res) == 0 {
 		return nil
 	}
+	// Articles whose titles contain the question's words usually answer it.
+	titleScore := func(t string) int {
+		lt, n := strings.ToLower(t), 0
+		for _, w := range terms {
+			if strings.Contains(lt, w) {
+				n++
+			}
+		}
+		return n
+	}
+	sort.SliceStable(res, func(a, b int) bool { return titleScore(res[a].Title) > titleScore(res[b].Title) })
 	var out []ai.Source
 	seen := map[string]bool{}
 	for _, r := range res {

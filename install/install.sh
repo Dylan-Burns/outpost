@@ -15,6 +15,9 @@
 #   --uninstall          remove Outpost (keeps content unless --purge)
 #   --purge              with --uninstall, also delete the data directory
 #   -y, --yes            do not ask questions
+# Everything runs inside main(), called on the last line, so a download cut
+# off part way through runs nothing at all.
+main() {
 set -Eeuo pipefail
 
 SITE="${OUTPOST_SITE:-https://outpost-offline.vercel.app}"
@@ -65,7 +68,7 @@ ask() { # ask "question" default(y/n)
 valid_port() { [[ "$1" =~ ^[0-9]+$ ]] && [ "$1" -ge 1 ] && [ "$1" -le 65535 ]; }
 [ -z "$PORT" ] || valid_port "$PORT" || die "--port must be a number from 1 to 65535"
 [ -z "$LIB_PORT" ] || valid_port "$LIB_PORT" || die "--library-port must be a number from 1 to 65535"
-[ -z "$VERSION" ] || [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]] || die "--version looks wrong: $VERSION"
+[ -z "$VERSION" ] || [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "--version looks wrong: $VERSION"
 if [ -n "$DATA_DIR" ]; then
   case "$DATA_DIR" in /*) ;; *) die "--data-dir must be an absolute path" ;; esac
   case "$DATA_DIR" in *[!A-Za-z0-9/._-]*) die "--data-dir may only contain letters, digits, / . _ -" ;; esac
@@ -134,13 +137,27 @@ fi
 
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
+verify_sig() { # verify_sig NAMESPACE FILE SIGFILE
+  printf 'outpost-release %s\n' "$RELEASE_KEY" > "$WORK/allowed_signers"
+  ssh-keygen -Y verify -f "$WORK/allowed_signers" -I outpost-release -n "$1" -s "$3" < "$2" >/dev/null 2>&1
+}
 fetch() { curl -fsSL --proto '=https' --tlsv1.2 --retry 4 --retry-delay 2 --connect-timeout 20 -o "$2" "$1"; }
 
 # ---------------------------------------------------------------- release
 if [ -z "$VERSION" ]; then
   fetch "$SITE/releases/latest.json" "$WORK/latest.json" || die "cannot reach $SITE. Is this machine online?"
+  fetch "$SITE/releases/latest.json.sig" "$WORK/latest.json.sig" || die "cannot download the release list signature"
+  verify_sig outpost-release-index "$WORK/latest.json" "$WORK/latest.json.sig" \
+    || die "the release list signature does not verify. Do not continue; report it at $SITE."
   VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$WORK/latest.json" | head -1)"
-  [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]] || die "the release list looks wrong"
+  [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || die "the release list looks wrong"
+  if [ -x "$PREFIX/bin/outpost" ]; then
+    INSTALLED="$("$PREFIX/bin/outpost" version 2>/dev/null || true)"
+    if [[ "$INSTALLED" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && [ "$INSTALLED" != "$VERSION" ] \
+       && [ "$(printf '%s\n%s\n' "$INSTALLED" "$VERSION" | sort -V | tail -1)" = "$INSTALLED" ]; then
+      die "Outpost $INSTALLED is newer than the published $VERSION. To go back on purpose, pass --version $VERSION."
+    fi
+  fi
 fi
 REL="$SITE/releases/v$VERSION"
 TARBALL="outpost-$VERSION-linux-$ARCH.tar.gz"
@@ -148,8 +165,7 @@ say "Downloading Outpost $VERSION ($ARCH)"
 fetch "$REL/$TARBALL" "$WORK/$TARBALL" || die "cannot download $REL/$TARBALL"
 fetch "$REL/SHA256SUMS" "$WORK/SHA256SUMS"
 fetch "$REL/SHA256SUMS.sig" "$WORK/SHA256SUMS.sig"
-printf 'outpost-release %s\n' "$RELEASE_KEY" > "$WORK/allowed_signers"
-ssh-keygen -Y verify -f "$WORK/allowed_signers" -I outpost-release -n outpost-release -s "$WORK/SHA256SUMS.sig" < "$WORK/SHA256SUMS" >/dev/null 2>&1 \
+verify_sig outpost-release "$WORK/SHA256SUMS" "$WORK/SHA256SUMS.sig" \
   || die "the release signature does not verify. Do not use this download; report it at $SITE."
 note "release signature verified"
 ( cd "$WORK" && grep -E "  $TARBALL\$" SHA256SUMS | sha256sum -c --status - ) || die "the download does not match its signed checksum"
@@ -329,3 +345,6 @@ if [ -n "$CODE" ]; then
 fi
 printf '\n  Content is stored in %s\n' "$DATA_DIR"
 printf '  Logs: journalctl -u outpost -f    Update: re-run this installer\n\n'
+}
+
+main "$@"

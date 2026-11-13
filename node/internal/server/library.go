@@ -17,6 +17,8 @@ const signInPage = `<!doctype html><meta charset="utf-8"><meta name="viewport" c
 <title>Sign in</title><style>body{font:16px/1.5 system-ui,sans-serif;max-width:36rem;margin:15vh auto;padding:0 1rem;color:#222}</style>
 <h1>This library is private</h1><p>Sign in on the Outpost dashboard of this node, then come back.</p>`
 
+const libraryCSP = "default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+
 // LibraryHandler proxies kiwix-serve on the library port. It runs in a
 // separate browser origin from the dashboard, so scripts inside archives
 // cannot reach the admin interface's pages.
@@ -36,6 +38,10 @@ func (s *Server) LibraryHandler() http.Handler {
 			h.Set("X-Content-Type-Options", "nosniff")
 			h.Set("Referrer-Policy", "no-referrer")
 			h.Set("X-Frame-Options", "SAMEORIGIN")
+			// Archive pages may carry scripts; keep them from reaching other
+			// hosts (no tracking, no probing the LAN from visitors' browsers).
+			h.Set("Content-Security-Policy", libraryCSP)
+			h.Set("Cross-Origin-Resource-Policy", "same-origin")
 			h.Set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()")
 			h.Del("Server")
 			return nil

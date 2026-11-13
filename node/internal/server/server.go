@@ -285,17 +285,29 @@ func (s *Server) checkWith(th *auth.Throttle, r *http.Request, check func() bool
 }
 
 // session returns the valid session for the request, if any.
+// It looks at every cookie of that name: the library origin shares the
+// cookie jar (cookies ignore ports), so a script there could plant a junk
+// cookie with a longer path that the browser sends first.
 func (s *Server) session(r *http.Request) (key string, sess state.Session, ok bool) {
-	c, err := r.Cookie(cookieName)
-	if err != nil || len(c.Value) < 20 || len(c.Value) > 100 {
-		return "", sess, false
+	n := 0
+	for _, c := range r.Cookies() {
+		if c.Name != cookieName {
+			continue
+		}
+		if n++; n > 8 {
+			break
+		}
+		if len(c.Value) < 20 || len(c.Value) > 100 {
+			continue
+		}
+		k := auth.TokenKey(c.Value)
+		var found bool
+		s.Store.View(func(st *state.State) { sess, found = st.Sessions[k] })
+		if found && time.Now().Before(sess.Expires) {
+			return k, sess, true
+		}
 	}
-	key = auth.TokenKey(c.Value)
-	s.Store.View(func(st *state.State) { sess, ok = st.Sessions[key] })
-	if ok && time.Now().After(sess.Expires) {
-		ok = false
-	}
-	return key, sess, ok
+	return "", state.Session{}, false
 }
 
 func (s *Server) newSession(w http.ResponseWriter, r *http.Request) (string, error) {
@@ -424,8 +436,10 @@ func (s *Server) handleUI(w http.ResponseWriter, r *http.Request) {
 
 // Serve runs the dashboard and library servers until ctx ends.
 func (s *Server) Serve(ctx context.Context, dashAddr, libAddr string) error {
-	dash := &http.Server{Addr: dashAddr, Handler: s.Handler(), ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute, MaxHeaderBytes: 64 << 10}
-	lib := &http.Server{Addr: libAddr, Handler: s.LibraryHandler(), ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 2 * time.Minute, MaxHeaderBytes: 64 << 10}
+	// ReadTimeout bounds slow uploads; there is no write timeout because map
+	// files and assistant answers stream for a long time.
+	dash := &http.Server{Addr: dashAddr, Handler: s.Handler(), ReadHeaderTimeout: 10 * time.Second, ReadTimeout: 30 * time.Second, IdleTimeout: 2 * time.Minute, MaxHeaderBytes: 64 << 10}
+	lib := &http.Server{Addr: libAddr, Handler: s.LibraryHandler(), ReadHeaderTimeout: 10 * time.Second, ReadTimeout: 30 * time.Second, IdleTimeout: 2 * time.Minute, MaxHeaderBytes: 64 << 10}
 	errc := make(chan error, 2)
 	go func() { errc <- dash.ListenAndServe() }()
 	go func() { errc <- lib.ListenAndServe() }()

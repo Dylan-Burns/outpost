@@ -66,6 +66,10 @@ export default function Docs() {
         <dd>The admin password is stored as an argon2id hash. Sessions use random 256-bit cookies that scripts cannot read, stored only as hashes. Every change requires a per-session token and a same-origin request. Sign-in attempts are limited per client, with an overall budget against guessing from many addresses.</dd>
         <dt>Archives kept apart from the dashboard</dt>
         <dd>The library runs on its own port, which browsers treat as a separate origin, so scripts inside an archive cannot read the dashboard. The dashboard sends a strict content security policy and refuses to be framed.</dd>
+        <dt>Map data</dt>
+        <dd>Map regions are cut on demand from the Protomaps planet build named in the signed catalog, over HTTPS. Unlike archives, extracted regions have no published checksum, so their integrity rests on that HTTPS connection.</dd>
+        <dt>Other accounts on the same machine</dt>
+        <dd>kiwix-serve listens on a loopback port of the node itself. In private mode, people with their own login on that machine can still read the library through it; the setting protects the network, not other local users.</dd>
         <dt>A locked-down service</dt>
         <dd>Outpost runs as its own unprivileged account under systemd with a read-only system, no new privileges, no capabilities and write access only to its data folder.</dd>
       </dl>

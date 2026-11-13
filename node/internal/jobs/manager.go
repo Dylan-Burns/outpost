@@ -8,14 +8,12 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -729,13 +727,6 @@ func (m *Manager) installMap(ctx context.Context, job state.Job, it *catalog.Ite
 	m.phase(job.ID, "downloading")
 	prog := m.progress(job.ID)
 	err = maps.Extract(ctx, m.Paths.PMTiles, build, geometry, maxzoom, tmp, func(n int64) { prog(n, it.Size) })
-	if err != nil && ctx.Err() == nil {
-		// Planet builds are kept for a limited time; fall back to the newest.
-		if latest, lerr := m.latestMapBuild(ctx); lerr == nil && latest != build {
-			m.logf("map build %s failed (%v); trying %s", build, err, latest)
-			err = maps.Extract(ctx, m.Paths.PMTiles, latest, geometry, maxzoom, tmp, func(n int64) { prog(n, it.Size) })
-		}
-	}
 	if err != nil {
 		os.Remove(tmp)
 		return err
@@ -749,27 +740,6 @@ func (m *Manager) installMap(ctx context.Context, job state.Job, it *catalog.Ite
 	}
 	fsutil.SyncDir(m.Paths.Maps)
 	return m.record(it, file, st.Size())
-}
-
-// MapBuildsURL lists the Protomaps planet builds.
-var MapBuildsURL = "https://build-metadata.protomaps.dev/builds.json"
-
-func (m *Manager) latestMapBuild(ctx context.Context) (string, error) {
-	data, err := m.DL.FetchSmall(ctx, MapBuildsURL, 4<<20)
-	if err != nil {
-		return "", err
-	}
-	var builds []struct {
-		Key string `json:"key"`
-	}
-	if err := json.Unmarshal(data, &builds); err != nil || len(builds) == 0 {
-		return "", errors.New("no map builds listed")
-	}
-	key := builds[len(builds)-1].Key
-	if !fsutil.SafeName(key) || !strings.HasSuffix(key, ".pmtiles") {
-		return "", errors.New("unexpected map build name")
-	}
-	return "https://build.protomaps.com/" + key, nil
 }
 
 func (m *Manager) installModel(ctx context.Context, job state.Job, it *catalog.Item) error {
