@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Archivo, Martian_Mono } from "next/font/google";
 import NavLinks from "./components/NavLinks";
-import { loadCatalog, loadRelease } from "@/lib/catalog";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -28,25 +27,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#000000", colorScheme: "dark" };
 
-function Marking({ release, catalog }: { release: string; catalog: string }) {
-  // The strip that runs along the top and bottom of every page of a file.
-  return (
-    <div className="marking" aria-hidden="true">
-      <span>Release {release}</span>
-      <span>Unclassified // Cleared for public release</span>
-      <span>Catalog {catalog}</span>
-    </div>
-  );
-}
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const release = loadRelease().version;
-  const catalog = loadCatalog().generated.slice(0, 10);
   return (
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
         <a className="skip" href="#main">Skip to content</a>
-        <Marking release={release} catalog={catalog} />
         <header className="site-header">
           <div className="wrap">
             <Link href="/" className="wordmark" aria-label="Outpost home">
@@ -81,7 +66,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p className="foot-mark" aria-hidden="true">Outpost</p>
           </div>
         </footer>
-        <Marking release={release} catalog={catalog} />
       </body>
     </html>
   );

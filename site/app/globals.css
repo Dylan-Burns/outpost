@@ -65,9 +65,8 @@ code { font-family: var(--mono); font-size: 0.8em; }
 .skip { position: absolute; left: -9999px; }
 .skip:focus { left: 1rem; top: 1rem; background: var(--fg); color: var(--bg); padding: 0.6rem 1rem; z-index: 99; }
 
-/* The machine voice: sizes, ports, commands, markings. */
+/* The machine voice: sizes, ports, commands. */
 .label,
-.marking,
 .spec,
 .titleblock dt,
 .titleblock small,
@@ -103,8 +102,6 @@ section > .wrap { padding-block: var(--sec); }
 .wrap.flush { padding-bottom: 0; }
 .lede { font-size: clamp(1.05rem, 1.55vw, 1.25rem); line-height: 1.5; color: var(--text); max-width: 37rem; }
 
-.marking { background: var(--fg); color: var(--bg); display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; padding: 0.42rem calc(var(--gutter) + var(--pad)); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.16em; white-space: nowrap; }
-.marking span:last-child { text-align: right; }
 
 .site-header { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
 .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: var(--bar); }
@@ -126,7 +123,7 @@ section > .wrap { padding-block: var(--sec); }
 
 /* Hero: a stage holding the top half of a globe as wide as the screen, with
    the words laid over it, and the title block under it. */
-.hero { display: flex; flex-direction: column; min-height: clamp(34rem, calc(100svh - 5.6rem), calc(50vw + 9.5rem)); border-top: 0; }
+.hero { display: flex; flex-direction: column; min-height: clamp(34rem, calc(100svh - var(--bar)), calc(50vw + 9.5rem)); border-top: 0; }
 .hero > .wrap { padding-block: 0; }
 .hero-stage { flex: 1; display: flex; flex-direction: column; position: relative; isolation: isolate; overflow: hidden; }
 .hero-stage > .wrap { flex: 1; position: relative; display: flex; flex-direction: column; pointer-events: none; }
@@ -546,10 +543,6 @@ table.hw { width: calc(100% + 2 * var(--pad)); margin: 0 calc(-1 * var(--pad)); 
   .screen .phone { display: block; aspect-ratio: 780 / 1040; object-fit: cover; object-position: 50% 0; }
   .screen-pair { grid-template-columns: minmax(0, 1fr); }
   .wrap { border-inline: 0; }
-  .marking { grid-template-columns: 1fr; padding-inline: 0.5rem; font-size: 0.5rem; letter-spacing: 0.12em; }
-  .marking span { text-align: center; }
-  .marking span:first-child,
-  .marking span:last-child { display: none; }
   .cat-items th:nth-child(3),
   .cat-items td:nth-child(3) { display: none; }
   .cat-items td, .cat-items th { padding-right: 0.6rem; }
