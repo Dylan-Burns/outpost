@@ -50,6 +50,23 @@ There is no Windows installer. Any device with a browser can use a running node.
   verifies the signature with `ssh-keygen -Y verify` and pins kiwix-tools and pmtiles by checksum for each
   system and processor. Before deploying the site, push the staged release and run the `install-e2e`
   workflow (`gh workflow run install-e2e.yml`): it installs from the checkout on real Linux and Mac machines.
+  The commit that stages a release is tagged `vX.Y.Z`, which is what `scripts/verify-release.sh` builds.
+
+## Check it yourself
+
+The source here is what the website hands out, and you do not have to take that on trust. Releases are
+reproducible: the same commit gives the same program, byte for byte.
+
+```
+git clone https://github.com/Dylan-Burns/outpost && cd outpost
+scripts/verify-release.sh 1.3.1
+```
+
+That builds tag `v1.3.1`, downloads the release projectoutpost.org serves, checks its signature against the key
+in `install/install.sh` (fingerprint `SHA256:FPLD+xaDRLa1ieZmEeYFzxkjCl2T2YliTvXER6TK84I`), compares all four
+programs, and compares the installer the website serves with `install/install.sh`. The `verify-release`
+workflow runs the same check here every week. To read the installer before running it:
+`curl -fsSL https://projectoutpost.org/install.sh | less`. Reporting a vulnerability: see `SECURITY.md`.
 
 ## Development
 
@@ -66,6 +83,10 @@ Refreshing the catalog: `python3 catalog/build.py --pmtiles /path/to/pmtiles` (a
 region sizes), then rebuild the node and deploy the site. The release key lives outside the repository at
 `~/.config/outpost-release/release_ed25519`; its public half is in `node/internal/release/release.go` and
 `install/install.sh`.
+
+## Licence
+
+Outpost is licensed under the Apache License 2.0 (`LICENSE`); third-party parts are listed in `NOTICE`.
 
 ## Content licences
 

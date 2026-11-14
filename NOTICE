@@ -1,0 +1,22 @@
+Outpost
+Copyright 2026 Dylan Burns
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Built into the Outpost program:
+  golang.org/x/crypto, golang.org/x/sys   BSD-3-Clause   The Go Authors
+  github.com/ledongthuc/pdf               BSD-3-Clause   The Go Authors, Le Dong Thuc
+  preact                                  MIT            Jason Miller
+  maplibre-gl                             BSD-3-Clause   MapLibre contributors
+  pmtiles, @protomaps/basemaps            BSD-3-Clause   Protomaps LLC
+
+Hosted by the website and downloaded by a node:
+  Map fonts (Noto Sans)                   SIL OFL 1.1
+  Map sprites (Protomaps)                 CC0
+
+Downloaded from their publishers onto the owner's machine, not part of this
+repository: kiwix-tools (GPL-3.0), pmtiles (BSD-3-Clause), Ollama (MIT), and
+the archives and maps in the catalog, each under its publisher's licence.
+
+The name Outpost, the mark and the release signing key are not licensed for
+use by modified versions: a fork must use its own name and its own key.
