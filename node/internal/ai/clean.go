@@ -66,6 +66,12 @@ func words(s string) (ws []string, at []span) {
 // word and in order, in the instructions. Runs that contain the wording a
 // decline is meant to use are kept.
 func CleanAnswer(answer, instructions string) string {
+	// A model that cannot stop thinking (Qwen3 4B Thinking 2507 ignores
+	// think=false) writes its reasoning first; only what follows it is the
+	// answer.
+	if i := strings.LastIndex(answer, "</think>"); i >= 0 {
+		answer = strings.TrimSpace(answer[i+len("</think>"):])
+	}
 	iw, _ := words(instructions)
 	aw, at := words(answer)
 	// longest[i] is the length of the longest run starting at answer word i

@@ -35,3 +35,10 @@ func TestCleanAnswer(t *testing.T) {
 		t.Errorf("v2 echo:\n%s", got)
 	}
 }
+
+func TestCleanAnswerDropsReasoning(t *testing.T) {
+	got := CleanAnswer("<think>\nOkay, the user asks about bleeding. S1 says press.\n</think>\n\nPress hard on the wound [S1].", "instructions")
+	if got != "Press hard on the wound [S1]." {
+		t.Errorf("got %q", got)
+	}
+}
