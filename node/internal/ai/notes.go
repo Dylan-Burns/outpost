@@ -31,7 +31,8 @@ Baby under 1 year: lay the baby face down along your forearm, head lower than th
 If the person becomes unresponsive and stops breathing normally, call emergency services and start CPR.`},
 	{"Cardiopulmonary resuscitation", "CPR", "NHS, Red Cross and American Heart Association guidance", `CPR is only for someone who is unresponsive and not breathing normally.
 Call emergency services, or have someone else call, and send someone for a defibrillator (AED) if there is one.
-Adult: kneel beside them, put the heel of one hand in the centre of the chest with the other hand on top, and push down hard and fast, about 5 to 6 cm (2 inches) deep, 100 to 120 times a minute, letting the chest come back up each time.
+Adult: kneel beside them, put the heel of one hand in the centre of the chest with the other hand on top, and push down hard and fast, about 5 to 6 cm (2 to 2.4 inches) deep, 100 to 120 times a minute, letting the chest come back up each time.
+Child: use one hand; baby: use two fingers. Press down about a third of the depth of the chest.
 If you are trained, give 2 rescue breaths after every 30 compressions. If not, keep doing chest compressions only.
 Use the defibrillator as soon as it arrives and follow its spoken instructions.
 Keep going until help takes over, the person starts breathing normally, or you are too exhausted to continue.`},
@@ -135,7 +136,7 @@ Cool any burns with running water. Anyone who has had an electric shock should b
 	{"Nosebleed", "Nosebleed", "NHS guidance", `Sit down and lean forward, not back, so blood does not run down the throat.
 Pinch the soft part of the nose, just above the nostrils, firmly for 10 to 15 minutes without letting go, and breathe through the mouth.
 Do not tilt the head back and do not lie down.
-Get medical help if the bleeding lasts more than 20 minutes, is very heavy, followed a blow to the head, or the person takes blood-thinning medicine, or if it is a young child who has frequent nosebleeds.`},
+Get medical help if the bleeding has not stopped after 10 to 15 minutes of pinching, is very heavy, makes the person weak or dizzy, followed a blow to the head, or the person takes blood-thinning medicine, or if it is a young child who has frequent nosebleeds.`},
 	{"Tick", "Removing a tick", "CDC guidance", `Use fine-tipped tweezers. Grasp the tick as close to the skin as you can and pull upward with steady, even pressure. Do not twist or jerk it.
 If mouth parts stay in the skin, remove them with the tweezers if you can easily; otherwise leave them and let the skin heal.
 Clean the bite and your hands with soap and water or rubbing alcohol.
@@ -143,7 +144,7 @@ Do not use nail polish, petroleum jelly, a match or other heat to make the tick 
 See a doctor if a rash, fever, aches or tiredness follow in the weeks after the bite.`},
 	{"Fainting", "Fainting", "NHS guidance", `Lay the person down and raise their legs, for example on a chair or bag, to help blood reach the brain. Loosen tight clothing and give them fresh air.
 Most people come round within a minute. Check that they are breathing.
-If they do not come round within a minute or two, call emergency services and put them in the recovery position. If they are not breathing normally, start CPR.
+If they do not come round within a minute, call emergency services and put them in the recovery position. If they are not breathing normally, start CPR.
 Do not give them anything to eat or drink until they are fully awake and alert.
 Get medical advice if they fainted for no clear reason, were injured, have chest pain or a pounding heartbeat, or are pregnant.`},
 	{"Gas leak", "Smell of gas", "gas utility and fire service guidance", `A smell like rotten eggs may be a gas leak.
