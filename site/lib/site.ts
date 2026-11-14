@@ -7,6 +7,9 @@
 export const DOMAIN = "projectoutpost.org";
 export const SITE = `https://www.${DOMAIN}`;
 
+/** Where the source lives, for anyone who wants to read it or build it themselves. */
+export const REPO = "https://github.com/Dylan-Burns/outpost";
+
 /** The one line that installs Outpost. */
 export const INSTALL = `curl -fsSL https://${DOMAIN}/install.sh | sudo bash`;
 

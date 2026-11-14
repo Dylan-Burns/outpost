@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { releaseKeyFingerprint } from "@/lib/catalog";
+import { REPO } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Help and answers",
@@ -153,6 +154,12 @@ export default function Docs() {
 
             <h2 id="security">Security</h2>
             <dl>
+              <dt>Source you can read</dt>
+              <dd>
+                Everything Outpost runs on your computer is published: the installer, the program, the dashboard and the script that builds
+                each release. Read it, or build it yourself, at <a href={REPO} rel="noopener">github.com/Dylan-Burns/outpost</a>. Releases
+                are built so that the same source gives the same file, byte for byte, so anyone can check that a download matches the code.
+              </dd>
               <dt>Signed releases and catalog</dt>
               <dd>
                 Release checksums and the catalog are signed with an Ed25519 key in OpenSSH&apos;s signature format. The installer verifies

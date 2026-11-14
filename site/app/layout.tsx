@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Archivo, Martian_Mono } from "next/font/google";
 import NavLinks from "./components/NavLinks";
-import { SITE } from "@/lib/site";
+import { REPO, SITE } from "@/lib/site";
 import "./globals.css";
 
 // One family in two widths: wide for display, normal for reading.
@@ -61,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Link href="/install">Install guide</Link>
                 <Link href="/docs">Help and answers</Link>
                 <Link href="/docs#security">Security</Link>
+                <a href={REPO} rel="noopener">Source code</a>
               </nav>
             </div>
             <p className="foot-mark" aria-hidden="true">Outpost</p>
