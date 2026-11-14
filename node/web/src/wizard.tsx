@@ -115,6 +115,16 @@ export function Login({ onDone, title }: { onDone: () => void; title?: string })
   );
 }
 
+// suggestedModel is the model setup ticks for you: the best in Outpost's
+// assistant tests that runs well in this computer's memory, or else the
+// smallest one.
+function suggestedModel<T extends { kind: string; ramGB?: number; rank?: number; size: number }>(items: T[], memBytes: number): T | undefined {
+  const models = items.filter((i) => i.kind === "model");
+  const memGB = memBytes / 1e9;
+  const fits = models.filter((m) => m.rank && (!memGB || memGB >= (m.ramGB || 0) * 1.25)).sort((a, b) => (a.rank || 0) - (b.rank || 0));
+  return fits[0] || [...models].sort((a, b) => a.size - b.size)[0];
+}
+
 const STEPS = ["What it does", "Wikipedia", "Subjects", "Maps", "AI models", "Review"];
 
 export function Wizard({ status, refresh, onDone }: { status: Status; refresh: () => void; onDone: () => void }) {
@@ -129,13 +139,13 @@ export function Wizard({ status, refresh, onDone }: { status: Status; refresh: (
 
   // The assistant's program can arrive while this page is open: the first
   // step shows the line that installs it. When it does, switch the assistant
-  // on and pick the smallest model, as if it had been there from the start.
+  // on and pick a model, as if it had been there from the start.
   useEffect(() => {
     if (!status.aiAvailable || hadAI.current) return;
     hadAI.current = true;
     setApps((a) => ({ ...a, assistant: true }));
-    const small = data?.catalog.items.find((i) => i.kind === "model");
-    if (small) setSel((s) => (s && s.models.length === 0 ? { ...s, models: [small.id] } : s));
+    const pick = data && suggestedModel(data.catalog.items, data.system.memBytes);
+    if (pick) setSel((s) => (s && s.models.length === 0 ? { ...s, models: [pick.id] } : s));
   }, [status.aiAvailable, data]);
 
   useEffect(() => {
@@ -143,8 +153,8 @@ export function Wizard({ status, refresh, onDone }: { status: Status; refresh: (
       setData(d);
       const s = defaultSelection(d.catalog);
       if (status.aiAvailable) {
-        const small = d.catalog.items.find((i) => i.kind === "model");
-        if (small) s.models = [small.id];
+        const pick = suggestedModel(d.catalog.items, d.system.memBytes);
+        if (pick) s.models = [pick.id];
       }
       setSel(s);
     }, (e) => setErr(e.message));

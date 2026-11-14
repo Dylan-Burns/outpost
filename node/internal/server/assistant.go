@@ -49,6 +49,7 @@ type modelView struct {
 	Model string `json:"model"`
 	Title string `json:"title"`
 	Size  int64  `json:"size"`
+	Rank  int    `json:"rank,omitempty"`
 }
 
 func (s *Server) installedModels() []modelView {
@@ -60,12 +61,25 @@ func (s *Server) installedModels() []modelView {
 				continue
 			}
 			if it := c.Item(id); it != nil {
-				out = append(out, modelView{ID: id, Model: it.Model, Title: it.Title, Size: it.Size})
+				out = append(out, modelView{ID: id, Model: it.Model, Title: it.Title, Size: it.Size, Rank: it.Rank})
 			}
 		}
 	})
 	sort.Slice(out, func(a, b int) bool { return out[a].Size < out[b].Size })
 	return out
+}
+
+// bestModel is the installed model that answers by default: the best in
+// Outpost's assistant tests (lowest rank), or the smallest if none is ranked.
+// The smallest model still names the topics, as it is the quickest.
+func bestModel(models []modelView) modelView {
+	best := models[0]
+	for _, m := range models {
+		if m.Rank > 0 && (best.Rank == 0 || m.Rank < best.Rank) {
+			best = m
+		}
+	}
+	return best
 }
 
 func (s *Server) handleAssistantInfo(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +92,21 @@ func (s *Server) handleAssistantInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	models := s.installedModels()
 	if available && len(models) > 0 {
-		s.warmModel(models[0].Model)
+		s.warmModel(models[0].Model) // names the topics
+		if b := bestModel(models); b.Model != models[0].Model {
+			s.warmModel(b.Model) // answers
+		}
+	}
+	// The page lists the default model first.
+	if len(models) > 1 {
+		b := bestModel(models)
+		ordered := []modelView{b}
+		for _, m := range models {
+			if m.ID != b.ID {
+				ordered = append(ordered, m)
+			}
+		}
+		models = ordered
 	}
 	writeJSON(w, http.StatusOK, map[string]any{"available": available, "models": nonNil(models)})
 }
@@ -131,7 +159,7 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusServiceUnavailable, "no AI model is installed yet")
 		return
 	}
-	model := models[0]
+	model := bestModel(models)
 	for _, m := range models {
 		if m.ID == req.Model {
 			model = m

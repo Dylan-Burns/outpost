@@ -53,6 +53,7 @@ type Item struct {
 	BBox        []float64 `json:"bbox,omitempty"`  // map-region: west,south,east,north
 	Model       string    `json:"model,omitempty"` // model: Ollama name, e.g. "qwen3:1.7b"
 	RAMGB       int       `json:"ramGB,omitempty"` // model: memory it needs to run comfortably
+	Rank        int       `json:"rank,omitempty"`  // model: 1 is best in Outpost's assistant tests; 0 is untested
 	MaxZoom     int       `json:"maxzoom,omitempty"`
 }
 

@@ -323,19 +323,29 @@
       "model": "qwen3:1.7b",
       "title": "Qwen3 1.7B",
       "ramGB": 4,
-      "description": "Small and quick. Runs on almost any machine."
+      "description": "The smallest and quickest. Good for short look-ups; the larger models below gave more careful answers to emergency questions in Outpost's tests.",
+      "rank": 4
     },
     {
       "model": "llama3.2:3b",
       "title": "Llama 3.2 3B",
       "ramGB": 6,
-      "description": "A capable small model from Meta."
+      "description": "Gave the most accurate answers to emergency questions in Outpost's tests. Recommended for most computers.",
+      "rank": 1
+    },
+    {
+      "model": "phi4-mini:3.8b",
+      "title": "Phi-4 mini",
+      "ramGB": 6,
+      "rank": 2,
+      "description": "Microsoft's small model: the most careful in Outpost's tests, with no harmful answers to the emergency questions."
     },
     {
       "model": "gemma3:4b",
       "title": "Gemma 3 4B",
       "ramGB": 8,
-      "description": "Google's compact model; good at summaries."
+      "description": "Google's compact model: short answers that keep closely to the sources.",
+      "rank": 3
     },
     {
       "model": "qwen3:8b",

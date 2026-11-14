@@ -33,6 +33,7 @@ export type Item = {
   bbox?: number[];
   model?: string;
   ramGB?: number;
+  rank?: number; // models: 1 is best in Outpost's assistant tests
 };
 
 export type Category = {

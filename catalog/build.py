@@ -365,6 +365,8 @@ def main():
     for m in src["models"]:
         all_items.append({"id": "model-" + slug(m["model"]), "kind": "model", "title": m["title"], "description": m["description"],
                           "size": model_size(m["model"]), "model": m["model"], "ramGB": m["ramGB"], "license": "See the model's licence"})
+        if m.get("rank"):
+            all_items[-1]["rank"] = m["rank"]
 
     print("Map assets…", file=sys.stderr)
     all_items.append(map_assets(src))
