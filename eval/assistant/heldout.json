@@ -105,7 +105,8 @@
     "hospital|medical|antivenom|emergency|evacuat"
    ],
    "never": "suck|cut (the|into)|incision|apply ice|tourniquet",
-   "kind": "answer"
+   "kind": "answer",
+   "unless": "jewel|ring|watch|tight cloth|constrict|swell"
   },
   {
    "id": "h-unconscious-breathing",
