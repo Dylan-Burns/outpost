@@ -140,8 +140,10 @@ func main() {
 	notes := flag.Bool("notes", false, "add Outpost's first-aid notes as sources")
 	topicsStyle := flag.String("topics-prompt", ai.TopicsStyle, "topic naming prompt (v1, v2)")
 	dump := flag.Bool("dump", false, "save the messages sent to the model with each result")
+	qFirst := flag.Bool("qfirst", false, "put the question before the sources as well as after")
 	flag.Parse()
 	ai.TopicsStyle = *topicsStyle
+	ai.QuestionFirst = *qFirst
 	ai.UseNotes = *notes
 	ai.MaxSources, ai.PassageBudget = *maxSrc, *budget
 	if *temp >= 0 {

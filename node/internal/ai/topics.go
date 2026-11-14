@@ -60,7 +60,7 @@ var emergencies = []struct {
 	topics []string
 	none   []*regexp.Regexp // the rule does not apply if any of these match
 }{
-	{rx(`swallow|ingest|\bate\b|drank|drunk|chew|overdos|took too many`, `pill|tablet|medic|bleach|chemical|cleaner|detergent|poison|berr|mushroom|batter|antifreeze|fuel|petrol|gasoline|paracetamol|tylenol|aspirin|iron`), []string{"Poisoning", "Drug overdose"}, nil},
+	{rx(`swallow|ingest|\bate\b|drank|drunk|chew|overdos|took too many|took (a |the )?(whole |entire |full )?(bottle|pack|packet|box)`, `pill|tablet|medic|bleach|chemical|cleaner|detergent|soap|laundry|pod|lye|drain|poison|berr|mushroom|batter|antifreeze|fuel|petrol|gasoline|paracetamol|tylenol|aspirin|iron|sleeping`), []string{"Poisoning", "Drug overdose"}, nil},
 	{rx(`generator|engine|stove|heater|grill|barbecue|charcoal|furnace|boiler|fire`, `headache|dizz|nause|vomit|drowsy|sleepy|confus|faint|collaps`), []string{"Carbon monoxide poisoning"}, nil},
 	{rx(`carbon monoxide`), []string{"Carbon monoxide poisoning"}, nil},
 	{rx(`diabet|insulin|sugar`, `shak|sweat|confus|dizz|faint|pale|drowsy|unconscious|not making sense|weird`), []string{"Hypoglycemia"}, nil},
@@ -75,10 +75,12 @@ var emergencies = []struct {
 	{rx(`bleed|blood (is )?(spurt|pour|everywhere)|deep cut|gash|laceration`), []string{"Bleeding", "Hemorrhage", "Tourniquet"}, nil},
 	{rx(`broke|broken|fractur|snapped|crack`, `bone|arm|leg|ankle|wrist|hip|rib|collarbone|finger|toe|foot|hand|elbow|knee|shoulder|jaw|nose|skull`), []string{"Bone fracture", "Splint (medicine)"}, rx(`broke(n)? (the |my |his |her |their )?skin|skin (was |is )?broken`)},
 	{rx(`bent (the )?wrong way|wrong angle|out of place|deformed|crooked|sticking out`, `arm|leg|ankle|wrist|finger|toe|elbow|knee|shoulder|hip|bone`), []string{"Bone fracture", "Joint dislocation"}, nil},
-	{rx(`burn|scald`), []string{"Burn", "Thermal burn"}, nil},
+	{rx(`burn|scald`), []string{"Burn", "Thermal burn"}, rx(`wood|\blogs?\b|fuel|candle|calorie|\bfat\b|\bcds?\b|dvd|burns best|burn (the |our |my )?(trash|garbage|rubbish|waste|leaves)|heartburn|burn ?out|burning (smell|sensation when)`)},
+	{rx(`spill|spilt|splash|poured|knocked over|touched|grabbed|picked up`, `boiling|hot (water|coffee|tea|oil|soup|grease|pan|pot|stove|iron|metal)|stove|kettle|oven`), []string{"Burn", "Thermal burn"}, nil},
 	{rx(`heat ?stroke|sunstroke|overheat|too hot|heat exhaustion`), []string{"Heat stroke", "Heat exhaustion"}, nil},
-	{rx(`hypotherm|freezing|so cold|shivering uncontrollab|fell in(to)? (cold|icy) water`), []string{"Hypothermia"}, nil},
+	{rx(`hypotherm|freezing|so cold|shivering uncontrollab|fell in(to)? (cold|icy) water`), []string{"Hypothermia"}, rx(`pipe|freezer|\bcar\b|engine|food|water line|plant|garden|tank|battery`)},
 	{rx(`frostbit|frost nip|frozen (finger|toe|nose|ear)`), []string{"Frostbite"}, nil},
+	{rx(`numb|white|waxy|pale|hard|blister|grey|gray`, `toe|finger|feet|foot|ear|nose|hand|cheek`, `snow|cold|freez|\bice\b|frost|winter|below zero`), []string{"Frostbite"}, nil},
 	{rx(`hit (his|her|their|my) head|head injur|knocked out|concuss|fell on (his|her|their|my) head`), []string{"Head injury", "Concussion"}, nil},
 	{rx(`not breathing|no pulse|cpr|unresponsive|cardiac arrest|heart stopped`), []string{"Cardiopulmonary resuscitation", "Cardiac arrest"}, nil},
 	{rx(`asthma|wheez|inhaler`), []string{"Asthma"}, nil},
@@ -89,7 +91,7 @@ var emergencies = []struct {
 	{rx(`\bbats?\b`, `bedroom|room|house|sleep|slept|woke|bit|bite|scratch|touch|attic`), []string{"Rabies"}, nil},
 	{rx(`rabies|rabid`), []string{"Rabies"}, nil},
 	{rx(`generator|grill|charcoal|camp ?stove|propane|kerosene|paraffin heater|gas heater|bbq|barbecue`, `inside|indoors|in the (house|home|garage|basement|tent|cabin|kitchen)|garage|basement|tent|window|enclosed`), []string{"Carbon monoxide poisoning"}, nil},
-	{rx(`fire|smoke|flames|burning`, `house|home|building|apartment|flat|hallway|room|kitchen|stairs|trapped|escape|stove|pan|oil|grease|fat`), []string{"Smoke inhalation"}, rx(`start (a |the )?fire|fire ?wood|campfire|tinder|kindling|wood ?stove`)},
+	{rx(`fire|smoke|flames|burning`, `house|home|building|apartment|flat|hallway|room|kitchen|stairs|trapped|escape|stove|pan|oil|grease|fat`), []string{"Smoke inhalation"}, rx(`start (a |the )?fire|fire ?wood|campfire|tinder|kindling|wood ?stove|wildfire|bush ?fire|forest fire|brush fire`)},
 	{rx(`lightning|thunder`), []string{"Lightning", "Lightning burn"}, nil},
 	{rx(`live wire|electrocut|electric(al)? shock|shocked by|power line|downed line`), []string{"Electrical injury"}, nil},
 	{rx(`nose ?bleed|bleeding (from (the |his |her |their |my )?)?nose|nose (is |won.t stop )?bleeding|epistaxis`), []string{"Nosebleed"}, nil},
@@ -109,6 +111,22 @@ var emergencies = []struct {
 	{rx(`rain ?water|rain barrel|cistern`), []string{"Rainwater harvesting"}, nil},
 	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},
 	{rx(`honey`, `baby|infant|month|newborn`), []string{"Botulism"}, nil},
+	// Added after the training questions: these found a phone named Tornado,
+	// an article on menstrual cups for a bear at the campsite, and a
+	// Volkswagen repair guide for a smell of gas.
+	{rx(`faint|passed out|blacked out|syncope`), []string{"Fainting"}, nil},
+	{rx(`\beyes?\b`, `chip|dust|sand|something|scratch|object|splinter|grit|metal|sawdust|stuck|poked|lash`), []string{"Eye injury", "Corneal abrasion"}, nil},
+	{rx(`\beyes?\b`, `spray|chemical|bleach|cleaner|acid|lye|pepper|mace|splash`), []string{"Chemical eye injury"}, nil},
+	{rx(`pulse|heart ?rate|heartbeat`, `check|take|find|feel|count|measure`), []string{"Pulse"}, nil},
+	{rx(`trapped|pinned|crushed|stuck under`, `tree|beam|rubble|\bcar\b|rock|log|wall|debris|weight|under`), []string{"Crush injury", "Crush syndrome"}, nil},
+	{rx(`smell (of )?gas|gas (leak|smell)|leaking gas|smells? (like )?rotten eggs?|propane leak|natural gas`), []string{"Gas leak"}, nil},
+	{rx(`earthquake|tremor|quake`), []string{"Earthquake"}, nil},
+	{rx(`tornado|twister|funnel cloud`), []string{"Tornado"}, nil},
+	{rx(`flood|flash flood|water (is )?rising`), []string{"Flood"}, rx(`flood ?light`)},
+	{rx(`hurricane|cyclone|typhoon`), []string{"Tropical Cyclone"}, nil},
+	{rx(`wildfire|bush ?fire|forest fire|brush fire|grass fire`), []string{"Wildfire"}, nil},
+	{rx(`\bbears?\b`, `camp|tent|near|attack|charg|\bsee\b|\bsaw\b|spotted|trail|hik|food|cub|woods|yard`), []string{"Bear"}, nil},
+	{rx(`baby is coming|giving birth|in labou?r|contractions|waters? (has |have )?broke|deliver (a|the|my|her) baby`), []string{"Childbirth"}, nil},
 }
 
 func rx(res ...string) []*regexp.Regexp {

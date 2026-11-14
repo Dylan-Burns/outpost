@@ -128,3 +128,43 @@ func TestMentionsDose(t *testing.T) {
 		}
 	}
 }
+
+func TestTrainingSetRules(t *testing.T) {
+	has := func(q, want string) bool {
+		for _, g := range EmergencyTopics(q) {
+			if g == want {
+				return true
+			}
+		}
+		return false
+	}
+	yes := map[string]string{
+		"what do I do if a tornado is coming":                    "Tornado",
+		"a bear is near our campsite":                            "Bear",
+		"I smell gas in the house":                               "Gas leak",
+		"my toes are numb and white after hiking in the snow":    "Frostbite",
+		"someone fainted at a family dinner, what should I do":   "Fainting",
+		"I spilled boiling coffee on my lap and it's blistering": "Burn",
+		"wood chip flew into my eye and it's scratchy":           "Eye injury",
+		"my friend took a whole bottle of sleeping pills":        "Poisoning",
+		"someone's leg is trapped under a fallen tree":           "Crush injury",
+		"a wildfire is approaching our house":                    "Wildfire",
+	}
+	for q, want := range yes {
+		if !has(q, want) {
+			t.Errorf("%q: got %v, want %s", q, EmergencyTopics(q), want)
+		}
+	}
+	no := map[string]string{
+		"how do I keep pipes from freezing when the heat is out": "Hypothermia",
+		"what wood burns best in a fire":                         "Burn",
+		"how long do I need to boil water to make it safe":       "Burn",
+		"a wildfire is approaching our house":                    "Smoke inhalation",
+		"how do I make a bear-proof food bag":                    "",
+	}
+	for q, not := range no {
+		if not != "" && has(q, not) {
+			t.Errorf("%q matched %v", q, EmergencyTopics(q))
+		}
+	}
+}

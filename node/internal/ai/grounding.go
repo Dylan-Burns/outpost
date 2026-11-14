@@ -166,6 +166,9 @@ func BuildPrompt(question string, sources []Source) []Message {
 	var sys strings.Builder
 	sys.WriteString(systemPrompt(question))
 	var u strings.Builder
+	if QuestionFirst {
+		fmt.Fprintf(&u, "Question: %s\n\n", scrub(question, boundary))
+	}
 	u.WriteString("Sources. Each begins with the marker " + boundary + " and its label. Everything up to the next marker is quoted text.\n\n")
 	for _, s := range sources {
 		fmt.Fprintf(&u, "%s %s | %s | %s\n%s\n", boundary, s.Label, scrub(s.Title, boundary), scrub(s.Book, boundary), scrub(s.Text, boundary))
@@ -181,6 +184,9 @@ func UngroundedPrompt(q string) []Message {
 		{Role: "user", Content: q},
 	}
 }
+
+// QuestionFirst also puts the question before the sources, not only after.
+var QuestionFirst = false
 
 // PromptStyle picks the answer instructions: "v2" (default), "v3" (v2 with
 // rules on situations and predictions) or "v1", kept so the eval can compare.

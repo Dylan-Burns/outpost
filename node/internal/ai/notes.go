@@ -141,6 +141,42 @@ If mouth parts stay in the skin, remove them with the tweezers if you can easily
 Clean the bite and your hands with soap and water or rubbing alcohol.
 Do not use nail polish, petroleum jelly, a match or other heat to make the tick detach; remove it as quickly as possible.
 See a doctor if a rash, fever, aches or tiredness follow in the weeks after the bite.`},
+	{"Fainting", "Fainting", "NHS guidance", `Lay the person down and raise their legs, for example on a chair or bag, to help blood reach the brain. Loosen tight clothing and give them fresh air.
+Most people come round within a minute. Check that they are breathing.
+If they do not come round within a minute or two, call emergency services and put them in the recovery position. If they are not breathing normally, start CPR.
+Do not give them anything to eat or drink until they are fully awake and alert.
+Get medical advice if they fainted for no clear reason, were injured, have chest pain or a pounding heartbeat, or are pregnant.`},
+	{"Gas leak", "Smell of gas", "gas utility and fire service guidance", `A smell like rotten eggs may be a gas leak.
+Do not switch lights or appliances on or off, do not use a phone or anything else that could make a spark inside, and do not light a flame or smoke.
+Open doors and windows on your way out if you can do it quickly. Get everyone out of the building and keep people away.
+From a safe distance outside, call the gas company or emergency services.
+Turn the gas off at the meter or the propane tank only if you know how and can do it safely. Do not go back inside until you are told it is safe.`},
+	{"Earthquake", "Earthquake", "Red Cross, FEMA and USGS guidance", `During the shaking: drop to your hands and knees, cover your head and neck under a sturdy table or desk (or against an inside wall), and hold on until the shaking stops. This is "Drop, Cover and Hold On".
+Stay inside until the shaking stops. Do not run outside, and do not stand in a doorway. Keep away from windows, glass and things that could fall.
+If you are outside, move away from buildings, trees, streetlights and power lines. If you are driving, stop away from bridges and overpasses and stay in the car.
+Afterwards, expect aftershocks. Check for injuries, gas leaks and damage, and leave a damaged building.
+Near the coast, if the shaking was strong or long, move to high ground straight away: a tsunami may follow.`},
+	{"Tornado", "Tornado", "US National Weather Service guidance", `Go to a basement or storm shelter. If there is none, go to a small room without windows on the lowest floor, such as a bathroom, closet or inside hallway.
+Get under something sturdy and cover your head and neck with your arms. Blankets, a mattress or a helmet give extra protection.
+Mobile homes and vehicles are not safe in a tornado: go to a sturdy building or shelter before it arrives.
+If you are caught outside with no shelter, lie flat in a ditch or low spot and cover your head. Do not shelter under a bridge or overpass.
+Stay in shelter until the storm has passed.`},
+	{"Flood", "Flood", "US National Weather Service and Red Cross guidance", `Move to higher ground straight away if you are told to, or if water is rising.
+Do not walk, swim or drive through floodwater: 15 cm (6 inches) of moving water can knock you down, and 30 cm (1 foot) can carry a car away. Turn around, don't drown.
+If your car is caught in rising water, get out and move to higher ground if you can do so safely.
+Stay away from power lines and electrical equipment in or near water.
+Floodwater can carry sewage and chemicals: do not drink it, and wash with clean water after touching it.
+Do not go back home until the authorities say it is safe.`},
+	{"Wildfire", "Wildfire", "CAL FIRE and Red Cross guidance", `Leave as soon as you are told to evacuate, or earlier if you feel unsafe: wildfires move fast.
+Take your emergency kit, wear long sleeves, long trousers and sturdy shoes, and cover your nose and mouth. Close windows and doors behind you and follow the evacuation route you are given.
+If you are trapped in a car: park away from trees and brush, close the windows and vents, lie on the floor and cover yourself with a wool blanket or coat.
+If you are trapped at home: stay inside, away from outside walls and windows, with the doors closed. A house gives more protection than the open.
+Smoke can harm people far from the fire: stay indoors with windows closed when the air is smoky.`},
+	{"Bear", "Bear encounter", "US National Park Service guidance", `Stay calm and do not run: running can make a bear chase you.
+Talk calmly so it knows you are human, stand your ground, make yourself look large, and pick up small children. Back away slowly, sideways if you can, and leave the bear a way out.
+Have bear spray ready and know how to use it.
+If a brown or grizzly bear attacks, lie flat on your stomach with your hands behind your neck and play dead. If a black bear attacks, or any bear attacks you in your tent, fight back hard, aiming at its face.
+At camp, store food and anything scented in a bear-proof container, a locked car or hung out of reach, and cook and eat away from where you sleep.`},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.
