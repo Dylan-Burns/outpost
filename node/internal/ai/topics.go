@@ -129,6 +129,16 @@ var emergencies = []struct {
 	{rx(`wildfire|bush ?fire|forest fire|brush fire|grass fire`), []string{"Wildfire"}, nil},
 	{rx(`\bbears?\b`, `camp|tent|near|attack|charg|\bsee\b|\bsaw\b|spotted|trail|hik|food|cub|woods|yard`), []string{"Bear"}, nil},
 	{rx(`baby is coming|giving birth|in labou?r|contractions|waters? (has |have )?broke|deliver (a|the|my|her) baby`), []string{"Childbirth"}, nil},
+	// Added after the final set: these found war psychiatry for a fall from a
+	// roof, recipes for a child's Tylenol, and pyromania for lighting a fire.
+	{rx(`can.?t (feel|move) (his |her |their |my )?(legs|arms|feet|hands|body)|neck (injury|pain|hurt)|back (injury|broken)|broke (his |her |their |my )?(neck|back)|spinal|spine|paraly`), []string{"Spinal injury", "Spinal Cord Injury"}, nil},
+	{rx(`epi ?pen|auto-?injector|adrenaline (pen|shot|injection)|epinephrine`), []string{"Epinephrine autoinjector", "Anaphylaxis"}, nil},
+	{rx(`stuck|embedded|impaled|lodged|sticking (out|in)|went through`, `\b(arm|leg|hand|foot|chest|belly|stomach|eye|head|neck|thigh|back|wound|skin)\b`, `glass|knife|nail|stick|branch|metal|rod|arrow|shard|blade|object|pole|fence`), []string{"Bleeding", "Penetrating trauma", "Impalement"}, nil},
+	{rx(`paracetamol|tylenol|acetaminophen|calpol|panadol`, `child|kid|son|daughter|toddler|baby|infant|year.?old|month.?old`), []string{"Paracetamol for children"}, nil},
+	{rx(`ibuprofen|advil|motrin|nurofen`, `child|kid|son|daughter|toddler|baby|infant|year.?old|month.?old`), []string{"Ibuprofen for children"}, nil},
+	{rx(`paracetamol|tylenol|acetaminophen|panadol`), []string{"Paracetamol for adults"}, rx(`child|kid|son|daughter|toddler|baby|infant|year.?old|month.?old`)},
+	{rx(`ibuprofen|advil|motrin|nurofen`), []string{"Ibuprofen for adults"}, rx(`child|kid|son|daughter|toddler|baby|infant|year.?old|month.?old`)},
+	{rx(`generator`, `outlet|wall|socket|plug|wiring|backfeed|back-feed|panel|transfer switch|whole house|power the house|refuel|fuel|petrol|gas(oline)?|rain|wet`), []string{"Generator"}, nil},
 }
 
 func rx(res ...string) []*regexp.Regexp {

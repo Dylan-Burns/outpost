@@ -56,8 +56,12 @@ func TestNotes(t *testing.T) {
 	UseNotes = true
 	defer func() { UseNotes = false }()
 	n := Notes("An adult is choking and can't breathe or talk. What do I do?")
-	if len(n) != 1 || !strings.Contains(n[0].Title, "Choking") || !strings.Contains(n[0].Text, "abdominal thrusts") {
+	if len(n) != 1 || !strings.Contains(n[0].Title, "Choking") || !strings.Contains(n[0].Text, "abdominal thrusts") || strings.Contains(n[0].Text, "forearm") {
 		t.Fatalf("choking: %+v", n)
+	}
+	n = Notes("my 6 month old baby is choking and can't cry")
+	if len(n) != 1 || !strings.Contains(n[0].Text, "chest thrusts") || strings.Contains(n[0].Text, "pull sharply inwards and upwards") {
+		t.Fatalf("baby choking: %+v", n)
 	}
 	if n := Notes("Is it safe to can green beans in a water bath?"); len(n) == 0 || !strings.Contains(n[0].Text, "pressure canner") {
 		t.Fatalf("canning: %+v", n)
@@ -166,5 +170,31 @@ func TestTrainingSetRules(t *testing.T) {
 		if not != "" && has(q, not) {
 			t.Errorf("%q matched %v", q, EmergencyTopics(q))
 		}
+	}
+}
+
+func TestFinalSetGaps(t *testing.T) {
+	has := func(q, want string) bool {
+		for _, g := range EmergencyTopics(q) {
+			if g == want {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"someone fell off the roof and can't feel their legs":           "Spinal injury",
+		"how do I use an epipen":                                        "Anaphylaxis",
+		"there's a big piece of glass stuck in his arm":                 "Bleeding",
+		"how many tylenol can I give my 3 year old":                     "Paracetamol for children",
+		"how much ibuprofen can an adult take":                          "Ibuprofen for adults",
+		"can I plug my generator into a wall outlet to power the house": "Generator",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: got %v, want %s", q, EmergencyTopics(q), want)
+		}
+	}
+	if has("how many tylenol can I give my 3 year old", "Paracetamol for adults") {
+		t.Error("child question got the adult page")
 	}
 }
