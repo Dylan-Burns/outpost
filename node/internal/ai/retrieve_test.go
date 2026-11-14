@@ -21,6 +21,7 @@ func (f fakeLib) ArticleText(_ context.Context, p string, _ int) (string, error)
 }
 
 func TestRetrievePrefersNamedTopicOverWordMatch(t *testing.T) {
+	libraryOnly(t)
 	lib := fakeLib{
 		// The words of "I broke my left ankle today" match phone repair guides.
 		search: map[string][]Hit{
@@ -47,6 +48,7 @@ func TestRetrievePrefersNamedTopicOverWordMatch(t *testing.T) {
 }
 
 func TestRetrieveDropsDuplicatePassages(t *testing.T) {
+	libraryOnly(t)
 	page := "Where there is no doctor. Poisoning: if a child swallows medicine, get help at once and keep the container."
 	lib := fakeLib{
 		search: map[string][]Hit{
@@ -105,4 +107,12 @@ func TestOverlapMatchesWordStarts(t *testing.T) {
 	if overlap("A man swallows pills", []string{"man", "swallowed", "pills"}) != 3 {
 		t.Fatal("whole words missed")
 	}
+}
+
+// libraryOnly turns Outpost's notes off for a test about the library's own
+// passages, and back to what they were afterwards.
+func libraryOnly(t *testing.T) {
+	was := UseNotes
+	UseNotes = false
+	t.Cleanup(func() { UseNotes = was })
 }

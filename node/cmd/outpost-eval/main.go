@@ -137,7 +137,7 @@ func main() {
 	temp := flag.Float64("temp", -1, "sampling temperature (default: the server's)")
 	predict := flag.Int("predict", 0, "most tokens per answer (default: the server's)")
 	ctxLen := flag.Int("ctx", 0, "context window in tokens (default: the server's)")
-	notes := flag.Bool("notes", false, "add Outpost's first-aid notes as sources")
+	notes := flag.Bool("notes", ai.UseNotes, "add Outpost's first-aid notes as sources")
 	topicsStyle := flag.String("topics-prompt", ai.TopicsStyle, "topic naming prompt (v1, v2)")
 	dump := flag.Bool("dump", false, "save the messages sent to the model with each result")
 	qFirst := flag.Bool("qfirst", false, "put the question before the sources as well as after")

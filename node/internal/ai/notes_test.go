@@ -49,12 +49,12 @@ func TestMoreEmergencyTopics(t *testing.T) {
 }
 
 func TestNotes(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
 	UseNotes = false
 	if n := Notes("An adult is choking and can't breathe"); len(n) != 0 {
 		t.Fatalf("notes while off: %v", n)
 	}
 	UseNotes = true
-	defer func() { UseNotes = false }()
 	n := Notes("An adult is choking and can't breathe or talk. What do I do?")
 	if len(n) != 1 || !strings.Contains(n[0].Title, "Choking") || !strings.Contains(n[0].Text, "abdominal thrusts") || strings.Contains(n[0].Text, "forearm") {
 		t.Fatalf("choking: %+v", n)
@@ -81,8 +81,8 @@ func TestNotes(t *testing.T) {
 }
 
 func TestRetrievePutsNotesFirst(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
 	UseNotes = true
-	defer func() { UseNotes = false }()
 	lib := fakeLib{
 		suggest: map[string][]Hit{"Choking": {{Title: "Choking", Path: "/content/med/Choking"}}},
 		text:    map[string]string{"/content/med/Choking": "Choking is when breathing is blocked.\nTreatment: back blows and abdominal thrusts."},
@@ -94,6 +94,7 @@ func TestRetrievePutsNotesFirst(t *testing.T) {
 }
 
 func TestRetrieveTrustsRuleTopics(t *testing.T) {
+	libraryOnly(t)
 	// "touched a live wire" shares no word with "Electrical injury".
 	lib := fakeLib{
 		suggest: map[string][]Hit{"Electrical injury": {{Title: "Electrical injury", Path: "/content/med/Electrical_injury"}}},
@@ -106,6 +107,7 @@ func TestRetrieveTrustsRuleTopics(t *testing.T) {
 }
 
 func TestRetrieveTakesTwoPagesPerPDF(t *testing.T) {
+	libraryOnly(t)
 	var hits []Hit
 	text := map[string]string{}
 	for i := 1; i <= 5; i++ {
