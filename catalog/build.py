@@ -302,6 +302,32 @@ def rehost(out_dir, key):
     publish(cat, out_dir, key)
 
 
+def models_only(out_dir, key):
+    """Update only the AI models (titles, descriptions, ranks, sizes and new
+    models) from source.json, leave every other item exactly as published,
+    and sign again with a higher sequence number."""
+    src = json.loads((ROOT / "catalog" / "source.json").read_text())
+    cat = json.loads((out_dir / "catalog.json").read_text())
+    rest = [i for i in cat["items"] if i.get("kind") != "model"]
+    old = {i["id"]: i for i in cat["items"] if i.get("kind") == "model"}
+    models = []
+    for m in src["models"]:
+        mid = "model-" + slug(m["model"])
+        item = {"id": mid, "kind": "model", "title": m["title"], "description": m["description"],
+                "size": old[mid]["size"] if mid in old else model_size(m["model"]), "model": m["model"],
+                "ramGB": m["ramGB"], "license": "See the model's licence"}
+        if m.get("rank"):
+            item["rank"] = m["rank"]
+        models.append(item)
+    # Models go where they were, so the catalog's order is otherwise unchanged.
+    first = next((k for k, i in enumerate(cat["items"]) if i.get("kind") == "model"), len(rest))
+    cat["items"] = rest[:first] + models + rest[first:]
+    cat["sequence"] = max(int(time.time()), cat["sequence"] + 1)
+    cat["generated"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    print(f"models: {len(old)} before, {len(models)} now: {', '.join(i['model'] for i in models)}", file=sys.stderr)
+    publish(cat, out_dir, key)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pmtiles")
@@ -309,10 +335,14 @@ def main():
     ap.add_argument("--jobs", type=int, default=6)
     ap.add_argument("--skip-maps", action="store_true", help="reuse region sizes from the previous catalog")
     ap.add_argument("--rehost", action="store_true", help="only move the site's own files to SITE_URL and sign again")
+    ap.add_argument("--models", action="store_true", help="only update the AI models from source.json and sign again")
     args = ap.parse_args()
     out_dir = ROOT / "site" / "public" / "catalog" / "v1"
     if args.rehost:
         rehost(out_dir, args.key)
+        return
+    if args.models:
+        models_only(out_dir, args.key)
         return
     if not args.pmtiles:
         ap.error("--pmtiles is required")

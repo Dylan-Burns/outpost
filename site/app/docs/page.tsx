@@ -99,8 +99,10 @@ export default function Docs() {
               </dd>
               <dt>Is the AI reliable?</dt>
               <dd>
-                No AI model is. Outpost&apos;s assistant searches your library first and shows what it used. Read the sources, especially for
-                medicine, and be wary of any answer that comes without them.
+                No AI model is. Outpost&apos;s assistant searches your library first and shows what it used. For common emergencies it also
+                reads Outpost&apos;s own first-aid notes, short summaries of NHS, Red Cross and CDC guidance that open beside the answer, and it
+                warns you when an answer gives a dose. In our tests on emergency questions, Llama 3.2 3B and Phi-4 mini answered more accurately
+                than the smallest model. Read the sources, especially for medicine, and be wary of any answer that comes without them.
               </dd>
               <dt>Can I add my own files?</dt>
               <dd>Not yet. Outpost installs content only from its signed catalog, so that every file can be checked.</dd>

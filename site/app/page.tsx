@@ -229,7 +229,8 @@ export default function Home() {
                 <h3>An AI assistant that shows its sources</h3>
                 <p>
                   Ask a question in plain words. It reads your library first and answers with links to the articles it used, so you can check
-                  them yourself. On medical and electrical questions it sends you to the text rather than guessing at doses or steps.
+                  them yourself. For common emergencies it also reads short first-aid notes from NHS, Red Cross and CDC guidance, and it
+                  warns you whenever an answer gives a dose.
                 </p>
               </div>
               <div className="feature">
