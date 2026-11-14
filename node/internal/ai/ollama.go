@@ -160,9 +160,19 @@ type Message struct {
 	Content string `json:"content"`
 }
 
-// Chat streams a reply, calling onToken for each piece of text.
+// AnswerOptions are the sampling settings for answers. num_predict caps the
+// length: on a computer without a graphics card a small model writes about
+// ten words a second, and an answer that runs on is one nobody waits for.
+var AnswerOptions = map[string]any{"temperature": 0.2, "num_ctx": 8192}
+
+// Chat streams a reply, calling onToken for each piece of text. Generation
+// stops if the model starts copying a source marker back out.
 func (c *Client) Chat(ctx context.Context, model string, msgs []Message, onToken func(string) error) error {
-	return c.chat(ctx, model, msgs, map[string]any{"temperature": 0.2, "num_ctx": 8192}, onToken)
+	opts := map[string]any{"stop": []string{srcMarker}}
+	for k, v := range AnswerOptions {
+		opts[k] = v
+	}
+	return c.chat(ctx, model, msgs, opts, onToken)
 }
 
 func (c *Client) chat(ctx context.Context, model string, msgs []Message, opts map[string]any, onToken func(string) error) error {

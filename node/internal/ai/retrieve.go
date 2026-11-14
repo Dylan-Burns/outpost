@@ -27,11 +27,19 @@ type Library interface {
 // emergency in their own words; the library files it under its proper name.
 type Topics func(ctx context.Context, question string) []string
 
+// MaxSources and PassageBudget bound what the model reads: at most this many
+// passages of at most this many bytes each.
+var (
+	MaxSources    = 4
+	PassageBudget = 1800
+)
+
 type candidate struct {
 	hit     Hit
 	score   float64
 	passage string
 	byWords bool // the full-text search on the question's own words found it
+	byRule  bool // an article titled after a known emergency the question describes
 }
 
 // Retrieve searches the library for the question and returns up to four
@@ -40,6 +48,7 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 	terms := Terms(q)
 	// Known emergencies first: they are certain; the model's guesses are not.
 	named := EmergencyTopics(q)
+	ruled := len(named)
 	if topics != nil {
 		tctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 		for _, t := range topics(tctx, q) {
@@ -76,7 +85,7 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 		byPath[h.Path] = &candidate{hit: h, score: s}
 	}
 	// 1. Articles named after the topic.
-	suggest := func(t string, exact, prefix float64) {
+	suggest := func(t string, exact, prefix float64, rule bool) {
 		hits, _ := lib.Suggest(sctx, t, 3)
 		lt := strings.ToLower(t)
 		for _, h := range hits {
@@ -84,6 +93,9 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 			switch {
 			case ht == lt:
 				add(h, exact)
+				if rule {
+					byPath[h.Path].byRule = true
+				}
 			case strings.HasPrefix(ht, lt):
 				add(h, prefix)
 			default:
@@ -91,10 +103,10 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 			}
 		}
 	}
-	for _, t := range named {
-		suggest(t, 6, 2)
+	for i, t := range named {
+		suggest(t, 6, 2, i < ruled)
 		if c := coreTopic(t); c != "" && c != t {
-			suggest(c, 4, 1)
+			suggest(c, 4, 1, false)
 		}
 	}
 	// 2. Full-text search, on the named topics and on the question's words.
@@ -134,6 +146,9 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 	// Read the best few and keep the passages that actually cover the words.
 	var read []*candidate
 	seenTitle := map[string]bool{}
+	// At most two pages of one PDF: four pages of "Camping Recipes" once
+	// filled every place for a question about a thunderstorm on a campsite.
+	perDoc := map[string]int{}
 	for _, c := range cands {
 		if len(read) >= 7 {
 			break
@@ -142,11 +157,15 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 		if seenTitle[key] {
 			continue
 		}
+		doc := c.hit.Book + "\x00" + pdfDoc(c.hit.Title)
+		if perDoc[doc] >= 2 {
+			continue
+		}
 		text, err := lib.ArticleText(sctx, c.hit.Path, 60000)
 		if err != nil || len(text) < 80 {
 			text = c.hit.Snippet
 		}
-		p := bestPassages(text, all, q, 1800)
+		p := bestPassages(text, all, q, PassageBudget)
 		if len(p) < 60 {
 			p = c.hit.Snippet
 		}
@@ -154,16 +173,20 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 			continue
 		}
 		cover := float64(overlap(p, all)) / float64(len(all))
-		// A passage must share a word with the question itself, not only
-		// with the model's guess at the topic, which can be wrong.
 		// A passage must share words with the question itself, not only with
 		// the model's guess at the topic, which can be wrong ("Back" for a
 		// question about an unconscious man's position). One word will do for
 		// what the question's own words found, or when the title has it; a
 		// topic's other finds need two.
+		// An article whose title is exactly a known emergency the question
+		// describes needs none: "touched a live wire" shares no word with
+		// "Electrical injury".
 		need := 1
 		if !c.byWords && overlap(c.hit.Title, terms) == 0 {
 			need = min(2, len(terms))
+		}
+		if c.byRule {
+			need = 0
 		}
 		if cover == 0 || len(terms) > 0 && overlap(c.hit.Title+" "+p, terms) < need {
 			continue
@@ -176,21 +199,28 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 		}
 		seenTitle[key] = true
 		seenTitle[textKey] = true
+		perDoc[doc]++
 		c.passage = p
 		c.score += 3 * cover
 		read = append(read, c)
 	}
 	sort.SliceStable(read, func(a, b int) bool { return read[a].score > read[b].score })
-	var out []Source
+	// Outpost's own notes come first, then the library's passages.
+	out := Notes(q)
+	for i := range out {
+		out[i].Label = fmt.Sprintf("S%d", i+1)
+	}
+	fromLib := 0
 	for _, c := range read {
-		if len(out) == 4 {
+		if fromLib == MaxSources {
 			break
 		}
 		// A source far weaker than the best one is noise that a small model
 		// will try to use anyway.
-		if len(out) > 0 && c.score < read[0].score*0.35 {
+		if fromLib > 0 && c.score < read[0].score*0.35 {
 			break
 		}
+		fromLib++
 		out = append(out, Source{Label: fmt.Sprintf("S%d", len(out)+1), Title: c.hit.Title, Book: c.hit.Book, Path: c.hit.Path, Text: c.passage})
 	}
 	return out
@@ -235,6 +265,15 @@ func contains(xs []string, x string) bool {
 		}
 	}
 	return false
+}
+
+// pdfDoc returns the document name of a PDF page's title ("Camping
+// Recipes, page 18" is "Camping Recipes"), or the title itself.
+func pdfDoc(title string) string {
+	if i := strings.LastIndex(title, ", page "); i > 0 {
+		return title[:i]
+	}
+	return title
 }
 
 // passageKey identifies a passage by its opening words.

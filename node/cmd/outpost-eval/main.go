@@ -126,11 +126,28 @@ func main() {
 	out := flag.String("out", "", "write one JSON result per line here")
 	noTopics := flag.Bool("no-topics", false, "skip asking the model for article titles")
 	topicModel := flag.String("topic-model", "", "model that names the articles (default: -model)")
-	prompt := flag.String("prompt", ai.PromptStyle, "answer prompt style (v1, v2)")
+	prompt := flag.String("prompt", ai.PromptStyle, "answer prompt style (v1, v2, v3, v4)")
 	pdfCache := flag.String("pdf-cache", "", "index the PDFs inside archives, caching their text in this folder")
 	rescore := flag.String("rescore", "", "score the answers saved in this results file again, with the current test set")
 	retrieveOnly := flag.Bool("retrieve-only", false, "score retrieval only, skip the model")
+	maxSrc := flag.Int("sources", ai.MaxSources, "most passages given to the model")
+	budget := flag.Int("budget", ai.PassageBudget, "most bytes per passage")
+	temp := flag.Float64("temp", -1, "sampling temperature (default: the server's)")
+	predict := flag.Int("predict", 0, "most tokens per answer (default: the server's)")
+	ctxLen := flag.Int("ctx", 0, "context window in tokens (default: the server's)")
+	notes := flag.Bool("notes", false, "add Outpost's first-aid notes as sources")
 	flag.Parse()
+	ai.UseNotes = *notes
+	ai.MaxSources, ai.PassageBudget = *maxSrc, *budget
+	if *temp >= 0 {
+		ai.AnswerOptions["temperature"] = *temp
+	}
+	if *predict > 0 {
+		ai.AnswerOptions["num_predict"] = *predict
+	}
+	if *ctxLen > 0 {
+		ai.AnswerOptions["num_ctx"] = *ctxLen
+	}
 	ai.PromptStyle = *prompt
 
 	var set struct{ Cases []testCase }
@@ -192,7 +209,7 @@ func main() {
 		if len(want) > 0 && !want[tc.ID] {
 			continue
 		}
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute) // the server allows 5
 		t0 := time.Now()
 		var topics ai.Topics
 		if !*noTopics {

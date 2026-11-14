@@ -70,6 +70,28 @@ var emergencies = []struct {
 	{rx(`asthma|wheez|inhaler`), []string{"Asthma"}, nil},
 	{rx(`power (is )?(out|cut|off)|outage|blackout|no electricity`, `food|fridge|freezer|refrigerat|meat|milk`), []string{"Food safety", "Food spoilage"}, nil},
 	{rx(`tick`, `remove|bite|bitten|attached|stuck|embedded`), []string{"Tick", "Lyme disease"}, nil},
+	// Added after the second test set (dev2): the small model named these
+	// "bat in bedroom", "thunderstorm injury" and "Generator Safety: ...".
+	{rx(`\bbats?\b`, `bedroom|room|house|sleep|slept|woke|bit|bite|scratch|touch|attic`), []string{"Rabies"}, nil},
+	{rx(`rabies|rabid`), []string{"Rabies"}, nil},
+	{rx(`generator|grill|charcoal|camp ?stove|propane|kerosene|paraffin heater|gas heater|bbq|barbecue`, `inside|indoors|in the (house|home|garage|basement|tent|cabin|kitchen)|garage|basement|tent|window|enclosed`), []string{"Carbon monoxide poisoning"}, nil},
+	{rx(`fire|smoke|flames|burning`, `house|home|building|apartment|flat|hallway|room|kitchen|stairs|trapped|escape|stove|pan|oil|grease|fat`), []string{"Smoke inhalation"}, rx(`start (a |the )?fire|fire ?wood|campfire|tinder|kindling|wood ?stove`)},
+	{rx(`lightning|thunder`), []string{"Lightning", "Lightning burn"}, nil},
+	{rx(`live wire|electrocut|electric(al)? shock|shocked by|power line|downed line`), []string{"Electrical injury"}, nil},
+	{rx(`nose ?bleed|bleeding (from (the |his |her |their |my )?)?nose|nose (is |won.t stop )?bleeding|epistaxis`), []string{"Nosebleed"}, nil},
+	{rx(`tooth|teeth`, `knock|out|fell out|lost|broke`), []string{"Tooth avulsion"}, nil},
+	{rx(`altitude|high camp|mountain sickness|above \d+ ?(m|ft|feet|metres|meters)`), []string{"Altitude sickness"}, nil},
+	{rx(`panic attack|hyperventilat`), []string{"Panic attack"}, nil},
+	{rx(`sting|stung|stinger`), []string{"Bee sting"}, nil},
+	{rx(`splinter`), []string{"Splinter"}, nil},
+	{rx(`bug|insect|bead|object|something|pea|bean|stone|battery`, `(in|into|up) (my |his |her |their |the )?(ear|nose)|(ear|nose) (is )?(stuck|blocked)`), []string{"Foreign body"}, nil},
+	{rx(`sunburn|sun burn`), []string{"Sunburn"}, nil},
+	{rx(`hives|welts|urticaria`), []string{"Hives"}, nil},
+	{rx(`dehydrat`), []string{"Dehydration"}, nil},
+	{rx(`mushroom|toadstool|fungus|fungi`), []string{"Mushroom poisoning"}, nil},
+	{rx(`rain ?water|rain barrel|cistern`), []string{"Rainwater harvesting"}, nil},
+	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},
+	{rx(`honey`, `baby|infant|month|newborn`), []string{"Botulism"}, nil},
 }
 
 func rx(res ...string) []*regexp.Regexp {
