@@ -30,7 +30,9 @@ func (c *Client) TopicsWith(model string) Topics {
 			prompt = topicsPrompt2
 		}
 		err := c.chat(ctx, model, []Message{{Role: "system", Content: prompt}, {Role: "user", Content: scrub(q, "")}},
-			map[string]any{"temperature": 0, "num_ctx": 2048, "num_predict": 48},
+			// The same context size as answers: Ollama reloads a model
+			// whenever it changes, 2 to 5 seconds each time on a CPU.
+			map[string]any{"temperature": 0, "num_ctx": AnswerOptions["num_ctx"], "num_predict": 48},
 			func(s string) error { b.WriteString(s); return nil })
 		if err != nil {
 			return nil

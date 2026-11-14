@@ -76,7 +76,36 @@ func (s *Server) handleAssistantInfo(w http.ResponseWriter, r *http.Request) {
 		cancel()
 		available = err == nil
 	}
-	writeJSON(w, http.StatusOK, map[string]any{"available": available, "models": nonNil(s.installedModels())})
+	models := s.installedModels()
+	if available && len(models) > 0 {
+		s.warmModel(models[0].Model)
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"available": available, "models": nonNil(models)})
+}
+
+var (
+	warmMu   sync.Mutex
+	warmLast = map[string]time.Time{}
+)
+
+// warmModel starts loading the model that names topics and answers by
+// default when someone opens the assistant, so that it is ready by the time
+// they have typed a question. At most once every five minutes per model.
+func (s *Server) warmModel(model string) {
+	warmMu.Lock()
+	if time.Since(warmLast[model]) < 5*time.Minute {
+		warmMu.Unlock()
+		return
+	}
+	warmLast[model] = time.Now()
+	warmMu.Unlock()
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		defer cancel()
+		if err := s.AI.Warm(ctx, model); err != nil {
+			s.logf("assistant: warming %s: %v", model, err)
+		}
+	}()
 }
 
 func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {

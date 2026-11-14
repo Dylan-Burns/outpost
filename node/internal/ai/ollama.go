@@ -154,6 +154,27 @@ func (c *Client) Delete(ctx context.Context, name string) error {
 	return nil
 }
 
+// KeepAlive is how long Ollama keeps a model in memory after a request.
+// Its default is five minutes; loading a model again takes from a few
+// seconds to half a minute on a computer without a graphics card, which a
+// person in an emergency should not have to wait for twice.
+var KeepAlive = "30m"
+
+// Warm loads a model into memory without generating anything, so the first
+// question does not wait for it.
+func (c *Client) Warm(ctx context.Context, model string) error {
+	resp, err := c.do(ctx, http.MethodPost, "/api/generate", map[string]any{"model": model, "keep_alive": KeepAlive, "options": map[string]any{"num_ctx": AnswerOptions["num_ctx"]}})
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<16))
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("ollama warm: %s", resp.Status)
+	}
+	return nil
+}
+
 // Message is a chat message.
 type Message struct {
 	Role    string `json:"role"`
@@ -163,7 +184,7 @@ type Message struct {
 // AnswerOptions are the sampling settings for answers. num_predict caps the
 // length: on a computer without a graphics card a small model writes about
 // ten words a second, and an answer that runs on is one nobody waits for.
-var AnswerOptions = map[string]any{"temperature": 0.2, "num_ctx": 8192}
+var AnswerOptions = map[string]any{"temperature": 0.2, "num_ctx": 8192, "num_predict": 450}
 
 // Chat streams a reply, calling onToken for each piece of text. Generation
 // stops if the model starts copying a source marker back out.
@@ -177,7 +198,7 @@ func (c *Client) Chat(ctx context.Context, model string, msgs []Message, onToken
 
 func (c *Client) chat(ctx context.Context, model string, msgs []Message, opts map[string]any, onToken func(string) error) error {
 	resp, err := c.do(ctx, http.MethodPost, "/api/chat", map[string]any{
-		"model": model, "messages": msgs, "stream": true, "think": false,
+		"model": model, "messages": msgs, "stream": true, "think": false, "keep_alive": KeepAlive,
 		"options": opts,
 	})
 	if err != nil {
@@ -198,7 +219,7 @@ func (c *Client) chat(ctx context.Context, model string, msgs []Message, opts ma
 
 func (c *Client) chatNoThink(ctx context.Context, model string, msgs []Message, opts map[string]any, onToken func(string) error) error {
 	resp, err := c.do(ctx, http.MethodPost, "/api/chat", map[string]any{
-		"model": model, "messages": msgs, "stream": true,
+		"model": model, "messages": msgs, "stream": true, "keep_alive": KeepAlive,
 		"options": opts,
 	})
 	if err != nil {
