@@ -68,6 +68,10 @@ programs, and compares the installer the website serves with `install/install.sh
 workflow runs the same check here every week. To read the installer before running it:
 `curl -fsSL https://projectoutpost.org/install.sh | less`. Reporting a vulnerability: see `SECURITY.md`.
 
+Checked this way: 1.0.0, 1.0.3, 1.1.0, 1.2.0, 1.3.0 and 1.3.1 match. The two releases in between, 1.0.1 and
+1.0.2, both from the first day and both superseded, do not come out the same from any commit here, so
+they carry no tag.
+
 ## Development
 
 ```
