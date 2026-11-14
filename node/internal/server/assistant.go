@@ -176,6 +176,9 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 			send("unsupported", nums)
 		}
 	}
+	if ai.MentionsDose(answer.String()) {
+		send("dose", true)
+	}
 	send("done", map[string]any{"model": model.Title})
 }
 

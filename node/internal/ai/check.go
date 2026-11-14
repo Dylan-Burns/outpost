@@ -44,3 +44,15 @@ func UnsupportedNumbers(answer string, sources []Source) []string {
 	}
 	return out
 }
+
+// doseRE matches an amount of a medicine or chemical: "500 mg", "2 tablets",
+// "10 ml", "4 units".
+var doseRE = regexp.MustCompile(`(?i)\b\d+(?:[.,]\d+)?\s?(?:mg|milligrams?|mcg|micrograms?|µg|ml|millilit(?:re|er)s?|tablets?|capsules?|units?)\b`)
+
+// MentionsDose reports whether an answer gives an amount of a medicine or
+// chemical. Small models state doses even when told not to: Qwen3 1.7B gave
+// a 5-year-old the adult amoxicillin dose it found in an NHS page. The page
+// shows a fixed warning beside such an answer.
+func MentionsDose(answer string) bool {
+	return doseRE.MatchString(citeRE.ReplaceAllString(answer, " "))
+}

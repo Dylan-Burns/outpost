@@ -115,3 +115,16 @@ func TestRetrieveTakesTwoPagesPerPDF(t *testing.T) {
 		t.Fatalf("got %d pages of one PDF: %+v", len(src), src)
 	}
 }
+
+func TestMentionsDose(t *testing.T) {
+	for _, a := range []string{"The dosage for amoxicillin by mouth is 500 mg, 3 times a day [S2].", "Give 2 tablets every 4 hours.", "Inject 4 units of insulin.", "Take 10 ml of syrup."} {
+		if !MentionsDose(a) {
+			t.Errorf("missed %q", a)
+		}
+	}
+	for _, a := range []string{"Cool the burn for 20 minutes [S1].", "Press on the wound [S2][S3].", "Boil the water for 1 minute.", "Call 911."} {
+		if MentionsDose(a) {
+			t.Errorf("flagged %q", a)
+		}
+	}
+}

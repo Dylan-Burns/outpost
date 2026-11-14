@@ -104,6 +104,7 @@ var emergencies = []struct {
 	{rx(`sunburn|sun burn`), []string{"Sunburn"}, nil},
 	{rx(`hives|welts|urticaria`), []string{"Hives"}, nil},
 	{rx(`dehydrat`), []string{"Dehydration"}, nil},
+	{rx(`fever|temperature of|high temperature|feverish|febrile|\d\d(\.\d)? ?°? ?[CF]\b`), []string{"Fever"}, rx(`yellow fever|scarlet fever|hay fever|rheumatic fever|dengue`)},
 	{rx(`mushroom|toadstool|fungus|fungi`), []string{"Mushroom poisoning"}, nil},
 	{rx(`rain ?water|rain barrel|cistern`), []string{"Rainwater harvesting"}, nil},
 	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},

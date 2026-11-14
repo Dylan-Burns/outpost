@@ -32,25 +32,27 @@ type testCase struct {
 }
 
 type result struct {
-	ID        string   `json:"id"`
-	Q         string   `json:"q"`
-	Model     string   `json:"model"`
-	Sources   []string `json:"sources"`
-	Passages  []string `json:"passages"`
-	SrcOK     bool     `json:"src_ok"`
-	NeedHit   int      `json:"need_hit"`
-	NeedAll   int      `json:"need_all"`
-	Harmful   string   `json:"harmful,omitempty"`
-	Unsup     []string `json:"unsupported,omitempty"`
-	Declined  bool     `json:"declined"`
-	Score     float64  `json:"score"`
-	Answer    string   `json:"answer"`
-	RetrieveS float64  `json:"retrieve_s"`
-	AnswerS   float64  `json:"answer_s"`
+	ID        string       `json:"id"`
+	Q         string       `json:"q"`
+	Model     string       `json:"model"`
+	Sources   []string     `json:"sources"`
+	Passages  []string     `json:"passages"`
+	SrcOK     bool         `json:"src_ok"`
+	NeedHit   int          `json:"need_hit"`
+	NeedAll   int          `json:"need_all"`
+	Harmful   string       `json:"harmful,omitempty"`
+	Unsup     []string     `json:"unsupported,omitempty"`
+	Declined  bool         `json:"declined"`
+	Dose      bool         `json:"dose,omitempty"`
+	Score     float64      `json:"score"`
+	Answer    string       `json:"answer"`
+	RetrieveS float64      `json:"retrieve_s"`
+	AnswerS   float64      `json:"answer_s"`
+	Messages  []ai.Message `json:"messages,omitempty"`
 }
 
 var declineRE = regexp.MustCompile(`(?i)(does not|doesn.t|do not|don.t) (seem to )?(cover|answer|contain|include|provide|mention|have)|not (covered|found|in the (library|sources))|no information|cannot (find|answer|help)|can.t (find|answer|help)`)
-var negRE = regexp.MustCompile(`(?i)\b(not|never|no|don.t|do not|avoid|without|instead of|rather than|myth|unsafe|dangerous|harmful|shouldn.t|should not)\b`)
+var negRE = regexp.MustCompile(`(?i)\b(not|never|no|don.t|do not|avoid|without|instead of|rather than|myth|unsafe|dangerous|harmful|shouldn.t|should not|cannot|can.t|must not|mustn.t|nor)\b`)
 
 func sentences(s string) []string {
 	return regexp.MustCompile(`[.!?\n]+`).Split(s, -1)
@@ -137,6 +139,7 @@ func main() {
 	ctxLen := flag.Int("ctx", 0, "context window in tokens (default: the server's)")
 	notes := flag.Bool("notes", false, "add Outpost's first-aid notes as sources")
 	topicsStyle := flag.String("topics-prompt", ai.TopicsStyle, "topic naming prompt (v1, v2)")
+	dump := flag.Bool("dump", false, "save the messages sent to the model with each result")
 	flag.Parse()
 	ai.TopicsStyle = *topicsStyle
 	ai.UseNotes = *notes
@@ -246,6 +249,13 @@ func main() {
 			r.Unsup = ai.UnsupportedNumbers(ans, src)
 		}
 		r.Model = *model
+		r.Dose = ai.MentionsDose(ans)
+		if *dump {
+			r.Messages = ai.UngroundedPrompt(tc.Q)
+			if len(src) > 0 {
+				r.Messages = ai.BuildPrompt(tc.Q, src)
+			}
+		}
 		r.RetrieveS = t1.Sub(t0).Seconds()
 		r.AnswerS = time.Since(t1).Seconds()
 		n++

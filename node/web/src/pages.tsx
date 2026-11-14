@@ -181,7 +181,7 @@ export function Search({ status }: { status: Status }) {
 }
 
 type Source = { label: string; title: string; book: string; path: string; note?: string };
-type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; error: string; status: string; done: boolean; model?: string };
+type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; dose?: boolean; error: string; status: string; done: boolean; model?: string };
 
 export function Assistant({ status }: { status: Status }) {
   const [info, err] = usePoll<{ available: boolean; models: { id: string; title: string }[] }>("/api/assistant", 0);
@@ -207,6 +207,7 @@ export function Assistant({ status }: { status: Status }) {
         else if (ev === "sources") upd((t) => (t.sources = data || []));
         else if (ev === "ungrounded") upd((t) => (t.ungrounded = true));
         else if (ev === "unsupported") upd((t) => (t.unsupported = data || []));
+        else if (ev === "dose") upd((t) => (t.dose = true));
         else if (ev === "status") upd((t) => (t.status = data));
         else if (ev === "error") upd((t) => (t.error = data));
         else if (ev === "done") upd((t) => (t.model = data?.model));
@@ -274,6 +275,11 @@ export function Assistant({ status }: { status: Status }) {
               {t.unsupported && t.unsupported.length > 0 && (
                 <p class="alert warn small" style={{ whiteSpace: "normal" }}>
                   Not found in the sources: {t.unsupported.join(", ")}. The model may have made {t.unsupported.length > 1 ? "these" : "this"} up; check the source before relying on it.
+                </p>
+              )}
+              {t.dose && (
+                <p class="alert warn small" style={{ whiteSpace: "normal" }}>
+                  This answer gives an amount of a medicine or chemical. The right amount depends on the product's strength and, for medicines, on age and weight. Check the label or leaflet, or ask a pharmacist or doctor, before using it.
                 </p>
               )}
               {t.sources.length > 0 && (() => {
