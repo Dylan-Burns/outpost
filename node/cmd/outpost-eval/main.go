@@ -136,7 +136,9 @@ func main() {
 	predict := flag.Int("predict", 0, "most tokens per answer (default: the server's)")
 	ctxLen := flag.Int("ctx", 0, "context window in tokens (default: the server's)")
 	notes := flag.Bool("notes", false, "add Outpost's first-aid notes as sources")
+	topicsStyle := flag.String("topics-prompt", ai.TopicsStyle, "topic naming prompt (v1, v2)")
 	flag.Parse()
+	ai.TopicsStyle = *topicsStyle
 	ai.UseNotes = *notes
 	ai.MaxSources, ai.PassageBudget = *maxSrc, *budget
 	if *temp >= 0 {

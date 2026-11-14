@@ -136,6 +136,11 @@ Cool any burns with running water. Anyone who has had an electric shock should b
 Pinch the soft part of the nose, just above the nostrils, firmly for 10 to 15 minutes without letting go, and breathe through the mouth.
 Do not tilt the head back and do not lie down.
 Get medical help if the bleeding lasts more than 20 minutes, is very heavy, followed a blow to the head, or the person takes blood-thinning medicine, or if it is a young child who has frequent nosebleeds.`},
+	{"Tick", "Removing a tick", "CDC guidance", `Use fine-tipped tweezers. Grasp the tick as close to the skin as you can and pull upward with steady, even pressure. Do not twist or jerk it.
+If mouth parts stay in the skin, remove them with the tweezers if you can easily; otherwise leave them and let the skin heal.
+Clean the bite and your hands with soap and water or rubbing alcohol.
+Do not use nail polish, petroleum jelly, a match or other heat to make the tick detach; remove it as quickly as possible.
+See a doctor if a rash, fever, aches or tiredness follow in the weeks after the bite.`},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.
@@ -168,7 +173,7 @@ func Notes(q string) []Source {
 	for _, t := range topics {
 		for _, n := range notes {
 			if n.topic == t {
-				out = append(out, Source{Title: "Outpost note: " + n.title, Book: "Summary of " + n.basis, Path: "", Text: n.text})
+				out = append(out, Source{Title: "Outpost note: " + n.title, Book: "Summary of " + n.basis, Text: n.text, Note: n.text})
 			}
 		}
 		if len(out) == 2 {

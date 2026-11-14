@@ -180,7 +180,7 @@ export function Search({ status }: { status: Status }) {
   );
 }
 
-type Source = { label: string; title: string; book: string; path: string };
+type Source = { label: string; title: string; book: string; path: string; note?: string };
 type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; error: string; status: string; done: boolean; model?: string };
 
 export function Assistant({ status }: { status: Status }) {
@@ -233,7 +233,9 @@ export function Assistant({ status }: { status: Status }) {
       const m = part.match(/^\[S(\d+)\]$/);
       if (m) {
         const s = sources[Number(m[1]) - 1];
-        return s ? <a key={i} href={base + s.path} target="_blank" rel="noopener" title={s.title}>{part}</a> : part;
+        if (!s) return part;
+        // An Outpost note has no library page; it opens below the answer.
+        return s.note ? <abbr key={i} title={s.title}>{part}</abbr> : <a key={i} href={base + s.path} target="_blank" rel="noopener" title={s.title}>{part}</a>;
       }
       const b = part.match(/^\*\*([^*\n]+)\*\*$/);
       return b ? <strong key={i}>{b[1]}</strong> : part;
@@ -283,13 +285,20 @@ export function Assistant({ status }: { status: Status }) {
                 return (
                   <>
                     <div class="sources">
-                      {shown.map((s) => (
-                        <a key={s.label} href={base + s.path} target="_blank" rel="noopener">[{s.label}] {s.title} · {s.book}</a>
-                      ))}
+                      {shown.map((s) =>
+                        s.note ? (
+                          <details key={s.label} class="note-src">
+                            <summary>[{s.label}] {s.title} · {s.book}</summary>
+                            <p>{s.note}</p>
+                          </details>
+                        ) : (
+                          <a key={s.label} href={base + s.path} target="_blank" rel="noopener">[{s.label}] {s.title} · {s.book}</a>
+                        ),
+                      )}
                     </div>
                     {rest.length > 0 && (
                       <p class="muted small" style={{ margin: 0 }}>
-                        Also searched: {rest.map((s, i) => <>{i > 0 && " · "}<a key={s.label} href={base + s.path} target="_blank" rel="noopener">{s.title}</a></>)}
+                        Also searched: {rest.map((s, i) => <>{i > 0 && " · "}{s.note ? <span key={s.label}>{s.title}</span> : <a key={s.label} href={base + s.path} target="_blank" rel="noopener">{s.title}</a>}</>)}
                       </p>
                     )}
                   </>

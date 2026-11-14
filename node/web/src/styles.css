@@ -243,6 +243,11 @@ details > summary:hover { color: var(--fg); }
 .msg.a { border: 1px solid var(--line-2); white-space: pre-wrap; }
 .sources { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
 .sources a { padding: 0.2rem 0.55rem; border: 1px solid var(--line-2); font-size: 0.82rem; text-decoration: none; }
+/* An Outpost note has no page in the library: it opens in place, across the full width. */
+.sources .note-src { flex-basis: 100%; border: 1px solid var(--line-2); font-size: 0.82rem; }
+.sources .note-src summary { padding: 0.2rem 0.55rem; cursor: pointer; }
+.sources .note-src p { margin: 0; padding: 0.3rem 0.55rem 0.6rem; white-space: pre-line; color: var(--text); }
+.msg abbr { text-decoration: none; border-bottom: 1px dotted currentColor; cursor: help; }
 .composer { display: flex; position: sticky; bottom: 0.5rem; background: var(--bg); }
 .composer textarea { min-height: 3.4rem; resize: none; border-right: 0; }
 

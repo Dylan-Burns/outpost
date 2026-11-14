@@ -12,11 +12,24 @@ const topicsPrompt = `Name the encyclopedia articles that answer the user's ques
 
 var topicLineRE = regexp.MustCompile(`^[\s\-*•\d.)"']+|["'.*]+$`)
 
+// topicsPrompt2 asks for titles in the encyclopedia's own form: Qwen3 1.7B
+// answered topicsPrompt with phrases such as "bat in bedroom" and
+// "Generator Safety: Operating Generators in Residential Settings".
+const topicsPrompt2 = `Which encyclopedia articles would answer this question? Reply with up to 3 article titles, one per line, and nothing else.
+Each title is a short noun phrase of 1 to 4 words, as an encyclopedia titles its articles: the name of the medical condition, injury, poisoning, hazard, skill, food or object the question is about. Use the general term, not the reader's words.`
+
+// TopicsStyle picks the prompt: "v1" (topicsPrompt) or "v2".
+var TopicsStyle = "v1"
+
 // TopicsWith asks the model to name the articles that would answer a question.
 func (c *Client) TopicsWith(model string) Topics {
 	return func(ctx context.Context, q string) []string {
 		var b strings.Builder
-		err := c.chat(ctx, model, []Message{{Role: "system", Content: topicsPrompt}, {Role: "user", Content: scrub(q, "")}},
+		prompt := topicsPrompt
+		if TopicsStyle == "v2" {
+			prompt = topicsPrompt2
+		}
+		err := c.chat(ctx, model, []Message{{Role: "system", Content: prompt}, {Role: "user", Content: scrub(q, "")}},
 			map[string]any{"temperature": 0, "num_ctx": 2048, "num_predict": 48},
 			func(s string) error { b.WriteString(s); return nil })
 		if err != nil {
@@ -61,6 +74,7 @@ var emergencies = []struct {
 	{rx(`drown|pulled .* (from|out of) (the )?water|under ?water`), []string{"Drowning"}, nil},
 	{rx(`bleed|blood (is )?(spurt|pour|everywhere)|deep cut|gash|laceration`), []string{"Bleeding", "Hemorrhage", "Tourniquet"}, nil},
 	{rx(`broke|broken|fractur|snapped|crack`, `bone|arm|leg|ankle|wrist|hip|rib|collarbone|finger|toe|foot|hand|elbow|knee|shoulder|jaw|nose|skull`), []string{"Bone fracture", "Splint (medicine)"}, rx(`broke(n)? (the |my |his |her |their )?skin|skin (was |is )?broken`)},
+	{rx(`bent (the )?wrong way|wrong angle|out of place|deformed|crooked|sticking out`, `arm|leg|ankle|wrist|finger|toe|elbow|knee|shoulder|hip|bone`), []string{"Bone fracture", "Joint dislocation"}, nil},
 	{rx(`burn|scald`), []string{"Burn", "Thermal burn"}, nil},
 	{rx(`heat ?stroke|sunstroke|overheat|too hot|heat exhaustion`), []string{"Heat stroke", "Heat exhaustion"}, nil},
 	{rx(`hypotherm|freezing|so cold|shivering uncontrollab|fell in(to)? (cold|icy) water`), []string{"Hypothermia"}, nil},
@@ -68,7 +82,7 @@ var emergencies = []struct {
 	{rx(`hit (his|her|their|my) head|head injur|knocked out|concuss|fell on (his|her|their|my) head`), []string{"Head injury", "Concussion"}, nil},
 	{rx(`not breathing|no pulse|cpr|unresponsive|cardiac arrest|heart stopped`), []string{"Cardiopulmonary resuscitation", "Cardiac arrest"}, nil},
 	{rx(`asthma|wheez|inhaler`), []string{"Asthma"}, nil},
-	{rx(`power (is )?(out|cut|off)|outage|blackout|no electricity`, `food|fridge|freezer|refrigerat|meat|milk`), []string{"Food safety", "Food spoilage"}, nil},
+	{rx(`power (is |goes |went |has gone |has been |was )?(out|cut|off|down)|outage|blackout|no electricity|power cut`, `food|fridge|freezer|refrigerat|meat|milk`), []string{"Food safety", "Food spoilage"}, nil},
 	{rx(`tick`, `remove|bite|bitten|attached|stuck|embedded`), []string{"Tick", "Lyme disease"}, nil},
 	// Added after the second test set (dev2): the small model named these
 	// "bat in bedroom", "thunderstorm injury" and "Generator Safety: ...".
@@ -84,6 +98,8 @@ var emergencies = []struct {
 	{rx(`panic attack|hyperventilat`), []string{"Panic attack"}, nil},
 	{rx(`sting|stung|stinger`), []string{"Bee sting"}, nil},
 	{rx(`splinter`), []string{"Splinter"}, nil},
+	// "how do I clean a dirty cut" found iFixit guides to cleaning a mouse.
+	{rx(`\bcuts?\b|wound|gash|graze|scrape|lacerat|sliced`, `clean|wash|dirty|infect|dress|bandage|care|heal|stitch|close`), []string{"Wound care", "Laceration"}, nil},
 	{rx(`bug|insect|bead|object|something|pea|bean|stone|battery`, `(in|into|up) (my |his |her |their |the )?(ear|nose)|(ear|nose) (is )?(stuck|blocked)`), []string{"Foreign body"}, nil},
 	{rx(`sunburn|sun burn`), []string{"Sunburn"}, nil},
 	{rx(`hives|welts|urticaria`), []string{"Hives"}, nil},
