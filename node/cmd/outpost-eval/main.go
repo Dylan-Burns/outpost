@@ -141,6 +141,7 @@ func main() {
 	topicsStyle := flag.String("topics-prompt", ai.TopicsStyle, "topic naming prompt (v1, v2)")
 	dump := flag.Bool("dump", false, "save the messages sent to the model with each result")
 	qFirst := flag.Bool("qfirst", false, "put the question before the sources as well as after")
+	clean := flag.Bool("clean", false, "score answers after removing text copied from the instructions, as the server does")
 	flag.Parse()
 	ai.TopicsStyle = *topicsStyle
 	ai.QuestionFirst = *qFirst
@@ -167,7 +168,7 @@ func main() {
 		os.Exit(1)
 	}
 	if *rescore != "" {
-		os.Exit(rescoreFile(*rescore, set.Cases))
+		os.Exit(rescoreFile(*rescore, set.Cases, *clean))
 	}
 	var bl []string
 	if *books != "" {
@@ -244,6 +245,9 @@ func main() {
 				fmt.Fprintln(os.Stderr, tc.ID, err)
 			}
 			ans = strings.TrimSpace(sb.String())
+			if *clean && len(src) > 0 {
+				ans = ai.CleanAnswer(ans, msgs[0].Content)
+			}
 		}
 		cancel()
 		r := score(tc, titles, passages, ans)
@@ -285,7 +289,7 @@ func main() {
 }
 
 // rescoreFile prints the scores of saved answers under the current rubric.
-func rescoreFile(path string, cases []testCase) int {
+func rescoreFile(path string, cases []testCase, clean bool) int {
 	b, err := os.ReadFile(path)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -311,7 +315,11 @@ func rescoreFile(path string, cases []testCase) int {
 		for len(passages) < len(old.Sources) {
 			passages = append(passages, "")
 		}
-		r := score(c, old.Sources, passages, old.Answer)
+		ans := old.Answer
+		if clean && len(old.Sources) > 0 {
+			ans = ai.CleanAnswer(ans, ai.SystemPrompt(old.Q))
+		}
+		r := score(c, old.Sources, passages, ans)
 		model = old.Model
 		n++
 		total += r.Score

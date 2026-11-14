@@ -208,6 +208,7 @@ export function Assistant({ status }: { status: Status }) {
         else if (ev === "ungrounded") upd((t) => (t.ungrounded = true));
         else if (ev === "unsupported") upd((t) => (t.unsupported = data || []));
         else if (ev === "dose") upd((t) => (t.dose = true));
+        else if (ev === "final") upd((t) => (t.a = data));
         else if (ev === "status") upd((t) => (t.status = data));
         else if (ev === "error") upd((t) => (t.error = data));
         else if (ev === "done") upd((t) => (t.model = data?.model));

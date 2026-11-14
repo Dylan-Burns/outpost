@@ -171,12 +171,19 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		send("error", "The assistant could not answer: "+err.Error())
 		return
 	}
+	final := answer.String()
 	if len(sources) > 0 {
-		if nums := ai.UnsupportedNumbers(answer.String(), sources); len(nums) > 0 {
+		// Small models often restate their instructions before answering;
+		// the page swaps in the answer without them once it is complete.
+		if c := ai.CleanAnswer(final, msgs[0].Content); c != final && c != "" {
+			final = c
+			send("final", final)
+		}
+		if nums := ai.UnsupportedNumbers(final, sources); len(nums) > 0 {
 			send("unsupported", nums)
 		}
 	}
-	if ai.MentionsDose(answer.String()) {
+	if ai.MentionsDose(final) {
 		send("dose", true)
 	}
 	send("done", map[string]any{"model": model.Title})
