@@ -275,3 +275,50 @@ func TestHypothermiaInPlainWords(t *testing.T) {
 		}
 	}
 }
+
+func TestMoreNotes(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	want := map[string]string{
+		"a stray dog bit my son and broke the skin":                      "Animal bites",
+		"my brother overdosed on fentanyl and his lips are blue":         "Opioid overdose",
+		"my friend is really drunk and passed out, can we let her sleep": "Alcohol poisoning",
+		"after the crash he is pale and clammy with a weak pulse":        "Shock",
+		"rolled my ankle on the trail and it's swelling":                 "Sprains",
+		"i mixed bleach and vinegar cleaning the shower and now i cough": "Fumes from mixed cleaners",
+		"we are lost in the woods and its getting dark":                  "Lost outdoors",
+		"my toddler has had diarrhea and vomiting since last night":      "dehydration",
+		"heat wave and no ac, is a fan enough for my dad":                "heat waves",
+		"wildfire smoke outside and i have asthma":                       "Wildfire smoke",
+		"knocked out a tooth playing hockey":                             "Knocked-out tooth",
+		"got drain cleaner splashed in my eye":                           "Eye injuries",
+		"hurricane is coming tonight should we stay":                     "Hurricane",
+		"my friend is having a panic attack":                             "Panic attack",
+	}
+	for q, title := range want {
+		found := false
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	for _, q := range []string{"how do i set up a smoke alarm", "i lost my keys in the forest", "how to make a fire without smoke", "my dad got an electric shock from the toaster"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "Wildfire smoke") || strings.Contains(n.Title, "Lost outdoors") || strings.Contains(n.Title, "Shock after") {
+				t.Errorf("%q got %s", q, n.Title)
+			}
+		}
+	}
+}
+
+func titles(n []Source) []string {
+	var out []string
+	for _, x := range n {
+		out = append(out, x.Title)
+	}
+	return out
+}

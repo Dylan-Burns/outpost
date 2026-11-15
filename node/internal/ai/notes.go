@@ -222,6 +222,63 @@ Measure liquid medicine with the syringe or spoon that comes with it, not a kitc
 Leave the gap between doses that the label gives, and never give more doses in 24 hours than it allows.
 Do not give two medicines that contain the same ingredient, such as paracetamol (acetaminophen) in a cold remedy and on its own.
 Do not give aspirin to anyone under 16. If you are unsure, the child is under 3 months, or has another illness, ask a pharmacist or doctor.`, ""},
+	{"Rabies", "Animal bites and rabies", "WHO and CDC guidance", `Wash the bite or scratch straight away with soap and plenty of running water for about 15 minutes, then put on an antiseptic if you have one. Press on it with a clean cloth if it bleeds.
+Get medical care the same day for any bite that breaks the skin, and for any bite or scratch from a wild animal (bat, fox, raccoon, skunk, monkey) or an unknown dog or cat, and after any contact with a bat, even with no mark you can see. Rabies vaccine given soon after the bite prevents the disease; once symptoms start it is almost always fatal.
+Note what the animal was and where it went, but do not try to catch it bare-handed.
+See a doctor if the bite becomes red, swollen, hot or oozing, or you get a fever.`, ""},
+	{"Dehydration", "Diarrhoea, vomiting and dehydration", "WHO and NHS guidance", `Keep drinking: small sips often if you are being sick. Oral rehydration solution is best: use sachets if you have them, or make it with 6 level teaspoons of sugar and half a level teaspoon of salt in 1 litre of clean, safe water (WHO recipe).
+Babies: keep breastfeeding or giving formula, and offer extra fluids between feeds.
+Signs of dehydration: thirst, dark yellow or little urine, dry mouth, dizziness; in a baby, fewer wet nappies, a sunken soft spot on the head, or no tears.
+Get medical help urgently for blood in the stool or vomit, a very sleepy, floppy or confused person, no urine all day, severe tummy pain, or a baby, young child or older person who cannot keep fluids down.`, ""},
+	{"Tooth avulsion", "Knocked-out tooth", "American Association of Endodontists and NHS guidance", `Pick the tooth up by the crown (the white part), not the root.
+If it is dirty, rinse it briefly in milk or with the person's saliva. Do not scrub it or wrap it in tissue.
+An adult (permanent) tooth: push it gently back into its socket, the right way round, and bite on a clean cloth to hold it. If you cannot, keep it in milk, or in the cheek of an adult who will not swallow it.
+Do not put a baby (milk) tooth back.
+See a dentist as soon as possible, ideally within 1 hour: the sooner, the better the tooth's chance.`, ""},
+	{"Eye injury", "Eye injuries", "NHS and American Academy of Ophthalmology guidance", `Chemical in the eye: rinse it straight away with clean running water for at least 15 to 20 minutes, holding the eyelids open, with the water running away from the other eye. Take out contact lenses. Then get urgent medical help.
+Dust or grit: blink, and rinse with clean water. Do not rub the eye.
+Something stuck in or through the eye: do not remove it or press on the eye. Cover the eye loosely (a paper cup works), ask the person to keep both eyes still, and get emergency help.
+A blow to the eye: hold a cold cloth gently against it, and get it checked if sight changes or it stays painful.`, ""},
+	{"Opioid overdose", "Opioid overdose", "CDC and SAMHSA guidance", `Signs: very slow, noisy or stopped breathing, blue or grey lips, tiny pupils, and the person cannot be woken.
+Call emergency services.
+Give naloxone (Narcan) if you have it: spray it into one nostril. It is safe to give even if you are not sure it is an opioid overdose. If there is no response after 2 to 3 minutes, give a second dose.
+If they are not breathing normally, start CPR. If they are breathing, put them in the recovery position.
+Stay with them until help arrives: naloxone can wear off before the opioid does, and breathing can stop again.`, ""},
+	{"Alcohol poisoning", "Alcohol poisoning", "NHS guidance", `Call emergency services if the person cannot be woken, has slow or irregular breathing, has a seizure, has pale or blue skin, or is being sick while not fully awake.
+Do not leave them to sleep it off. Lie them on their side in the recovery position, so they will not choke if they are sick, keep them warm, and stay with them, checking their breathing.
+Do not give coffee or more alcohol, do not put them in a cold shower or make them walk, and do not make them vomit.
+If they are awake, give sips of water.`, ""},
+	{"Shock", "Shock after an injury", "NHS and Red Cross guidance", `Shock is a life-threatening drop in blood flow, often after heavy bleeding, a serious burn or a severe allergic reaction. Signs: pale, cold, clammy skin, a fast weak pulse, fast breathing, and feeling faint, confused or sleepy.
+Call emergency services, and treat the cause if you can, such as pressing on a wound that is bleeding.
+Lay the person down and, if their legs are not injured, raise them. Keep them warm with a coat or blanket, and loosen tight clothing.
+Do not give them anything to eat or drink. Keep checking their breathing, and start CPR if it stops.`, ""},
+	{"Sprain", "Sprains", "NHS guidance", `For the first few days: rest the joint, hold an ice pack wrapped in a cloth on it for up to 20 minutes every 2 to 3 hours, support it with a bandage that is firm but not tight, and keep it raised.
+Get medical help if you cannot put any weight on it, it looks misshapen, it is numb or cold below the injury, or the pain is severe: it may be broken. Keep it still and splinted until it is seen.`, ""},
+	{"Toxic gas", "Fumes from mixed cleaners", "CDC and poison centre guidance", `Mixing bleach with ammonia, acids (toilet cleaners, vinegar, some descalers) or other cleaners makes toxic chlorine or chloramine gas.
+Leave the room straight away into fresh air and take others with you. Open windows only if you can do it on the way out without breathing more fumes.
+Call a poison centre or emergency services if there is coughing, wheezing, trouble breathing, chest pain, or eye pain. Rinse eyes or skin with plenty of running water for 15 minutes.
+Do not go back in until the room has aired out. Never mix cleaning products.`, ""},
+	{"Tropical Cyclone", "Hurricane", "US National Weather Service and FEMA guidance", `Leave if you are told to evacuate, especially from a storm-surge zone or a mobile home.
+If you stay, shelter in a small inside room, closet or hallway on the lowest floor that will not flood, away from windows. If you are told to go higher because of flooding, do not go into a closed attic.
+Do not go outside when the wind drops in the eye of the storm: it comes back from the other direction.
+Keep water (about 4 litres or 1 gallon per person per day), food, medicines, a torch, a battery radio and spare batteries.
+Afterwards, keep out of floodwater, away from fallen power lines, and never run a generator indoors.`, ""},
+	{"Wildfire", "Wildfire smoke", "US EPA and CDC guidance", `Stay indoors with windows and doors closed. Run air conditioning on recirculate if you have it.
+Make one room as clean as you can: a portable HEPA air cleaner, or a box fan with a MERV 13 furnace filter taped to it, helps a lot.
+Do not add to the smoke indoors: no candles, frying, smoking or vacuuming.
+Outdoors, a well-fitted N95 mask filters smoke; cloth and paper dust masks do not.
+People with asthma or heart or lung disease should keep their medicines and plan close, and leave the area if the air stays bad or symptoms get worse.`, ""},
+	{"Lost outdoors", "Lost outdoors", "US Forest Service and National Park Service guidance", `Stop as soon as you realise you are lost: sit down, think, look around and plan. People who stay in one place are found sooner.
+Stay put, above all if it is getting dark. Get out of wind and rain, keep dry, put on extra layers, and insulate yourself from the ground.
+Make yourself easy to find: three blasts on a whistle (the distress signal), bright clothing laid out in the open, a signal fire in a safe clear spot, or a mirror flashed at aircraft.
+Save your phone battery. A text to emergency services may go through where a call will not.
+Drink the water you have, and do not eat wild plants you are not sure of.`, ""},
+	{"Panic attack", "Panic attack", "NHS guidance", `Stay with the person and keep calm. Help them breathe slowly: in through the nose and out through the mouth, counting slowly. Do not use a paper bag.
+Reassure them that the attack will pass, usually within 20 minutes.
+Chest pain, trouble breathing and a racing heart can also be signs of a heart attack or another emergency: get medical help if it is their first attack, if there is chest pain, or if they do not settle.`, ""},
+	{"Heat stroke", "Hot weather and heat waves", "CDC and NHS guidance", `In a heat wave, a fan alone may not keep someone safe once it is hotter than about 32 to 35 °C (90 to 95 °F). Cool showers or baths, wet cloths on the skin, and spending the hottest hours somewhere air-conditioned (a library, shop or cooling centre) help more.
+Drink water regularly, before feeling thirsty. Keep curtains closed on sunny windows and avoid hard work in the hottest part of the day.
+Check on older people, babies and people who live alone at least twice a day.`, ""},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.
