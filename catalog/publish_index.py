@@ -7,7 +7,7 @@ lives under its own folder, named by its time, and is cached forever; the
 previous build stays up beside it, so a site still pointing at it keeps
 working until the site is deployed with the new root.json.
 
-  python3 catalog/publish_index.py --host https://index.projectoutpost.org [--deploy]
+  python3 catalog/publish_index.py --host https://outpost-index.vercel.app [--deploy]
 
 Steps: build with catalog/index.py into catalog/.cache/index-builds/<build>,
 stage the newest two builds and a vercel.json into catalog/.cache/index-site,
@@ -51,7 +51,7 @@ VERCEL_JSON = {
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--host", required=True, help="the index project's address, e.g. https://index.projectoutpost.org")
+    ap.add_argument("--host", required=True, help="the index project's address, e.g. https://outpost-index.vercel.app")
     ap.add_argument("--deploy", action="store_true")
     ap.add_argument("--reuse", help="stage an existing build instead of building")
     args = ap.parse_args()
@@ -97,6 +97,9 @@ def main():
     if args.deploy:
         if not (STAGE / ".vercel").exists():
             sys.exit(f"link {STAGE} to the index project first: cd {STAGE} && vercel link")
+        # `vercel link` writes a .env.local holding an access token; it must never be published.
+        for p in STAGE.glob(".env*"):
+            p.unlink()
         subprocess.run(["vercel", "deploy", "--prod", "--yes"], cwd=STAGE, check=True)
 
 
