@@ -55,6 +55,14 @@ def main():
         problems.append(f"root.json is not valid JSON: {e}")
         print("content index does not match the catalog:\n  " + "\n  ".join(problems))
         sys.exit(1)
+    # The page fetches the index from root.base; the site's CSP must allow that host.
+    base = root.get("base", "")
+    if base.startswith("https://"):
+        host = "/".join(base.split("/")[:3])
+        csp = (ROOT / "site" / "vercel.json").read_text()
+        m = re.search(r"connect-src ([^;\"]*)", csp)
+        if not m or host not in m.group(1).split():
+            problems.append(f"site/vercel.json's connect-src does not allow {host}, where the index is served")
     cols = {c["id"]: c for s in root["subjects"] for c in s["collections"]}
     for it in cat["items"]:
         if it["kind"] != "zim":
