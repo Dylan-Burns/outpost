@@ -981,3 +981,20 @@ func TestFifteenthRoundWording(t *testing.T) {
 		t.Errorf("fridge magnets: %v", titles(n))
 	}
 }
+
+func TestPufferAndDam(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"my 10 yo cant get her breath, lips going a bit blue, and her blue puffer is empty":           "Asthma",
+		"pulled my nephew out of the dam he coughed up a heap of water but hes ok now running around": "Drowning",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
