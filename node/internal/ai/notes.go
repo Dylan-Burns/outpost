@@ -129,6 +129,13 @@ If you are worried that someone is in danger, call the police. If you are afraid
 If they are breathing normally but will not wake, put them on their side in the recovery position: kneel beside them, put the arm nearest you at a right angle, bring the far arm across their chest with the back of their hand against the cheek nearest you, bend the far knee up, then pull on that knee to roll them towards you onto their side. Tilt the head back gently so the airway stays open.
 If you think they may have hurt their neck or back, keep them still and only roll them if they are vomiting or their airway is at risk.
 Keep checking their breathing until help arrives. If they stop breathing normally, roll them onto their back and start CPR.`, ""},
+	{"Croup", "Croup (barking cough in a child)", "NHS guidance", `A cough that sounds like a barking seal, often worse at night, with a hoarse voice, is usually croup.
+Call emergency services now if the child is struggling to breathe, the skin between the ribs or at the base of the throat sucks in with each breath, they make a high-pitched noise when breathing in while calm (not only when crying), they are very pale, blue or grey, drowsy or floppy, or they are drooling and cannot swallow.
+Otherwise keep the child calm and upright on your lap: crying makes it worse. Give liquids. Contact a doctor or nurse line (NHS 111) the same day; a single steroid dose often helps. Do not put them in a steam-filled room: it does not help and can scald.`, ""},
+	{"Wound infection", "A wound getting infected", "NHS guidance", `A wound that gets more painful, hot, swollen or red after the first day or two, or oozes pus, may be infected: see a doctor, pharmacist or nurse the same day, as it may need antibiotics.
+A red line or streak spreading from the wound up the arm or leg means the infection is spreading: get medical help urgently, today.
+Call emergency services if they also have a high temperature or shivering, feel very unwell, confused, or breathe fast: this can be sepsis.
+Meanwhile keep the wound clean with tap water, cover it with a clean dressing, and raise the limb. Mark the edge of the redness with a pen to see if it spreads.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -361,7 +368,8 @@ Fill with tap water, close tightly, label with the date, store somewhere cool an
 	{"Batteries", "Batteries, inverters and what they will run", "US Department of Energy guidance", `Stored energy in watt-hours is the battery's amp-hours times its voltage: a 100 Ah 12 V battery holds about 1,200 Wh.
 You can safely use only part of it: about half for a lead-acid battery, about 80 to 90% for a lithium (LiFePO4) one. An inverter loses roughly another 10 to 15%.
 A fridge's watt rating is what it draws while the compressor runs, but it runs only part of the time. Its daily use is on its label as kWh per year: divide by 365. Many fridges use 1 to 2 kWh a day.
-So divide usable watt-hours by the fridge's daily watt-hours to get days of running. Recharge before a lead-acid battery goes below half full, or it wears out fast.`, ""},
+So divide usable watt-hours by the fridge's daily watt-hours to get days of running. Recharge before a lead-acid battery goes below half full, or it wears out fast.
+Charging a lead-acid battery gives off hydrogen, which can explode: charge it somewhere well ventilated, away from flames, sparks and smoking, connect the charger before switching it on and switch it off before disconnecting, and stop if the battery gets hot, swells or smells of rotten eggs.`, ""},
 	{"Power outage", "Power cut", "FEMA and Red Cross guidance", `Nobody, this library included, can say when the power will come back. Report the outage to the electricity company if you can reach it, and follow its outage updates or local radio.
 Meanwhile keep the fridge and freezer closed, unplug electronics so a surge does not damage them when power returns, and use torches rather than candles.
 Never run a generator, grill or camp stove indoors.
@@ -390,6 +398,11 @@ func Notes(q string) []Source {
 	}
 	topics := EmergencyTopics(q)
 	for _, t := range noteTopics {
+		// "boiling water went on her arm" is a scald, not a question
+		// about drinking water.
+		if t.topic == "Water purification" && contains(topics, "Burn") {
+			continue
+		}
 		if t.re.MatchString(q) && !contains(topics, t.topic) {
 			topics = append(topics, t.topic)
 		}

@@ -554,3 +554,45 @@ func TestOlderSetMisses(t *testing.T) {
 		}
 	}
 }
+
+func TestSeventhRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"baby had runny poos all day hardly any wet nappies today, still feeding a bit but sleepy":                      "dehydration",
+		"pulled my nephew out the pool he coughed loads and hes breathing now, seems fine":                              "Drowning",
+		"knocked the kettle and it went on my 2 yr olds arm its gone red and blistery":                                  "Burns",
+		"heart going mad cant get a breath hands tingly feel like im dying, had this before n the doc said its anxiety": "Panic",
+		"my 2 yr old just had a fit shook all over for like a minute shes really hot":                                   "Seizure",
+		"kid has a cough like a barking seal and makes a whistly noise breathing in":                                    "Croup",
+		"my girl fell off the trampoline and her wrist is bent funny and swelling":                                      "Broken bones",
+		"cut my finger gardening few days ago now its hot and swollen and theres a red line creeping up my arm":         "infected",
+		"ground shaking!! do i run outside or stand in the doorway":                                                     "Earthquake",
+		"freezers been off a day, stuff still has ice crystals in it can i just refreeze it":                            "Food after",
+		"charging the old car batteries for my cabin in the shed overnight":                                             "Batteries",
+		"whats sarah mitchells phone number at 14 oak lane and does she live on her own":                                "Finding where",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	if n := Notes("baby had runny poos all day hardly any wet nappies today, still feeding a bit but sleepy"); len(n) > 0 && strings.Contains(titles(n)[0], "Hypothermia") {
+		t.Errorf("wet nappies read as cold and wet: %v", titles(n))
+	}
+}
+
+func TestScaldIsNotDrinkingWater(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	n := titles(Notes("my little girl pulled the kettle and boiling water went on her arm"))
+	if len(n) != 1 || !strings.Contains(n[0], "Burns") {
+		t.Errorf("scald notes: %v", n)
+	}
+	if n := titles(Notes("how long do i boil water to make it safe to drink")); len(n) == 0 || !strings.Contains(n[0], "safe to drink") {
+		t.Errorf("boiling drinking water: %v", n)
+	}
+}
