@@ -117,6 +117,8 @@ var emergencies = []struct {
 	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},
 	{rx(`honey`, `baby|infant|month|newborn`), []string{"Botulism"}, nil},
 	// Topics with a note added from a standard first-aid and preparedness list.
+	{rx(`box jelly|irukandji|chironex|sea wasp`), []string{"Box jellyfish"}, nil},
+	{rx(`jelly ?fish|stinger`, `tropical|northern australia|queensland|\bqld\b|cairns|darwin|top end|\bnt\b|broome|thailand|philippines|malaysia|indonesia|borneo|vietnam`), []string{"Box jellyfish"}, nil},
 	{rx(`power ?lines?|overhead (line|cable|wire)|(line|lines|wire|wires|cable) (came|come|is|are|has|have|got) (down|blown down|on the ground)|downed (line|wire|cable)|pylon|electricity pole|telegraph pole`), []string{"Downed power line"}, rx(`(on|onto|over|across|touching) (our|my|the|his|her|their|a) (car|truck|vehicle|van)|in (our|my|the|his|her|their|a) (car|truck|vehicle|van)|bury|burying|install`)},
 	{rx(`shaking (right )?now|(it.?s|its|house|building|bed|room|walls|windows) (is |are )?(shaking|swaying|rattling)`), []string{"Earthquake"}, rx(`shaking all over|all over|eyes|fit|jerk|convuls|seiz|shiver|cold|fever|hands`)},
 	{rx(`leave now|evacuat|have to leave|got to go|(got|have) .{0,10}(\d+|ten|five|fifteen) ?(min|mins|minutes)`, `take|grab|pack|bring|most important|what (do|should) (we|i)`), []string{"Go bag"}, nil},

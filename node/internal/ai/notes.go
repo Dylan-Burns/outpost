@@ -40,13 +40,13 @@ var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|\d+[- ]?(day|
 var notes = []note{
 	{"Choking", "Choking (adult or child over 1)", "NHS and Red Cross guidance", `These steps are for adults and children over 1 year old.
 If the person can cough, speak or breathe, encourage them to keep coughing. Do not hit their back or start CPR while they can cough.
-If they cannot cough, speak or breathe: give up to 5 sharp back blows between the shoulder blades with the heel of your hand. If that fails, give up to 5 abdominal thrusts: stand behind them, put a fist just above the belly button, hold it with your other hand and pull sharply inwards and upwards. Keep repeating 5 back blows and 5 abdominal thrusts. Call emergency services.
+If they cannot cough, speak or breathe: give up to 5 sharp back blows between the shoulder blades with the heel of your hand. If that fails, give up to 5 abdominal thrusts: stand behind them, put a fist just above the belly button, hold it with your other hand and pull sharply inwards and upwards. If the person is heavily pregnant or too large to reach around, give chest thrusts instead: put your fist in the centre of the breastbone and pull sharply straight back. Keep repeating 5 back blows and 5 abdominal thrusts. Call emergency services.
 If you are alone and choking: call emergency services if you can (an open line helps), then give yourself abdominal thrusts with your fist above your belly button, or lean over the back of a chair and push down onto it sharply.
 If the person becomes unresponsive and stops breathing normally, call emergency services and start CPR.`, "older"},
 	{"Choking", "Choking (baby under 1)", "NHS and Red Cross guidance", `These steps are for a baby under 1 year old.
 If the baby can cough or cry, let them keep coughing and stay with them.
 If the baby cannot cough, cry or breathe: lay the baby face down along your forearm, head lower than the body, supporting the head and jaw. Give up to 5 sharp back blows between the shoulder blades with the heel of your hand.
-If that fails, turn the baby face up along your arm and give up to 5 chest thrusts: press two fingers in the middle of the chest, just below the nipple line, sharply downwards.
+If that fails, turn the baby face up along your arm and give up to 5 chest thrusts: press the heel of one hand in the middle of the chest, just below the nipple line, sharply downwards.
 Keep repeating 5 back blows and 5 chest thrusts, and call emergency services. Never use abdominal thrusts on a baby.
 If the baby becomes unresponsive and stops breathing normally, call emergency services and start CPR.`, "baby"},
 	{"Cardiopulmonary resuscitation", "CPR (adult or child over 1)", "NHS, Red Cross and American Heart Association guidance", `CPR is only for someone who is unresponsive and not breathing normally. These steps are for adults and children over 1 year old.
@@ -55,21 +55,21 @@ Kneel beside them, put the heel of one hand in the centre of the chest with the 
 If you are trained, give 2 rescue breaths after every 30 compressions. If not, keep doing chest compressions only.
 Use the defibrillator as soon as it arrives and follow its spoken instructions.
 Keep going until help takes over, the person starts breathing normally, or you are too exhausted to continue.`, "older"},
-	{"Cardiopulmonary resuscitation", "CPR (baby under 1)", "NHS, Red Cross and American Heart Association guidance", `CPR is only for a baby who is unresponsive and not breathing normally. These steps are for a baby under 1 year old.
+	{"Cardiopulmonary resuscitation", "CPR (baby under 1)", "NHS, Red Cross and American Heart Association (2025) guidance", `CPR is only for a baby who is unresponsive and not breathing normally. These steps are for a baby under 1 year old.
 Shout for help and have someone call emergency services. If you are alone, give CPR for 1 minute first, then call.
 Lay the baby on its back on a firm surface and tilt the head back only slightly. Give 5 rescue breaths, covering the baby's mouth and nose with your mouth, each just enough to make the chest rise.
-Then give 30 chest compressions with two fingers in the middle of the chest, just below the nipple line, pressing down about a third of the depth of the chest (about 4 cm or 1.5 inches), 100 to 120 times a minute.
+Then give 30 chest compressions in the middle of the chest, just below the nipple line, with the heel of one hand or with both thumbs, your hands wrapped around the chest, pressing down about a third of the depth of the chest (about 4 cm or 1.5 inches), 100 to 120 times a minute.
 Then give 2 rescue breaths, and keep repeating 30 compressions and 2 breaths until help takes over or the baby starts breathing normally.`, "baby"},
 	{"Bleeding", "Severe bleeding", "NHS, Red Cross and Stop the Bleed guidance", `Press firmly on the wound with a clean cloth or dressing, and keep pressing hard without stopping to look. If blood soaks through, put more cloth on top; do not remove the first layer.
 Call emergency services if the bleeding is heavy.
 If an object is stuck in the wound, do not pull it out: press around it, not on it.
 Tourniquet: only for life-threatening bleeding from an arm or leg that firm pressure does not stop. Put it 5 to 7 cm (2 to 3 inches) above the wound, between the wound and the body, not on a joint. Tighten it until the bleeding stops, note the time, and do not loosen or remove it; leave that to medical staff.
 Lay the person down and keep them warm; heavy blood loss can cause shock.`, ""},
-	{"Burn", "Burns and scalds", "NHS and Red Cross guidance", `Cool the burn under cool or lukewarm running water for 20 minutes, as soon as possible.
+	{"Burn", "Burns and scalds", "NHS and Red Cross guidance", `Cool the burn under cool or lukewarm running water for 20 minutes, as soon as possible. Keep the rest of the person warm while you do, especially a baby or small child.
 Remove clothing and jewellery near the burn, unless it is stuck to the skin.
 Cover the burn loosely with cling film or a clean, non-fluffy dressing.
 Do not use ice, iced water, butter, toothpaste or creams. Do not burst blisters.
-Get medical help for burns that are large, deep, white or charred, on the face, hands, feet, joints or genitals, caused by chemicals or electricity, or on a baby or young child.
+Call emergency services for burns that are large, deep, white or charred, caused by electricity, or on a baby. Get medical help the same day for burns on the face, hands, feet, joints or genitals, chemical burns, and burns on a young child.
 Chemical burn: brush off any dry chemical, then rinse with plenty of running water for at least 20 minutes.`, ""},
 	{"Poisoning", "Swallowed poison or too many pills", "NHS, Red Cross and poison centre guidance", `Call emergency services or a poison centre straight away, even if the person seems well.
 Find out what was swallowed, how much and when, and keep the container or packet to show.
@@ -162,8 +162,12 @@ Do not cut or pull the cord. The afterbirth (placenta) usually comes within an h
 Go as high and as far inland as you can: at least 30 metres (100 feet) above sea level or 3 kilometres (2 miles) inland. If you cannot get out of the area, go to the upper floors or roof of a strong concrete building.
 A tsunami comes as a series of waves and later ones can be bigger: stay away from the coast until officials say it is safe, which can be many hours.`, ""},
 	{"Jellyfish sting", "Jellyfish stings", "NHS and Red Cross guidance", `Get out of the water. Rinse the area with seawater, not fresh water. Do not pee on it: urine does not help and can make it worse.
-Lift off any tentacles with tweezers, gloves or the edge of a card, not bare hands. Then soak the area in water as hot as can be tolerated (not scalding), or use hot packs, for about 30 minutes; painkillers can help. Vinegar helps only for some tropical box jellyfish.
+Lift off any tentacles with tweezers, gloves or the edge of a card, not bare hands. Then soak the area in water as hot as can be tolerated (not scalding), or use hot packs, for about 30 minutes; painkillers can help. This is for most jellyfish and the Portuguese man o' war (bluebottle). In tropical waters where box jellyfish live, follow the box jellyfish steps instead.
 Call emergency services if they have trouble breathing, chest pain, a fit, swelling of the face or throat, collapse, or a sting over a large area or on the face or genitals, or if a box jellyfish or Portuguese man o' war stung them.`, ""},
+	{"Box jellyfish", "Box jellyfish sting (tropical waters)", "ANZCOR and Australian Red Cross guidance", `Call emergency services now. Get the person out of the water and keep them still.
+Pour plenty of vinegar over the sting for at least 30 seconds before touching any tentacles; then remove them carefully with tweezers or gloves. If there is no vinegar, rinse with seawater, never fresh water.
+Watch their breathing closely: a box jellyfish sting can stop the heart. If they stop breathing normally, start CPR and keep going until help arrives.
+Severe pain, sweating, vomiting, or chest or back pain an hour or so later can be Irukandji syndrome: call emergency services.`, ""},
 	{"Cut needing stitches", "Does a cut need stitches?", "NHS and Red Cross guidance", `First stop the bleeding: press firmly on the cut with a clean cloth for 10 minutes without lifting it, and raise the injured part.
 A cut needs a nurse or doctor (stitches, glue or strips) if its edges gape apart, it is deep or longer than about 2 cm, it is on the face, a joint, the hand or the genitals, it was made by something dirty or a bite, or you can see fat, muscle or bone. Go the same day: wounds are best closed within about 6 to 8 hours.
 Call emergency services if bleeding will not stop after 10 minutes of firm pressure, blood is spurting, or the hand or finger beyond the cut is numb, pale or cannot move normally.
@@ -177,7 +181,7 @@ For the next day, watch them closely: get urgent medical help if they keep cough
 To splint, pad it and fix it to something rigid (a board, rolled newspaper or the other leg) so that the joints above and below the break cannot move. Check that the fingers or toes beyond it stay warm and pink.
 If bone is through the skin, cover the wound with a clean dressing and press around it, not on the bone.
 A cold pack wrapped in cloth can ease swelling. Do not put weight on a broken leg or ankle. Get medical help.`, ""},
-	{"Heat stroke", "Heat stroke and heat exhaustion", "NHS and CDC guidance", `Heat exhaustion (heavy sweating, weakness, headache, dizziness, nausea): move to a cool place, lie down with legs raised, drink water, and cool the skin. They should improve within 30 minutes.
+	{"Heat stroke", "Heat stroke and heat exhaustion", "NHS and CDC guidance", `Heat exhaustion (heavy sweating, weakness, headache, dizziness, nausea): move to a cool place, lie down with legs raised, drink water, and cool the skin. They should improve within 30 minutes; if they do not, or they get worse or confused, treat it as heat stroke and call emergency services.
 Heat stroke is an emergency: a very high temperature with confusion, collapse, a seizure, or hot skin that may have stopped sweating. Call emergency services and cool them as fast as you can: cold water on the skin, wet sheets and a fan, ice packs in the armpits, neck and groin, or a cold water bath.
 Give sips of water only if they are awake and can swallow.`, ""},
 	{"Hypothermia", "Hypothermia", "NHS and Red Cross guidance", `Signs: shivering, pale cold skin, slurred speech, clumsiness, confusion, drowsiness. Shivering may stop as it gets worse.
@@ -195,7 +199,7 @@ If a neck injury is possible, keep the head and neck still.
 Anyone who takes blood-thinning medicine (warfarin, apixaban, rivaroxaban, clopidogrel and others) needs to be checked urgently after any blow to the head, even if they seem fine: bleeding inside the skull can start slowly.
 Someone should stay with the person for the first 24 hours and get help if any of these signs appear.`, ""},
 	{"Asthma", "Asthma attack", "NHS and Asthma + Lung UK guidance", `Help the person sit upright, and keep them calm. Loosen tight clothing.
-If they have a reliever inhaler (usually blue), help them use it: one puff every 30 to 60 seconds, up to 10 puffs.
+If they have a reliever inhaler (usually blue), help them use it: one puff every 30 to 60 seconds, up to 10 puffs. If their reliever is a combination inhaler (MART or AIR, often not blue), it is one puff every 1 to 3 minutes, up to 6 puffs.
 If there is no inhaler, keep them sitting up and breathing slowly and steadily.
 Call emergency services if they do not get better, are getting worse, are too breathless to speak, or their lips turn blue.`, ""},
 	{"Food safety", "Food after a power cut", "USDA and FoodSafety.gov guidance", `Keep the fridge and freezer doors closed.
@@ -253,7 +257,7 @@ If you are caught outside with no shelter, lie flat in a ditch or low spot and c
 Stay in shelter until the storm has passed.`, ""},
 	{"Flood", "Flood", "US National Weather Service and Red Cross guidance", `Move to higher ground straight away if you are told to, or if water is rising.
 Do not walk, swim or drive through floodwater, however shallow it looks: the road under it may be washed away and the depth is hard to judge. 15 cm (6 inches) of moving water can knock you down, and 30 cm (1 foot) can carry a car away. Turn around, don't drown.
-If your car is caught in rising water, get out and move to higher ground if you can do so safely.
+If water is rising around your car but is not moving fast, get out and go to higher ground. If the car is in fast-moving water, stay inside with your seatbelt off; if water comes into the car, climb onto the roof and call emergency services.
 Stay away from power lines and electrical equipment in or near water.
 Floodwater can carry sewage and chemicals: do not drink it, and wash with clean water after touching it.
 Do not go back home until the authorities say it is safe.`, ""},
@@ -451,6 +455,7 @@ var supersedes = map[string]string{
 	// a tick someone wants to "burn off", bleach for drinking water, a
 	// person jerking on a live cable.
 	"Jellyfish sting":    "Burn",
+	"Box jellyfish":      "Jellyfish sting",
 	"Tick":               "Burn",
 	"Water purification": "Toxic gas",
 	"Electrical injury":  "Seizure",

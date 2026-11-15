@@ -243,7 +243,7 @@ func TestBabyCPRAndChildDoseNotes(t *testing.T) {
 	defer func(was bool) { UseNotes = was }(UseNotes)
 	UseNotes = true
 	n := Notes("how do you do cpr on a newborn baby")
-	if len(n) == 0 || !strings.Contains(n[0].Text, "two fingers") || strings.Contains(n[0].Text, "heel of one hand") {
+	if len(n) == 0 || !strings.Contains(n[0].Text, "both thumbs") || !strings.Contains(n[0].Text, "nipple line") || !strings.Contains(n[0].Text, "4 cm") {
 		t.Errorf("baby CPR: %+v", n)
 	}
 	n = Notes("my husband collapsed and is not breathing, how do i do cpr")
@@ -811,5 +811,33 @@ func TestFallenPowerLineNotHouseholdShock(t *testing.T) {
 	n = titles(Notes("my husbands still holding the hedge trimmer cable and twitching he got shocked"))
 	if len(n) == 0 || !strings.Contains(n[0], "Electric shock") {
 		t.Errorf("household notes %v", n)
+	}
+}
+
+func TestNoteAuditFixes(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	if f := first("got stung by a jellyfish swimming near cairns, its agony"); !strings.Contains(f, "Box jellyfish") {
+		t.Errorf("tropical sting: %q", f)
+	}
+	if f := first("bluebottle got me at the beach in nsw, its burning"); !strings.Contains(f, "Jellyfish stings") {
+		t.Errorf("bluebottle: %q", f)
+	}
+	for _, n := range Notes("my pregnant wife is choking on food and cant breathe") {
+		if strings.Contains(n.Title, "Choking (adult") && !strings.Contains(n.Text, "pregnant") {
+			t.Error("choking note lacks the pregnancy step")
+		}
+	}
+	for _, n := range notes {
+		if strings.Contains(n.text, "two fingers") {
+			t.Errorf("%s still uses the two-finger technique", n.title)
+		}
 	}
 }
