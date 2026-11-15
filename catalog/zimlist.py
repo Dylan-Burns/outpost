@@ -58,9 +58,10 @@ def keep(mime, front, url):
     return True
 
 
-def list_archive(item, tmpdir):
-    out = CACHE / (item["file"] + ".list.tsv.gz")
-    meta_path = CACHE / (item["file"] + ".meta.json")
+def list_archive(item, tmpdir, cache=None):
+    cache = cache or CACHE
+    out = cache / (item["file"] + ".list.tsv.gz")
+    meta_path = cache / (item["file"] + ".meta.json")
     if out.exists() and meta_path.exists():
         return json.loads(meta_path.read_text())
     t0 = time.time()
@@ -145,19 +146,49 @@ def list_archive(item, tmpdir):
         tmp.unlink(missing_ok=True)
 
 
+def verify_archive(item, tmpdir):
+    """List an archive again into a side folder, with the directory checked
+    against Kiwix's piece hashes, and mark the existing listing verified only
+    if the new one is identical (facts are keyed by its row numbers)."""
+    meta_path = CACHE / (item["file"] + ".meta.json")
+    old = json.loads(meta_path.read_text())
+    if old.get("directory_verified_bytes"):
+        return old
+    side = CACHE / "verify"
+    side.mkdir(exist_ok=True)
+    for ext in (".list.tsv.gz", ".meta.json"):
+        (side / (item["file"] + ext)).unlink(missing_ok=True)
+    info = list_archive(item, tmpdir, side)
+    if not info["directory_verified_bytes"]:
+        raise RuntimeError("the directory did not match Kiwix's piece hashes")
+    a = gzip.open(CACHE / (item["file"] + ".list.tsv.gz")).read()
+    b = gzip.open(side / (item["file"] + ".list.tsv.gz")).read()
+    if a != b:
+        raise RuntimeError("the verified listing differs from the one measured; re-list and re-measure this archive")
+    old["directory_verified_bytes"] = info["directory_verified_bytes"]
+    tmp_meta = meta_path.with_suffix(".part")
+    tmp_meta.write_text(json.dumps(old, indent=1, ensure_ascii=False))
+    tmp_meta.rename(meta_path)
+    for ext in (".list.tsv.gz", ".meta.json"):
+        (side / (item["file"] + ext)).unlink(missing_ok=True)
+    return old
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", nargs="*")
     ap.add_argument("--jobs", type=int, default=3)
     ap.add_argument("--tmp", default=os.environ.get("TMPDIR", "/tmp"))
+    ap.add_argument("--verify", action="store_true", help="check listings made before directories were verified")
+    ap.add_argument("--skip", nargs="*", default=[])
     args = ap.parse_args()
     CACHE.mkdir(parents=True, exist_ok=True)
     cat = json.loads(CATALOG.read_text())
-    zims = [i for i in cat["items"] if i["kind"] == "zim" and (not args.only or i["id"] in args.only)]
+    zims = [i for i in cat["items"] if i["kind"] == "zim" and (not args.only or i["id"] in args.only) and i["id"] not in args.skip]
     zims.sort(key=lambda i: i["size"])
     failed = []
     with cf.ThreadPoolExecutor(args.jobs) as ex:
-        futs = {ex.submit(list_archive, i, args.tmp): i for i in zims}
+        futs = {ex.submit(verify_archive if args.verify else list_archive, i, args.tmp): i for i in zims}
         for f in cf.as_completed(futs):
             i = futs[f]
             try:
