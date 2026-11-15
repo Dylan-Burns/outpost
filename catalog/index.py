@@ -25,6 +25,7 @@ import gzip
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -44,6 +45,8 @@ SOURCE = ROOT / "catalog" / "source.json"
 CACHE = ROOT / "catalog" / ".cache" / "zim"
 TIERS = ("essential", "standard", "comprehensive")
 SEARCH_BLOCK = 1500
+# Every character Python treats as a line break, plus tab (the field separator).
+LINE_BREAKS = re.compile("[\t\n\r\x0b\x0c\x1c\x1d\x1e\x85\u2028\u2029]")
 NAMESPACE = "outpost-content-index"
 
 
@@ -63,13 +66,13 @@ class Search:
 
     def __init__(self, tmp):
         self.path = Path(tmp) / "search.tsv"
-        self.f = open(self.path, "w", encoding="utf-8")
+        self.f = open(self.path, "w", encoding="utf-8", newline="\n")
         self.n = 0
 
     def add(self, col, path, items):
         p = ".".join(map(str, path))
         for row, it in enumerate(items):
-            t = it["t"].replace("\t", " ").replace("\n", " ")
+            t = LINE_BREAKS.sub(" ", it["t"])
             k = tree.norm(t)[:120]
             if not k:
                 continue
@@ -93,9 +96,12 @@ class Search:
             if cur:
                 blocks.append([cur[0][0]] + pack.add([[t, refs] for _k, t, refs in cur]))
 
-        with open(srt, encoding="utf-8") as f:
+        with open(srt, encoding="utf-8", newline="\n") as f:
             for line in f:
-                k, t, col, p, row = line.rstrip("\n").split("\t")
+                parts = line.rstrip("\n").split("\t")
+                if len(parts) != 5:
+                    raise ValueError(f"malformed search line: {line[:120]!r}")
+                k, t, col, p, row = parts
                 ref = [int(col), p, int(row)]
                 if last and last[0] == k and last[1] == t:
                     last[2].append(ref)
