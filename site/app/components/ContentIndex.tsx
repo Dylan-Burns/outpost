@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Collection, IndexRoot, Subject } from "@/lib/contentIndex";
 
-type TreeNode = { l: string; n: number; s: number; ss?: number[]; u?: number; d?: string; c?: TreeNode[]; r?: [number, number, number] };
+type TreeNode = { l: string; n: number; s: number; ss?: number[]; u?: number; cr?: [number, number, number]; d?: string; c?: TreeNode[]; r?: [number, number, number] };
 type Row = {
   t: string;
   k: string;
@@ -317,6 +317,13 @@ function onPath(target: Tgt, path: number[]) {
 
 function Section({ node, col, ed, path, depth, base, target, go }: Where) {
   const [open, setOpen] = useState(false);
+  const [kids, setKids] = useState<TreeNode[] | null>(node.c || null);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    if (!open || kids || !node.cr) return;
+    const [pack, off, len] = node.cr;
+    fetchPacked<TreeNode[]>(`${base}/p/${encodeURIComponent(col)}.${pack}.bin`, off, len).then(setKids, (e) => setErr(String(e)));
+  }, [open, kids, node.cr, base, col]);
   const ref = useRef<HTMLDetailsElement>(null);
   const wanted = onPath(target, path);
   useEffect(() => {
@@ -329,12 +336,16 @@ function Section({ node, col, ed, path, depth, base, target, go }: Where) {
           {node.l || "Contents"}
           {node.d && <small>{node.d}</small>}
         </span>
-        <span className="ix-kind">{node.c ? "section" : "shelf"}</span>
+        <span className="ix-kind">{node.c || node.cr ? "section" : "shelf"}</span>
         <span className="ix-len">{plural(node.n, "item")}</span>
         <span className="ix-size">{node.u ? `${bytes(nodeSize(node, ed))}+` : bytes(nodeSize(node, ed))}</span>
         <span className="ix-date" />
       </summary>
-      {open && <Children node={node} col={col} ed={ed} path={path} depth={depth + 1} base={base} target={wanted ? target : null} go={go} />}
+      {err && <p className={`ix-note lvl-${Math.min(depth + 1, 7)}`}>Could not load this section ({err}).</p>}
+      {open && node.cr && !kids && !err && <p className={`ix-note lvl-${Math.min(depth + 1, 7)}`}>Loading…</p>}
+      {open && (kids || !node.cr) && (
+        <Children node={{ ...node, c: kids || node.c }} col={col} ed={ed} path={path} depth={depth + 1} base={base} target={wanted ? target : null} go={go} />
+      )}
     </details>
   );
 }

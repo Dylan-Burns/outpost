@@ -53,6 +53,7 @@ export type Totals = {
   mapRegions: number;
   models: number;
   items: number;
+  distinctItems?: number;
   unmeasured: number;
   everyFile: number;
   archiveBytes: number;

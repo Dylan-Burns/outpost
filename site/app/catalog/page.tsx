@@ -37,8 +37,10 @@ export default function CatalogPage() {
             <div>
               <dt>Items</dt>
               <dd>
-                {num(t.items)}
-                <small>in {num(t.downloads)} downloads</small>
+                {num(t.distinctItems || t.items)}
+                <small>
+                  {t.distinctItems && t.distinctItems !== t.items ? `${num(t.items)} counting each edition` : `in ${num(t.downloads)} downloads`}
+                </small>
               </dd>
             </div>
             <div>

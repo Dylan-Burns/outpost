@@ -14,6 +14,7 @@ import re
 import unicodedata
 
 LIMIT = 200
+SUBTREE_BYTES = 32 << 10
 
 
 def norm(s):
@@ -241,6 +242,13 @@ def serialise(node, pack, on_leaf=None, path=()):
             on_leaf(path, node.items)
     if not out.get("u"):
         out.pop("u", None)
+    # A big branch is stored in the pack and fetched when its section is opened,
+    # so opening a collection never downloads the whole tree of a large wiki.
+    if path and "c" in out:
+        kids = json.dumps(out["c"], ensure_ascii=False, separators=(",", ":"))
+        if len(kids) > SUBTREE_BYTES:
+            out["cr"] = pack.add(out.pop("c"))
+            out["cn"] = len(kids)
     return out
 
 

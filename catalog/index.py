@@ -361,6 +361,8 @@ def main():
         "totals": {
             "downloads": len(cat["items"]), "archives": len(zims), "mapRegions": len(regions), "models": len(models),
             "items": all_items, "unmeasured": sum(col["unmeasured"] for col in built.values()),
+            "distinctItems": sum(c["items"] for c in {col.get("tree", col["id"]): col for col in built.values()}.values())
+                             + len(regions) + len(shared) + len(models),
             "everyFile": every, "archiveBytes": sum(i["size"] for i in zims),
             "mapBytes": sum(i["size"] for i in regions + shared), "modelBytes": sum(m["size"] for m in models),
             "largestLibrary": largest_bytes,

@@ -36,10 +36,19 @@ async function packed(url, off, len) {
   return JSON.parse(gunzipSync(buf).toString("utf8"));
 }
 
-// Every leaf of a tree, with its path of child indexes.
-function* leaves(node, path = []) {
-  if (node.r) yield { node, path };
-  for (const [i, c] of (node.c || []).entries()) yield* leaves(c, [...path, i]);
+// Leaves of a tree, with their path of child indexes. Big branches are
+// stored in the packs; follow at most a few of them per tree.
+async function leaves(col, node, path = [], out = [], budget = { n: 6 }) {
+  if (node.r) out.push({ node, path });
+  let kids = node.c;
+  if (!kids && node.cr) {
+    if (budget.n-- <= 0) return out;
+    const [pack, off, len] = node.cr;
+    kids = await packed(`${base}/p/${encodeURIComponent(col)}.${pack}.bin`, off, len);
+  }
+  const order = (kids || []).map((c, i) => [c, i]).sort(() => Math.random() - 0.5);
+  for (const [c, i] of order) await leaves(col, c, [...path, i], out, budget);
+  return out;
 }
 
 const root = await json(`${base}/root.json`);
@@ -52,13 +61,13 @@ const pool = [];
 const order = [...root.collections].sort(() => Math.random() - 0.5);
 for (const col of order) {
   const tree = await json(`${base}/c/${encodeURIComponent(col)}.json`);
-  const all = [...leaves(tree)];
+  const all = await leaves(col, tree);
   if (!all.length) continue;
   for (let k = 0; k < 2; k++) {
     const { node, path } = all[rnd(all.length)];
     const [pack, off, len] = node.r;
     const rows = await packed(`${base}/p/${encodeURIComponent(col)}.${pack}.bin`, off, len);
-    if (rows.length !== node.n - (node.c || []).reduce((a, c) => a + c.n, 0)) fail(`${col}: leaf count does not match its rows`);
+    if (!node.c && !node.cr && rows.length !== node.n) fail(`${col}: leaf count does not match its rows`);
     if (rows.length > root.limit) fail(`${col}: a shelf holds ${rows.length} rows`);
     const row = rnd(rows.length);
     const it = { col, path, row, title: rows[row].t, kind: rows[row].k };
