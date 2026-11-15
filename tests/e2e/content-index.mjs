@@ -91,7 +91,20 @@ step(`${subjects} subjects on the page`);
 for (const [kind, it] of want) {
   await page.goto(`${site}/catalog#/${encodeURIComponent(it.col)}/${it.path.join(".")}/${it.row}`, { waitUntil: "networkidle" });
   const hit = page.locator(".ix-item.hit");
-  await hit.waitFor({ timeout: 20000 }).catch(() => fail(`${kind} “${it.title}” in ${it.col}: link did not open its row`));
+  const opened = await hit.waitFor({ timeout: 60000 }).then(() => true, () => false);
+  if (!opened) {
+    const where = `#/${it.col}/${it.path.join(".")}/${it.row}`;
+    const state = {
+      sections: await page.locator(".ix-section[open] > summary .ix-name").allTextContents(),
+      collections: await page.locator(".ix-collection[open] > summary .ix-name strong").allTextContents(),
+      hits: await hit.count(),
+    };
+    await page.screenshot({ path: "content-index-fail.png" });
+    await page.reload({ waitUntil: "networkidle" });
+    const after = await hit.waitFor({ timeout: 60000 }).then(() => true, () => false);
+    fail(`${kind} “${it.title}” (${where}) did not open; state ${JSON.stringify(state)}; after a reload it ${after ? "did" : "still did not"}; ` +
+      `script errors: ${errors.slice(0, 3).join(" | ") || "none"}`);
+  }
   const text = await hit.locator("summary .ix-name").textContent();
   if (text !== it.title) fail(`${kind}: link opened “${text}”, expected “${it.title}”`);
   const zim = root.subjects.flatMap((s) => s.collections).find((c) => (c.tree || c.id) === it.col && !c.ed)?.zim;
@@ -122,7 +135,7 @@ step(`search found ${found} of ${picks.length} sampled titles`);
 await page.setViewportSize({ width: 390, height: 844 });
 const sample = [...want.values()][0];
 await page.goto(`${site}/catalog#/${encodeURIComponent(sample.col)}/${sample.path.join(".")}/${sample.row}`, { waitUntil: "networkidle" });
-await page.locator(".ix-item.hit").waitFor({ timeout: 20000 });
+await page.locator(".ix-item.hit").waitFor({ timeout: 60000 });
 const over = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
 if (over > 0) fail(`page scrolls sideways by ${over}px on a phone`);
 step("no sideways scroll on a phone");

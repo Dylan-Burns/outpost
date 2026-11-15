@@ -13,3 +13,4 @@ __pycache__/
 site/public/catalog/v1/index/c/
 site/public/catalog/v1/index/p/
 site/public/catalog/v1/index/s/
+tests/e2e/content-index-fail.png
