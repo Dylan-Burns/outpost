@@ -84,8 +84,16 @@ for (let i = 0; i < 30; i++) {
 }
 const book = books.find((b) => b.id === ARCHIVE);
 if (!book || !r.json.running) fail(`the library is not serving ${ARCHIVE}: ${JSON.stringify(r.json).slice(0, 200)}`);
-const page = await fetch(lib + book.path + "/", { redirect: "follow" });
-const html = await page.text();
+// The library lists a book as soon as it is installed; kiwix-serve picks the
+// new file up from its library a moment later, and answers 404 until then.
+let page, html, tries = 0;
+for (; tries < 60; tries++) {
+  page = await fetch(lib + book.path + "/", { redirect: "follow" });
+  html = await page.text();
+  if (page.status === 200) break;
+  await sleep(1000);
+}
+if (tries > 0) console.log(`    the library page answered ${page.status} after ${tries + 1} tries`);
 if (page.status !== 200 || html.length < 200) fail(`the library page returned ${page.status} with ${html.length} bytes`);
 if (!/frame-ancestors|default-src/.test(page.headers.get("content-security-policy") || "")) fail("the library origin sent no content security policy");
 step(`library serves ${book.title} (${html.length} bytes)`);
