@@ -46,7 +46,7 @@ If the person becomes unresponsive and stops breathing normally, call emergency 
 	{"Choking", "Choking (baby under 1)", "NHS and Red Cross guidance", `These steps are for a baby under 1 year old.
 If the baby can cough or cry, let them keep coughing and stay with them.
 If the baby cannot cough, cry or breathe: lay the baby face down along your forearm, head lower than the body, supporting the head and jaw. Give up to 5 sharp back blows between the shoulder blades with the heel of your hand.
-If that fails, turn the baby face up along your arm and give up to 5 chest thrusts: press the heel of one hand in the middle of the chest, just below the nipple line, sharply downwards.
+If that fails, turn the baby face up along your arm and give up to 5 chest thrusts: press two fingers or the heel of one hand in the middle of the chest, just below the nipple line, sharply downwards.
 Keep repeating 5 back blows and 5 chest thrusts, and call emergency services. Never use abdominal thrusts on a baby.
 If the baby becomes unresponsive and stops breathing normally, call emergency services and start CPR.`, "baby"},
 	{"Cardiopulmonary resuscitation", "CPR (adult or child over 1)", "NHS, Red Cross and American Heart Association guidance", `CPR is only for someone who is unresponsive and not breathing normally. These steps are for adults and children over 1 year old.
@@ -168,6 +168,9 @@ Call emergency services if they have trouble breathing, chest pain, a fit, swell
 Pour plenty of vinegar over the sting for at least 30 seconds before touching any tentacles; then remove them carefully with tweezers or gloves. If there is no vinegar, rinse with seawater, never fresh water.
 Watch their breathing closely: a box jellyfish sting can stop the heart. If they stop breathing normally, start CPR and keep going until help arrives.
 Severe pain, sweating, vomiting, or chest or back pain an hour or so later can be Irukandji syndrome: call emergency services.`, ""},
+	{"Chimney fire", "Chimney fire", "NFPA, London Fire Brigade and Red Cross guidance", `A loud roaring or rumbling, a stove pipe or flue glowing red, or flames or sparks from the top of the chimney mean a chimney fire. Get everyone out of the house and call the fire service.
+Only if it is safe and quick on the way out: close the stove door and its air vents to starve the fire of air. Do not throw water into a hot stove or onto a glowing pipe: steam and cracking metal can injure you.
+Do not go back in. Afterwards, do not use the stove again until a chimney sweep has inspected the chimney, as a chimney fire can crack it.`, ""},
 	{"Cut needing stitches", "Does a cut need stitches?", "NHS and Red Cross guidance", `First stop the bleeding: press firmly on the cut with a clean cloth for 10 minutes without lifting it, and raise the injured part.
 A cut needs a nurse or doctor (stitches, glue or strips) if its edges gape apart, it is deep or longer than about 2 cm, it is on the face, a joint, the hand or the genitals, it was made by something dirty or a bite, or you can see fat, muscle or bone. Go the same day: wounds are best closed within about 6 to 8 hours.
 Call emergency services if bleeding will not stop after 10 minutes of firm pressure, blood is spurting, or the hand or finger beyond the cut is numb, pale or cannot move normally.
@@ -456,6 +459,7 @@ var supersedes = map[string]string{
 	// person jerking on a live cable.
 	"Jellyfish sting":    "Burn",
 	"Box jellyfish":      "Jellyfish sting",
+	"Chimney fire":       "Starting a fire",
 	"Tick":               "Burn",
 	"Water purification": "Toxic gas",
 	"Electrical injury":  "Seizure",

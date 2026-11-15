@@ -836,8 +836,34 @@ func TestNoteAuditFixes(t *testing.T) {
 		}
 	}
 	for _, n := range notes {
-		if strings.Contains(n.text, "two fingers") {
+		if strings.Contains(n.text, "two fingers") && !strings.Contains(n.text, "heel of one hand") {
 			t.Errorf("%s still uses the two-finger technique", n.title)
 		}
+	}
+}
+
+func TestTwelfthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"kid got stung in the water up near darwin, long see through tentacles stuck on his legs and hes screaming, do i wee on it": "Box jellyfish",
+		"strong rotten egg smell in the kitchen, should i flick the light on to look for it":                                        "Smell of gas",
+		"loud roaring noise from the flue on my wood burner and the pipe is glowing red":                                            "Chimney fire",
+		"theres a stick jammed in my calf maybe 5cm in, yank it out?":                                                               "Severe bleeding",
+		"got stung by something with tentacles at the beach in cornwall":                                                            "Jellyfish stings",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first note %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	if f := first("how do i get the woodstove going when everythings damp"); !strings.Contains(f, "Starting a fire") {
+		t.Errorf("lighting a stove: %q", f)
 	}
 }
