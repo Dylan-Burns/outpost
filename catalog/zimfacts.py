@@ -238,11 +238,12 @@ def main():
     ap.add_argument("--skip", nargs="*", default=[])
     ap.add_argument("--jobs", type=int, default=2)
     ap.add_argument("--max-gb", type=float, default=1e9, help="only archives up to this size")
+    ap.add_argument("--min-gb", type=float, default=0, help="only archives over this size")
     ap.add_argument("--refresh", action="store_true")
     args = ap.parse_args()
     cat = json.loads(CATALOG.read_text())
     zims = [i for i in cat["items"] if i["kind"] == "zim" and (not args.only or i["id"] in args.only)
-            and i["id"] not in args.skip and i["size"] <= args.max_gb * 1e9
+            and i["id"] not in args.skip and args.min_gb * 1e9 < i["size"] <= args.max_gb * 1e9
             and (CACHE / (i["file"] + ".meta.json")).exists()]
     zims.sort(key=lambda i: i["size"])
     failed = []
