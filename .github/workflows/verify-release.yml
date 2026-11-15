@@ -28,4 +28,10 @@ jobs:
           WANT: ${{ inputs.version }}
         run: |
           v="${WANT:-$(sed -n 's/.*"version":"\([0-9.]*\)".*/\1/p' site/public/releases/latest.json)}"
+          # The tag is pushed before the site is deployed, so on a tag push
+          # wait up to 20 minutes for the release to appear.
+          for i in $(seq 40); do
+            curl -fsSI "https://projectoutpost.org/releases/v$v/SHA256SUMS" >/dev/null 2>&1 && break
+            echo "waiting for v$v on projectoutpost.org ($i/40)"; sleep 30
+          done
           scripts/verify-release.sh "$v"
