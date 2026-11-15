@@ -21,3 +21,4 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 22 }
       - run: cd site && npm ci && npx eslint . && npx next build
+      - run: python3 catalog/check_index.py
