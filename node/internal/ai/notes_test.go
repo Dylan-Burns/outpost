@@ -748,3 +748,46 @@ func TestOverdoseNoteComesAlone(t *testing.T) {
 		t.Errorf("notes %v", n)
 	}
 }
+
+func TestEleventhRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, title string) bool {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, title := range map[string]string{
+		"husband at dinner grabbed his throat he cant speak or cough just making a squeaky noise":                        "Choking (adult",
+		"baby 9 months went totally silent eating bits of grape face going dark no sound coming out":                     "Choking (baby",
+		"dad collapsed in the garden hes not really breathing just doing this weird gaspy snore thing":                   "CPR",
+		"my mate just texted me like a goodbye message saying thanks for everything and that hes got pills saved":        "suicide",
+		"spent ages digging the car out and now my fingertips are white and waxy and totally numb":                       "Frostbite",
+		"pulled my nephew out the deep end he'd gone under, coughed loads and spluttered but seems fine now":             "Drowning",
+		"sirens going off and we're in a mobile home no basement no nothing where do we go":                              "Tornado",
+		"its shaking right now im in bed what do i do":                                                                   "Earthquake",
+		"fire brigade says leave now, smoke getting thick, weve got maybe 10 min whats the most important stuff to grab": "go bag",
+		"stuck on the interstate in a white out, traffics not moving at all, ive got the engine running":                 "Stuck in a car",
+		"is the rain tank water ok to drink straight, it comes off the tin roof and theres possums up there":             "safe to drink",
+		"felt a long rolling quake while at the beach, now the sea is going way way out":                                 "Tsunami",
+		"HELP my husband is stuck to the hedge trimmer cable its cut through and hes jerking":                            "Electric shock",
+	} {
+		if !has(q, title) {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	for q, bad := range map[string]string{
+		"4 month old is burning up thermometer says 38.6 and she keeps turning away from the bottle":       "Burns",
+		"found a tick dug right into my daughters scalp, my husband says burn it off with a match":         "Burns",
+		"bluebottle got me at the beach kids say pee on it is that real its burning like crazy":            "Burns",
+		"council sent boil water notice but power's out and the gas is off too. how much bleach per litre": "Fumes",
+		"HELP my husband is stuck to the hedge trimmer cable its cut through and hes jerking":              "Seizure",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q wrongly got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}

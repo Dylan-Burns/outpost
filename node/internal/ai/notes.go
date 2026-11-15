@@ -439,6 +439,13 @@ var supersedes = map[string]string{
 	// The overdose note has the recovery position and naloxone, which
 	// must come first.
 	"Opioid overdose": "Recovery position",
+	// Notes whose words borrow from another: a jellyfish sting "burning",
+	// a tick someone wants to "burn off", bleach for drinking water, a
+	// person jerking on a live cable.
+	"Jellyfish sting":    "Burn",
+	"Tick":               "Burn",
+	"Water purification": "Toxic gas",
+	"Electrical injury":  "Seizure",
 }
 
 func Notes(q string) []Source {
