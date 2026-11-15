@@ -73,7 +73,7 @@ var emergencies = []struct {
 	{rx(`chok|something stuck in (his|her|their|my) throat|can.?t breathe or (talk|speak)`), []string{"Choking"}, nil},
 	{rx(`stroke|face (is )?droop|slurred speech|one side (of|is) (the |his |her |their )?(face|body)`), []string{"Stroke"}, rx(`(heat|sun) ?stroke`)},
 	{rx(`seiz|convuls|epilep`), []string{"Seizure", "Epilepsy"}, nil},
-	{rx(`drown|pulled .* (from|out of) (the )?water|under ?water`), []string{"Drowning"}, nil},
+	{rx(`drown|pulled .* (from|out of) (the )?water|under ?water|went under|go under|went in the (pool|lake|river|water)|fell in(to)? the (pool|lake|river|pond|water)|submerged|swallowed (a lot of )?water`), []string{"Drowning"}, nil},
 	{rx(`bleed|blood (is )?(spurt|pour|everywhere)|deep cut|gash|laceration`), []string{"Bleeding", "Hemorrhage", "Tourniquet"}, nil},
 	{rx(`broke|broken|fractur|snapped|crack`, `bone|arm|leg|ankle|wrist|hip|rib|collarbone|finger|toe|foot|hand|elbow|knee|shoulder|jaw|nose|skull`), []string{"Bone fracture", "Splint (medicine)"}, rx(`broke(n)? (the |my |his |her |their )?skin|skin (was |is )?broken`)},
 	{rx(`bent (the )?wrong way|wrong angle|out of place|deformed|crooked|sticking out`, `arm|leg|ankle|wrist|finger|toe|elbow|knee|shoulder|hip|bone`), []string{"Bone fracture", "Joint dislocation"}, nil},
@@ -117,6 +117,9 @@ var emergencies = []struct {
 	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},
 	{rx(`honey`, `baby|infant|month|newborn`), []string{"Botulism"}, nil},
 	// Topics with a note added from a standard first-aid and preparedness list.
+	{rx(`raccoon|racoon|fox|skunk|\bbats?\b|coyote|wild animal|stray`, `bit|bite|scratch|fought|fight|attack|saliva|licked|our dog|my dog|the dog|cat`), []string{"Rabies"}, nil},
+	{rx(`gas(oline)?|petrol|diesel|kerosene|lighter fluid|accelerant|fuel`, `start|light|get .* going|burn pile|campfire|fire ?pit|bonfire|wood stove|brush pile|on the fire`), []string{"Starting a fire"}, rx(`gas (leak|smell)|smell (of )?gas|natural gas|gas stove|gas station`)},
+	{rx(`fell|fall|fallen|tripped|slipped`, `hip|groin|leg (looks |is )?(shorter|turned|twisted)|can.?t (stand|walk|get up|put weight)|cant (stand|walk|get up)|won.?t (stand|walk)`), []string{"Bone fracture"}, nil},
 	{rx(`rash`, `glass|press|doesnt fade|doesn.?t (fade|go away)|wont fade|won.?t fade|fever|stiff neck|purple|spots`), []string{"Meningitis"}, nil},
 	{rx(`sudden|all of a sudden|today|this morning|overnight`, `confus|not making sense|talking nonsense|disorient|delirious|doesn.?t know where|does not know where`), []string{"Sudden confusion"}, rx(`snow|cold|freez|heat|sun|hot`)},
 	{rx(`tetanus|tetnus|tetnis|lockjaw|rusty|stepped on (a |an )?(old )?nail|puncture wound`), []string{"Tetanus"}, nil},

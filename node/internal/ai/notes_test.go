@@ -363,3 +363,32 @@ func TestThirdSetGaps(t *testing.T) {
 		}
 	}
 }
+
+func TestFourthSetGaps(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	want := map[string]string{
+		"our dog fought a raccoon and is bleeding from the face, what do we do":          "Animal bites",
+		"can i use a splash of gas to get the burn pile going":                           "Starting a fire safely",
+		"my son went under in the pool for a few seconds, coughed a lot, seems fine now": "Drowning",
+		"grandma is 81 and fell, her leg looks shorter and she cant stand":               "Broken bones",
+	}
+	for q, title := range want {
+		found := false
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	for _, q := range []string{"i smell gas near the stove", "how do i light my gas stove when the power is out"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "Starting a fire") {
+				t.Errorf("%q got %s", q, n.Title)
+			}
+		}
+	}
+}
