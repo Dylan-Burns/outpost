@@ -15,9 +15,17 @@ import (
 // change that loses recall, or matches a decoy, fails here first. Raise the
 // floor when recall improves.
 func TestParaphraseRecall(t *testing.T) {
+	// The second set (450, regional voices, symptoms described but never
+	// named) was written after the rules were tuned on the first.
+	for file, floor := range map[string]int{"paraphrases.json": 405, "paraphrases2.json": 290} {
+		t.Run(file, func(t *testing.T) { paraphraseRecall(t, file, floor) })
+	}
+}
+
+func paraphraseRecall(t *testing.T, file string, floor int) {
 	defer func(was bool) { UseNotes = was }(UseNotes)
 	UseNotes = true
-	b, err := os.ReadFile("../../../eval/assistant/paraphrases.json")
+	b, err := os.ReadFile("../../../eval/assistant/" + file)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +45,6 @@ func TestParaphraseRecall(t *testing.T) {
 			}
 		}
 	}
-	const floor = 395
 	if hit < floor {
 		t.Errorf("paraphrase recall %d of %d, below the floor of %d", hit, len(d.Positive), floor)
 	}
@@ -46,5 +53,5 @@ func TestParaphraseRecall(t *testing.T) {
 			t.Errorf("decoy %q got %v", q, titles(n))
 		}
 	}
-	t.Logf("paraphrase recall %d of %d", hit, len(d.Positive))
+	t.Logf("%s: recall %d of %d", file, hit, len(d.Positive))
 }

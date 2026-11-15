@@ -35,7 +35,23 @@ type note struct {
 // copy a note whole: given one note with steps for adults and for babies,
 // Qwen3 1.7B and Llama 3.2 3B both told the reader to give a choking baby
 // abdominal thrusts. A note for one situation only holds that situation.
-var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|bub|bubs|bubba|wee one|in the cot|in her cot|in his cot|\d+[- ]?(day|week|month)s?[- ]old)\b`)
+var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|bub|bubs|bubba|pickney|wee one|in the cot|in her cot|in his cot|\d+[- ]?(day|week|month)s?[- ]old|(one|two|three|four|five|six|seven|eight|nine|ten|eleven)[- ](day|week|month)s?[- ]old|(\d|1[01]|one|two|three|four|five|six|seven|eight|nine|ten|eleven) ?(months?|mths?|mos?)\b)\b`)
+
+// notBabyRE undoes a "months" that is not a baby's age.
+var notBabyRE = regexp.MustCompile(`(?i)\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven) ?(months?|mths?) (ago|pregnant|along|since|later|back|of (the|this)|supply|worth)|months? (pregnant|along)`)
+
+// isBaby reports whether a question is about a baby under one year.
+func isBaby(q string) bool {
+	if !babyRE.MatchString(q) {
+		return false
+	}
+	// "my wife is 7 months pregnant", "2 months ago": the word "baby" or
+	// an age in days or weeks still counts.
+	if notBabyRE.MatchString(q) {
+		return regexp.MustCompile(`(?i)\b(baby|infant|newborn|bub|bubba|wee one|\d+[- ]?(day|week)s?[- ]old)\b`).MatchString(q)
+	}
+	return true
+}
 
 var notes = []note{
 	{"Choking", "Choking (adult or child over 1)", "NHS and Red Cross guidance", `These steps are for adults and children over 1 year old.
@@ -457,6 +473,7 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
+	"Pregnancy warning signs":   {"Anaphylaxis", "Meningitis", "Eye injury"},
 	"Food safety":               {"Power outage"},
 	"Hypoglycemia":              {"Sudden confusion"},
 	"Winter car":                {"Winter heating"},
@@ -491,7 +508,11 @@ var supersedes = map[string][]string{
 // Minecraft tornado mod, a laptop "having a seizure", bleeding a radiator.
 // urgentRE keeps the notes when the question also sounds like a real
 // emergency ("my kid ate a mushroom from the garden, help").
-var everydayRE = regexp.MustCompile(`(?i)\b(recipes?|cake|cocktail|risotto|movie|film|album|song|band|spotify|netflix|quotes?|game|gaming|minecraft|fortnite|roblox|mod|toys?|lego|theme park|ride at|rollercoaster|course|certification|class(es)? near|price|best deals|cheapest|where to buy|shopping|photoshop|excel|chrome|browser|software|goats?|radiators?|brakes|chainsaw|mower|traffic noise|noise at night|seat hinge|soft close|tattoo|costume|meme|joke|lyrics)\b`)
+var everydayRE = regexp.MustCompile(`(?i)\b(sales|revenue|startup|quarter|burn rate|bleeding (cash|money)|drowning in (emails?|work|debt|paperwork|admin)|emails?|productivity|choked in the|(team|we|they) choked|coach(es)?|hydraulic|wordpress|plugin|blender|effects|emoji|poker|slang|sourdough|starter|chilli|chili|strobe|nosebleed seats?|stadium|posters?|school project|freestyle|backstroke|breaststroke|100m|swim(ming)? (lesson|technique)|cake|cocktail|risotto|movie|film|album|song|band|spotify|netflix|quotes?|game|gaming|minecraft|fortnite|roblox|mod|toys?|lego|theme park|ride at|rollercoaster|course|certification|class(es)? near|price|best deals|cheapest|where to buy|shopping|photoshop|excel|chrome|browser|software|goats?|radiators?|brakes|chainsaw|mower|traffic noise|noise at night|seat hinge|soft close|tattoo|costume|meme|joke|lyrics)\b`)
+
+// metaphorRE recognises figures of speech and machinery that use injury
+// words: these never need a note, even though "bleeding" also sounds urgent.
+var metaphorRE = regexp.MustCompile(`(?i)\b(bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
 
 var urgentRE = regexp.MustCompile(`(?i)\b(help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|blood|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
 
@@ -499,7 +520,7 @@ func Notes(q string) []Source {
 	if !UseNotes {
 		return nil
 	}
-	if everydayRE.MatchString(q) && !urgentRE.MatchString(q) {
+	if metaphorRE.MatchString(q) || everydayRE.MatchString(q) && !urgentRE.MatchString(q) {
 		return nil
 	}
 	topics := EmergencyTopics(q)
@@ -515,7 +536,7 @@ func Notes(q string) []Source {
 	}
 	var out []Source
 	for _, t := range topics {
-		baby := babyRE.MatchString(q)
+		baby := isBaby(q)
 		for _, n := range notes {
 			if n.topic == t && (n.who == "" || n.who == "baby" && baby || n.who == "older" && !baby) {
 				out = append(out, Source{Title: "Outpost note: " + n.title, Book: "Summary of " + n.basis, Text: n.text, Note: n.text})
