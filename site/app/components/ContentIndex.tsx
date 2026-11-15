@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Collection, IndexRoot, Subject } from "@/lib/contentIndex";
 
-type TreeNode = { l: string; n: number; s: number; u?: number; d?: string; c?: TreeNode[]; r?: [number, number, number] };
+type TreeNode = { l: string; n: number; s: number; ss?: number[]; u?: number; d?: string; c?: TreeNode[]; r?: [number, number, number] };
 type Row = {
   t: string;
   k: string;
@@ -32,6 +32,8 @@ type Row = {
   zoom?: number;
   bbox?: number[];
   rank?: number;
+  qs?: number;
+  ss?: (number | null)[];
 };
 type Ref = [number, string, number];
 type Hit = [string, Ref[]];
@@ -61,6 +63,7 @@ function length(r: Row): string {
   if (r.pg) return plural(r.pg, "page");
   if (r.min) return minutes(r.min);
   if (r.steps) return plural(r.steps, "step");
+  if (r.qs) return plural(r.qs, "question");
   if (r.k === "question" && r.ans !== undefined) return plural(r.ans, "answer");
   if (r.w) return plural(r.w, "word");
   if (r.ram) return `${r.ram} GB memory`;
@@ -68,7 +71,12 @@ function length(r: Row): string {
   return "";
 }
 
-const sizeText = (s: number | undefined) => (s === undefined || s === null ? "not yet measured" : bytes(s));
+function sizeText(r: Row, ed: number) {
+  const s = r.ss ? r.ss[ed] : r.s;
+  if (r.ss && s === null) return "not in this edition";
+  return s === undefined || s === null || s < 0 ? "not yet measured" : bytes(s);
+}
+const nodeSize = (n: TreeNode, ed: number) => (n.ss ? n.ss[ed] : n.s);
 
 // --- data access ---------------------------------------------------------------
 
@@ -200,14 +208,16 @@ function CollectionRow({ c, base, target, go, also, home }: { c: Collection; bas
   const [tree, setTree] = useState<TreeNode | null>(null);
   const [err, setErr] = useState("");
   const ref = useRef<HTMLDetailsElement>(null);
-  const wanted = home && target?.col === c.id;
+  const treeId = c.tree || c.id;
+  const ed = c.ed || 0;
+  const wanted = home && target?.col === treeId && (!c.tree || c.ed === 0);
   useEffect(() => {
     if (wanted && ref.current && !ref.current.open) ref.current.open = true;
   }, [wanted]);
   useEffect(() => {
     if (!open || tree) return;
-    fetchJson<TreeNode>(`${base}/c/${c.id}.json`).then(setTree, (e) => setErr(String(e)));
-  }, [open, tree, base, c.id]);
+    fetchJson<TreeNode>(`${base}/c/${c.tree || c.id}.json`).then(setTree, (e) => setErr(String(e)));
+  }, [open, tree, base, c.id, c.tree]);
   const kinds = Object.entries(c.kinds || {});
   const other = Object.entries(c.other || {}).filter(([, v]) => v > 0);
   return (
@@ -283,20 +293,20 @@ function CollectionRow({ c, base, target, go, also, home }: { c: Collection; bas
       </div>
       {err && <p className="ix-note lvl-2">Could not load this collection&apos;s contents ({err}).</p>}
       {open && !tree && !err && <p className="ix-note lvl-2">Loading…</p>}
-      {tree && <Children node={tree} col={c.id} path={[]} depth={2} base={base} target={wanted ? target : null} go={go} />}
+      {tree && <Children node={tree} col={treeId} ed={ed} path={[]} depth={2} base={base} target={wanted ? target : null} go={go} />}
     </details>
   );
 }
 
-function Children({ node, col, path, depth, base, target, go }: {
-  node: TreeNode; col: string; path: number[]; depth: number; base: string; target: Tgt; go: Go;
-}) {
+type Where = { node: TreeNode; col: string; ed: number; path: number[]; depth: number; base: string; target: Tgt; go: Go };
+
+function Children({ node, col, ed, path, depth, base, target, go }: Where) {
   return (
     <>
       {(node.c || []).map((ch, i) => (
-        <Section key={i} node={ch} col={col} path={[...path, i]} depth={depth} base={base} target={target} go={go} />
+        <Section key={i} node={ch} col={col} ed={ed} path={[...path, i]} depth={depth} base={base} target={target} go={go} />
       ))}
-      {node.r && <Leaf node={node} col={col} path={path} depth={depth} base={base} target={target} go={go} />}
+      {node.r && <Leaf node={node} col={col} ed={ed} path={path} depth={depth} base={base} target={target} go={go} />}
     </>
   );
 }
@@ -305,9 +315,7 @@ function onPath(target: Tgt, path: number[]) {
   return !!target && path.every((p, i) => target.path[i] === p) && target.path.length >= path.length;
 }
 
-function Section({ node, col, path, depth, base, target, go }: {
-  node: TreeNode; col: string; path: number[]; depth: number; base: string; target: Tgt; go: Go;
-}) {
+function Section({ node, col, ed, path, depth, base, target, go }: Where) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDetailsElement>(null);
   const wanted = onPath(target, path);
@@ -323,17 +331,15 @@ function Section({ node, col, path, depth, base, target, go }: {
         </span>
         <span className="ix-kind">{node.c ? "section" : "shelf"}</span>
         <span className="ix-len">{plural(node.n, "item")}</span>
-        <span className="ix-size">{node.u ? `${bytes(node.s)}+` : bytes(node.s)}</span>
+        <span className="ix-size">{node.u ? `${bytes(nodeSize(node, ed))}+` : bytes(nodeSize(node, ed))}</span>
         <span className="ix-date" />
       </summary>
-      {open && <Children node={node} col={col} path={path} depth={depth + 1} base={base} target={wanted ? target : null} go={go} />}
+      {open && <Children node={node} col={col} ed={ed} path={path} depth={depth + 1} base={base} target={wanted ? target : null} go={go} />}
     </details>
   );
 }
 
-function Leaf({ node, col, path, depth, base, target, go }: {
-  node: TreeNode; col: string; path: number[]; depth: number; base: string; target: Tgt; go: Go;
-}) {
+function Leaf({ node, col, ed, path, depth, base, target, go }: Where) {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [err, setErr] = useState("");
   useEffect(() => {
@@ -350,13 +356,13 @@ function Leaf({ node, col, path, depth, base, target, go }: {
   return (
     <>
       {rows.map((r, i) => (
-        <Item key={i} r={r} id={`row-${col}-${path.join(".")}-${i}`} depth={depth} hit={i === hit} link={() => go(col, path, i)} />
+        <Item key={i} r={r} ed={ed} id={`row-${col}-${where}-${i}`} depth={depth} hit={i === hit} link={() => go(col, path, i)} />
       ))}
     </>
   );
 }
 
-function Item({ r, id, depth, hit, link }: { r: Row; id: string; depth: number; hit: boolean; link: () => void }) {
+function Item({ r, ed, id, depth, hit, link }: { r: Row; ed: number; id: string; depth: number; hit: boolean; link: () => void }) {
   const facts: [string, string][] = [];
   if (r.by) facts.push([r.k === "talk" ? "Speaker" : r.k === "book" ? "Author" : "By", r.by]);
   if (r.x) facts.push(["About", r.x]);
@@ -379,7 +385,7 @@ function Item({ r, id, depth, hit, link }: { r: Row; id: string; depth: number; 
         <span className="ix-name">{r.t}</span>
         <span className="ix-kind">{r.k}</span>
         <span className="ix-len">{length(r)}</span>
-        <span className="ix-size">{sizeText(r.s)}</span>
+        <span className="ix-size">{sizeText(r, ed)}</span>
         <span className="ix-date">{r.d || ""}</span>
       </summary>
       <dl className={`ix-facts lvl-${Math.min(depth + 1, 8)}`}>

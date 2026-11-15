@@ -191,27 +191,34 @@ def measure(item, refresh=False):
     todo = [r for r in rows if r.idx in videos and "secs" not in facts[r.idx] and "vid" not in facts[r.idx]]
     if todo:
         log(item, f"{len(todo)} videos")
-    for s in range(0, len(todo), 60):
-        chunk = todo[s:s + 60]
-        spans_v = []
+    for s in range(0, len(todo), 100):
+        chunk = todo[s:s + 100]
+        where = {}
         for r in chunk:
             comp, offs = first.get(r.cluster) or zim.cluster_offsets(src, spans, [r.cluster])[r.cluster]
+            if comp:
+                continue  # videos are stored uncompressed; skip the odd one that is not
             base = spans[r.cluster][0] + 1 + offs[r.blob]
-            n = offs[r.blob + 1] - offs[r.blob]
-            k = min(n, 256 << 10)
-            spans_v.append((base, k))
-            spans_v.append((base + n - k, k))
-        data = src.read_many(spans_v) if not any(first.get(r.cluster, (True,))[0] for r in chunk) else None
-        recs = []
-        for j, r in enumerate(chunk):
-            if data is None:
+            where[r.idx] = (base, offs[r.blob + 1] - offs[r.blob])
+        heads = dict(zip(where, src.read_many([(b, min(n, 64 << 10)) for b, n in where.values()])))
+        recs, tails = [], {}
+        for r in chunk:
+            if r.idx not in heads:
                 continue
-            secs = media.media_seconds(data[2 * j], data[2 * j + 1])
-            x = {"vid": 1}
-            if secs:
-                x["secs"] = round(secs)
+            secs = media.media_seconds(heads[r.idx])
+            if secs is None and heads[r.idx][4:8] == b"ftyp":
+                tails[r.idx] = r
+                continue
+            x = {"vid": 1, **({"secs": round(secs)} if secs else {})}
             facts[r.idx].update(x)
             recs.append({"i": r.idx, **x})
+        if tails:
+            got = src.read_many([(where[i][0] + where[i][1] - min(where[i][1], 512 << 10), min(where[i][1], 512 << 10)) for i in tails])
+            for (i, r), tail in zip(tails.items(), got):
+                secs = media.media_seconds(heads[i], tail)
+                x = {"vid": 1, **({"secs": round(secs)} if secs else {})}
+                facts[i].update(x)
+                recs.append({"i": i, **x})
         flush(recs, [])
 
     pf.close()

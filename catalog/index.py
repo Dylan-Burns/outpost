@@ -123,6 +123,7 @@ def main():
     ap.add_argument("--key", default=os.path.expanduser("~/.config/outpost-release/release_ed25519"))
     ap.add_argument("--no-sign", action="store_true")
     ap.add_argument("--only", nargs="*", help="build only these collections (for testing)")
+    ap.add_argument("--allow-missing", action="store_true", help="leave out archives not listed yet (for testing)")
     args = ap.parse_args()
 
     t0 = time.time()
@@ -151,6 +152,27 @@ def main():
     if missing:
         sys.exit(f"purpose missing for: {missing}")
 
+    def add_dropped(skipped, meta):
+        skipped = collections.Counter(skipped)
+        skipped["redirects (other names for the same page)"] += sum(v for k, v in meta["counts"].items() if k.startswith("redirect"))
+        for k, v in meta["counts"].items():
+            if k.startswith("dropped "):
+                kind = k[len("dropped "):]
+                label = ("pictures" if kind.startswith("image/") else "fonts" if "font" in kind else
+                         "styles and scripts" if kind in ("text/css", "application/javascript", "text/javascript", "application/wasm")
+                         else "search index" if "xapian" in kind or "zimlisting" in kind else "other support files")
+                skipped[label] += v
+        return skipped
+
+    def zim_extra(it, meta, fam, measured):
+        md = meta.get("metadata", {})
+        return {"purpose": purposes["items"][it["id"]], "description": it.get("description") or md.get("Description", ""),
+                "longDescription": md.get("LongDescription", ""), "edition": it.get("date") or md.get("Date", "")[:7],
+                "built": md.get("Date", ""), "size": it["size"], "license": it.get("license", ""),
+                "publisher": it.get("publisher") or md.get("Publisher", ""), "creator": md.get("Creator", ""),
+                "file": it["file"], "sha256": it["sha256"], "entries": meta["entries"], "measured": measured,
+                "notice": it.get("notice", ""), "family": fam.name, "kind": "zim"}
+
     def build_collection(cid, title, its, skipped, extra):
         root = tree.build(its)
         n = tree.check(root)
@@ -167,6 +189,61 @@ def main():
         rec.update(extra)
         return rec
 
+    # Editions of one book (Wikipedia with pictures, text only, introductions only)
+    # share one tree: each row carries a size per edition.
+    FLAVOUR_ORDER = {"maxi": 0, "nopic": 1, "mini": 2, "": 3}
+    by_book = collections.defaultdict(list)
+    for i in cat["items"]:
+        if i["kind"] == "zim":
+            by_book[i["book"]].append(i)
+    edition_group = {}
+    for book, members in by_book.items():
+        if len(members) > 1:
+            members.sort(key=lambda i: FLAVOUR_ORDER.get(i.get("flavour", ""), 9))
+            for k, m in enumerate(members):
+                edition_group[m["id"]] = (members, k)
+
+    def collection_items(it):
+        meta_p = CACHE / (it["file"] + ".meta.json")
+        if not meta_p.exists():
+            if args.allow_missing:
+                raise LookupError(it["id"])
+            sys.exit(f"{it['id']}: not listed yet (run catalog/zimlist.py)")
+        meta = json.loads(meta_p.read_text())
+        rows = zimfacts.load_rows(it["file"])
+        facts, measured = load_facts(it["file"])
+        fam = sources.family(it, meta)
+        its, skipped = fam.items(rows, facts)
+        url_of = {r.idx: r.url for r in rows}
+        for x in its:
+            x["_url"] = url_of.get(x["idx"], "")
+        return meta, fam, its, skipped, measured
+
+    shared_trees = {}  # primary id -> {member id: (items in edition, bytes in edition)}
+
+    def build_shared(members):
+        primary = members[0]
+        per = [collection_items(m) for m in members]
+        base = per[0][2]
+        index = {x["_url"]: x for x in base}
+        for x in base:
+            x["ss"] = [None] * len(members)
+        for e, (_meta, _fam, its, _sk, _m) in enumerate(per):
+            for x in its:
+                y = index.get(x["_url"])
+                if y is None:
+                    y = dict(x)
+                    y["ss"] = [None] * len(members)
+                    y["s"] = None
+                    index[x["_url"]] = y
+                    base.append(y)
+                y["ss"][e] = x.get("s") if x.get("s") is not None else -1
+        for x in base:  # in each edition: a size, -1 (listed, not yet measured) or None (not in it)
+            x.pop("_url", None)
+        counts = {m["id"]: (sum(1 for x in base if x["ss"][e] is not None),
+                            sum(max(x["ss"][e] or 0, 0) for x in base)) for e, m in enumerate(members)}
+        return per, base, counts
+
     built = {}
     stats = collections.Counter()
     for c in cat["categories"]:
@@ -176,31 +253,38 @@ def main():
             it = items[iid]
             if args.only and iid not in args.only:
                 continue
+            if iid not in built and iid in edition_group and not args.only:
+                members, _k = edition_group[iid]
+                try:
+                    per, base, counts = build_shared(members)
+                except LookupError:
+                    continue
+                prim = members[0]
+                tree_rec = None
+                for e, m in enumerate(members):
+                    meta, fam, its, skipped, measured = per[e]
+                    skipped = add_dropped(skipped, meta)
+                    extra = zim_extra(m, meta, fam, measured)
+                    if tree_rec is None:
+                        tree_rec = build_collection(prim["id"], prim["title"], base, skipped, extra)
+                    rec = dict(tree_rec)
+                    rec.update(extra)
+                    rec.update({"id": m["id"], "title": m["title"], "items": counts[m["id"]][0], "itemBytes": counts[m["id"]][1],
+                                "unmeasured": sum(1 for x in its if x.get("s") is None),
+                                "kinds": dict(collections.Counter(x["k"] for x in its).most_common()),
+                                "other": dict(skipped.most_common()), "tree": prim["id"], "ed": e,
+                                "editions": [x["id"] for x in members]})
+                    built[m["id"]] = rec
+                    print(f"  {m['id']:45} {rec['items']:>10,} items (shared tree)  {time.time() - t0:6.0f}s", file=sys.stderr, flush=True)
             if iid not in built:
-                meta_p = CACHE / (it["file"] + ".meta.json")
-                if not meta_p.exists():
-                    sys.exit(f"{iid}: not listed yet (run catalog/zimlist.py)")
-                meta = json.loads(meta_p.read_text())
-                rows = zimfacts.load_rows(it["file"])
-                facts, measured = load_facts(it["file"])
-                fam = sources.family(it, meta)
-                its, skipped = fam.items(rows, facts)
-                skipped["redirects (other names for the same page)"] += sum(v for k, v in meta["counts"].items() if k.startswith("redirect"))
-                for k, v in meta["counts"].items():
-                    if k.startswith("dropped "):
-                        kind = k[len("dropped "):]
-                        label = ("pictures" if kind.startswith("image/") else "fonts" if "font" in kind else
-                                 "styles and scripts" if kind in ("text/css", "application/javascript", "text/javascript", "application/wasm")
-                                 else "search index" if "xapian" in kind or "zimlisting" in kind else "other support files")
-                        skipped[label] += v
-                md = meta.get("metadata", {})
-                extra = {"purpose": purposes["items"][iid], "description": it.get("description") or md.get("Description", ""),
-                         "longDescription": md.get("LongDescription", ""), "edition": it.get("date") or md.get("Date", "")[:7],
-                         "built": md.get("Date", ""), "size": it["size"], "license": it.get("license", ""),
-                         "publisher": it.get("publisher") or md.get("Publisher", ""), "creator": md.get("Creator", ""),
-                         "file": it["file"], "sha256": it["sha256"], "entries": meta["entries"], "measured": measured,
-                         "notice": it.get("notice", ""), "family": fam.name, "kind": "zim"}
-                built[iid] = build_collection(iid, it["title"], its, skipped, extra)
+                try:
+                    meta, fam, its, skipped, measured = collection_items(it)
+                except LookupError:
+                    continue
+                for x in its:
+                    x.pop("_url", None)
+                skipped = add_dropped(skipped, meta)
+                built[iid] = build_collection(iid, it["title"], its, skipped, zim_extra(it, meta, fam, measured))
                 stats["items"] += built[iid]["items"]
                 print(f"  {iid:45} {built[iid]['items']:>10,} items  {time.time() - t0:6.0f}s", file=sys.stderr, flush=True)
             rec = dict(built[iid])

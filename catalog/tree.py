@@ -227,9 +227,14 @@ def serialise(node, pack, on_leaf=None, path=()):
             out["n"] += sc["n"]
             out["s"] += sc["s"]
             out["u"] = out.get("u", 0) + sc.get("u", 0)
+    if kids and "ss" in out.get("c", [{}])[0]:
+        out["ss"] = [sum(c["ss"][e] for c in out["c"]) for e in range(len(out["c"][0]["ss"]))]
     if node.items:
         out["n"] += len(node.items)
         out["s"] += sum(it.get("s") or 0 for it in node.items)
+        if "ss" in node.items[0]:
+            own = [sum(max(it["ss"][e] or 0, 0) for it in node.items) for e in range(len(node.items[0]["ss"]))]
+            out["ss"] = [a + b for a, b in zip(out.get("ss", [0] * len(own)), own)]
         out["u"] = out.get("u", 0) + sum(1 for it in node.items if it.get("s") is None)
         out["r"] = pack.add([row(it) for it in node.items])
         if on_leaf:

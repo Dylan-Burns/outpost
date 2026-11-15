@@ -832,6 +832,88 @@ class IFixit(Family):
         return out, skipped
 
 
+# --- Khan Academy (kolibri2zim) -----------------------------------------------------------------
+
+KHAN_CRUMBS = re.compile(r'aria-label="breadcrumb"(.*?)</(?:nav|ol)>', re.S)
+KHAN_LI = re.compile(r"<li[^>]*>(.*?)</li>", re.S)
+KHAN_VIDEO = re.compile(r'src="\.?/?([0-9a-f]{32}\.(?:webm|mp4))"')
+KHAN_DESC = re.compile(r'<p[^>]*class="[^"]*(?:description|lead)[^"]*"[^>]*>(.*?)</p>', re.S)
+
+
+def _text(h):
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", h))).strip()
+
+
+class Khan(Family):
+    name = "khan"
+
+    def wanted(self, rows):
+        return {r.idx for r in rows if r.front}
+
+    def needs_duration(self, row):
+        return row.url.endswith((".webm", ".mp4"))
+
+    def extract(self, row, data):
+        h = data.decode("utf-8", "replace")
+        x = {}
+        m = KHAN_CRUMBS.search(h)
+        if m:
+            x["crumbs"] = [_text(li) for li in KHAN_LI.findall(m.group(1))]
+        m = KHAN_VIDEO.search(h)
+        if m:
+            x["video"] = m.group(1)
+        m = KHAN_DESC.search(h)
+        if m:
+            x["desc"] = _text(m.group(1))[:300]
+        return x
+
+    def items(self, rows, facts):
+        by_url = {r.url: r for r in rows}
+        folders = collections.defaultdict(list)
+        for r in rows:
+            if "/" in r.url and r.mime == "application/json":
+                folders[r.url.split("/", 1)[0]].append(r)
+        out, skipped, used = [], collections.Counter(), set()
+        for r in rows:
+            if not r.front:
+                continue
+            f = facts.get(r.idx, {})
+            crumbs = [c for c in f.get("crumbs", []) if c]
+            path = tuple(crumbs[1:-1])[:5] if len(crumbs) > 2 else ()
+            vr = by_url.get(f.get("video", ""))
+            ex = folders.get(r.url, [])
+            if vr:
+                vf = facts.get(vr.idx, {})
+                it = {"t": html.unescape(r.title), "k": "video", "path": path, "idx": r.idx, "s": vf.get("s")}
+                if vf.get("secs"):
+                    it["min"] = round(vf["secs"] / 60, 1)
+                used.add(vr.idx)
+            elif ex:
+                qs = [e for e in ex if "/images/" not in e.url]
+                sz = [facts.get(e.idx, {}).get("s") for e in ex]
+                it = {"t": html.unescape(r.title), "k": "exercise", "path": path, "idx": r.idx,
+                      "s": sum(sz) if all(v is not None for v in sz) else None, "qs": len(qs)}
+                used.update(e.idx for e in ex)
+            else:
+                skipped["topic and course pages"] += 1
+                used.add(r.idx)
+                continue
+            if f.get("desc"):
+                it["x"] = first_line(f["desc"])
+            out.append(it)
+            used.add(r.idx)
+        for r in rows:
+            if r.idx in used or r.front:
+                continue
+            if r.url.endswith(".vtt"):
+                skipped["subtitles"] += 1
+            elif r.url.endswith((".webm", ".mp4")):
+                out.append(self.make(r, facts, "video", ("Videos not linked from a lesson",)))
+            else:
+                skipped[self.skip_reason(r)] += 1
+        return out, skipped
+
+
 def family(item, meta):
     b = item["book"]
     if b.startswith(("wikipedia_", "wiktionary_", "wikivoyage_", "wikiquote_", "wikibooks_", "wikiversity_", "wikisource_",
@@ -859,4 +941,6 @@ def family(item, meta):
         return Phet(item, meta)
     if b.startswith("ifixit_"):
         return IFixit(item, meta)
+    if b.startswith("khanacademy_"):
+        return Khan(item, meta)
     return Family(item, meta)

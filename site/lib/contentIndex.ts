@@ -31,6 +31,10 @@ export type Collection = {
   kind: "zim" | "maps" | "models";
   tier?: string;
   alsoIn?: string[];
+  /** Editions of one book share one tree: its id, and this edition's column in it. */
+  tree?: string;
+  ed?: number;
+  editions?: string[];
 };
 
 export type Subject = {
