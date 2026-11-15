@@ -207,6 +207,12 @@ func Retrieve(ctx context.Context, lib Library, q string, topics Topics) []Sourc
 	sort.SliceStable(read, func(a, b int) bool { return read[a].score > read[b].score })
 	// Outpost's own notes come first, then the library's passages.
 	out := Notes(q)
+	if NotesOnly && len(out) > 0 {
+		for i := range out {
+			out[i].Label = fmt.Sprintf("S%d", i+1)
+		}
+		return out
+	}
 	for i := range out {
 		out[i].Label = fmt.Sprintf("S%d", i+1)
 	}

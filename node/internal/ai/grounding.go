@@ -165,6 +165,9 @@ func BuildPrompt(question string, sources []Source) []Message {
 	boundary := srcMarker + "-" + hex.EncodeToString(b)
 	var sys strings.Builder
 	sys.WriteString(systemPrompt(question))
+	if PremiseCheck {
+		sys.WriteString("- If the question assumes something (\"it's probably fine, right?\", \"should I rub it?\"), check that against the sources first and say plainly if it is wrong. Do not agree just because the reader expects it.\n")
+	}
 	if NotesFirst {
 		for _, src := range sources {
 			if src.Note != "" {
@@ -192,6 +195,33 @@ func UngroundedPrompt(q string) []Message {
 		{Role: "user", Content: q},
 	}
 }
+
+// PremiseCheck tells the model to check what the question takes for
+// granted: Qwen3 1.7B agreed that a beeping CO alarm was "probably just the
+// battery" and that chicken left 8 hours without power was fine if it smelt
+// fine, with notes saying otherwise in front of it.
+var PremiseCheck = false
+
+// OnlyNotes returns the notes among sources, or all of sources if there are
+// none. Their labels stay as they are (notes come first), so the citations
+// in an answer built from them still point at the right entries of the
+// full list the page shows.
+func OnlyNotes(sources []Source) []Source {
+	var out []Source
+	for _, s := range sources {
+		if s.Note != "" {
+			out = append(out, s)
+		}
+	}
+	if len(out) == 0 {
+		return sources
+	}
+	return out
+}
+
+// NotesOnly gives the model only Outpost's notes when any match, leaving out
+// the library's passages, which a small model mixes into the note's steps.
+var NotesOnly = false
 
 // NotesFirst tells the model that Outpost's notes win when sources disagree.
 var NotesFirst = false

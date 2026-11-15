@@ -69,6 +69,12 @@ func (s *Server) installedModels() []modelView {
 	return out
 }
 
+// smallModel reports whether a model is the smallest kind Outpost offers:
+// ranked last in its tests, or unranked and under 2 GB.
+func smallModel(m modelView) bool {
+	return m.Rank >= 4 || m.Rank == 0 && m.Size > 0 && m.Size < 2e9
+}
+
 // bestModel is the installed model that answers by default: the best in
 // Outpost's assistant tests (lowest rank), or the smallest if none is ranked.
 // The smallest model still names the topics, as it is the quickest.
@@ -212,7 +218,16 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 	send("sources", nonNil(sources))
 	var msgs []ai.Message
 	if len(sources) > 0 {
-		msgs = ai.BuildPrompt(q, sources)
+		// The smallest model reads only Outpost's notes when any match: given
+		// the library's passages as well, Qwen3 1.7B mixed them into the
+		// note's steps ("put the toes by the fire"); on a second independent
+		// set its harmful answers fell from 4 to 1. Larger models do better
+		// with the passages. The page lists every source either way.
+		prompt := sources
+		if smallModel(model) {
+			prompt = ai.OnlyNotes(sources)
+		}
+		msgs = ai.BuildPrompt(q, prompt)
 	} else {
 		send("ungrounded", true)
 		msgs = ai.UngroundedPrompt(q)

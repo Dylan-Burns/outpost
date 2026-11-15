@@ -7,7 +7,7 @@ import (
 
 var (
 	citeRE     = regexp.MustCompile(`\[S\d+\]`)
-	listNumRE  = regexp.MustCompile(`(?m)^\s*\d+[.)]\s`)
+	listNumRE  = regexp.MustCompile(`(?m)^\s*(\d+[.)]|\[\d+\])\s`) // "1. ", "1) " and "[1] " list markers
 	numberRE   = regexp.MustCompile(`\d+(?:[.,/]\d+)*`)
 	numPhrase  = regexp.MustCompile(`\d+(?:[.,/:–-]\d+)*\s*(?:%|°\s?[CF]?|[a-zA-Z]+)?`)
 	thousandRE = regexp.MustCompile(`(\d),(\d{3})`)

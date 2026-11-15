@@ -74,6 +74,7 @@ If they are unconscious but breathing, put them in the recovery position (on the
 If a chemical got on the skin or in the eyes, rinse with plenty of running water.`, ""},
 	{"Carbon monoxide poisoning", "Carbon monoxide", "CDC and NHS guidance", `Headache, dizziness, nausea, tiredness or confusion in several people sharing a space with a generator, stove, heater, grill or fire is a warning sign of carbon monoxide.
 Get everyone into fresh air straight away. Turn off the source only if it is safe, and do not go back inside. Call emergency services.
+Treat a carbon monoxide alarm that sounds as real, even if nobody feels ill: the gas has no smell and symptoms can come late. Get everyone out first, then call the fire service or gas company; do not assume it is the battery. A low-battery warning is usually a single chirp about once a minute, not the full alarm.
 Never run a generator, camp stove, grill or fuel heater inside a home, garage, tent or vehicle, even with doors or windows open. Keep a generator outside, at least 6 metres (20 feet) from windows, doors and vents.`, ""},
 	{"Hypoglycemia", "Low blood sugar", "NHS and American Diabetes Association guidance", `Shakiness, sweating, confusion or odd behaviour in someone with diabetes may be low blood sugar.
 If they are awake and can swallow safely: give fast sugar, such as glucose tablets, a small glass of fruit juice or regular (not diet) soft drink, or sweets. Check again after 15 minutes and repeat if they are no better, then give a snack.
@@ -183,7 +184,7 @@ Mobile homes and vehicles are not safe in a tornado: go to a sturdy building or 
 If you are caught outside with no shelter, lie flat in a ditch or low spot and cover your head. Do not shelter under a bridge or overpass.
 Stay in shelter until the storm has passed.`, ""},
 	{"Flood", "Flood", "US National Weather Service and Red Cross guidance", `Move to higher ground straight away if you are told to, or if water is rising.
-Do not walk, swim or drive through floodwater: 15 cm (6 inches) of moving water can knock you down, and 30 cm (1 foot) can carry a car away. Turn around, don't drown.
+Do not walk, swim or drive through floodwater, however shallow it looks: the road under it may be washed away and the depth is hard to judge. 15 cm (6 inches) of moving water can knock you down, and 30 cm (1 foot) can carry a car away. Turn around, don't drown.
 If your car is caught in rising water, get out and move to higher ground if you can do so safely.
 Stay away from power lines and electrical equipment in or near water.
 Floodwater can carry sewage and chemicals: do not drink it, and wash with clean water after touching it.
