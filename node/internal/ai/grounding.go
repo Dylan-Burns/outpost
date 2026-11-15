@@ -202,21 +202,20 @@ func UngroundedPrompt(q string) []Message {
 // fine, with notes saying otherwise in front of it.
 var PremiseCheck = false
 
-// OnlyNotes returns the notes among sources, or all of sources if there are
-// none. Their labels stay as they are (notes come first), so the citations
-// in an answer built from them still point at the right entries of the
-// full list the page shows.
-func OnlyNotes(sources []Source) []Source {
-	var out []Source
+// NoteAnswer is the answer made of Outpost's notes among sources, or "" if
+// there are none: each note's title and text, citing its label.
+func NoteAnswer(sources []Source) string {
+	var b strings.Builder
 	for _, s := range sources {
-		if s.Note != "" {
-			out = append(out, s)
+		if s.Note == "" {
+			continue
 		}
+		if b.Len() > 0 {
+			b.WriteString("\n\n")
+		}
+		fmt.Fprintf(&b, "%s [%s]\n%s", strings.TrimPrefix(s.Title, "Outpost note: "), s.Label, s.Note)
 	}
-	if len(out) == 0 {
-		return sources
-	}
-	return out
+	return b.String()
 }
 
 // NotesOnly gives the model only Outpost's notes when any match, leaving out

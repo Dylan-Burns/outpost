@@ -69,6 +69,12 @@ func (s *Server) installedModels() []modelView {
 	return out
 }
 
+// answerWithNote reports whether Outpost's notes answer a question instead
+// of the model: when the model is the smallest kind and a note matched.
+func answerWithNote(m modelView, sources []ai.Source) bool {
+	return smallModel(m) && ai.NoteAnswer(sources) != ""
+}
+
 // smallModel reports whether a model is the smallest kind Outpost offers:
 // ranked last in its tests, or unranked and under 2 GB.
 func smallModel(m modelView) bool {
@@ -216,18 +222,21 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		sources = s.gatherSources(ctx, q, models[0].Model)
 	}
 	send("sources", nonNil(sources))
+	// With the smallest model, a matching Outpost note is the answer and the
+	// model is not asked. Qwen3 1.7B agreed with whatever a question assumed
+	// even with the note in front of it ("probably just the battery,
+	// right?"); on two sets of 95 questions written by an agent that had
+	// seen none of Outpost, the notes alone scored 0.82 and 0.84 with no
+	// harmful answer, against 0.67 to 0.70 with 3 to 4 for the model, and
+	// the reader has them in seconds. The page shows the note.
+	if answerWithNote(model, sources) {
+		send("noteanswer", true)
+		send("done", map[string]any{"model": model.Title})
+		return
+	}
 	var msgs []ai.Message
 	if len(sources) > 0 {
-		// The smallest model reads only Outpost's notes when any match: given
-		// the library's passages as well, Qwen3 1.7B mixed them into the
-		// note's steps ("put the toes by the fire"); on a second independent
-		// set its harmful answers fell from 4 to 1. Larger models do better
-		// with the passages. The page lists every source either way.
-		prompt := sources
-		if smallModel(model) {
-			prompt = ai.OnlyNotes(sources)
-		}
-		msgs = ai.BuildPrompt(q, prompt)
+		msgs = ai.BuildPrompt(q, sources)
 	} else {
 		send("ungrounded", true)
 		msgs = ai.UngroundedPrompt(q)

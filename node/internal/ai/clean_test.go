@@ -43,13 +43,13 @@ func TestCleanAnswerDropsReasoning(t *testing.T) {
 	}
 }
 
-func TestOnlyNotesAndListMarkers(t *testing.T) {
+func TestNoteAnswerAndListMarkers(t *testing.T) {
 	src := []Source{{Label: "S1", Title: "Outpost note: Frostbite", Note: "x", Text: "Rewarm in warm water."}, {Label: "S2", Title: "Frostbite", Text: "Frostbite is..."}}
-	if n := OnlyNotes(src); len(n) != 1 || n[0].Label != "S1" {
-		t.Errorf("OnlyNotes: %+v", n)
+	if a := NoteAnswer(src); !strings.HasPrefix(a, "Frostbite [S1]\n") || strings.Contains(a, "Frostbite is") {
+		t.Errorf("NoteAnswer: %q", a)
 	}
-	if n := OnlyNotes(src[1:]); len(n) != 1 || n[0].Label != "S2" {
-		t.Errorf("OnlyNotes without notes: %+v", n)
+	if a := NoteAnswer(src[1:]); a != "" {
+		t.Errorf("NoteAnswer without notes: %q", a)
 	}
 	if u := UnsupportedNumbers("[1] Do not rub them [S1].\n[2] Rewarm them [S1].", src); len(u) != 0 {
 		t.Errorf("list markers counted as numbers: %v", u)

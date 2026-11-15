@@ -181,7 +181,7 @@ export function Search({ status }: { status: Status }) {
 }
 
 type Source = { label: string; title: string; book: string; path: string; note?: string };
-type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; dose?: boolean; error: string; status: string; done: boolean; model?: string };
+type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; dose?: boolean; noteAnswer?: boolean; error: string; status: string; done: boolean; model?: string };
 
 export function Assistant({ status }: { status: Status }) {
   const [info, err] = usePoll<{ available: boolean; models: { id: string; title: string; rank?: number }[] }>("/api/assistant", 0);
@@ -208,6 +208,7 @@ export function Assistant({ status }: { status: Status }) {
         else if (ev === "ungrounded") upd((t) => (t.ungrounded = true));
         else if (ev === "unsupported") upd((t) => (t.unsupported = data || []));
         else if (ev === "dose") upd((t) => (t.dose = true));
+        else if (ev === "noteanswer") upd((t) => (t.noteAnswer = true));
         else if (ev === "final") upd((t) => (t.a = data));
         else if (ev === "status") upd((t) => (t.status = data));
         else if (ev === "error") upd((t) => (t.error = data));
@@ -287,8 +288,13 @@ export function Assistant({ status }: { status: Status }) {
                   <p class="note-text">{s.note}</p>
                 </section>
               ))}
-              {t.sources.some((s) => s.note) && (t.a || !t.error) && <p class="answer-label">The assistant&apos;s answer, from your library. Where it differs from the note above, follow the note.</p>}
-              {t.a ? linkify(t.a, t.sources) : !t.error && <span class="muted"><span class="spinner" /> {t.status}</span>}
+              {t.noteAnswer && (
+                <p class="answer-label">
+                  Follow Outpost&apos;s note above. The library articles below have more detail.
+                </p>
+              )}
+              {!t.noteAnswer && t.sources.some((s) => s.note) && (t.a || !t.error) && <p class="answer-label">The assistant&apos;s answer, from your library. Where it differs from the note above, follow the note.</p>}
+              {t.a ? linkify(t.a, t.sources) : !t.error && !t.noteAnswer && !t.done && <span class="muted"><span class="spinner" /> {t.status}</span>}
               {t.error && <p class="alert warn" style={{ whiteSpace: "normal" }}>{t.error}</p>}
               {t.unsupported && t.unsupported.length > 0 && (
                 <p class="alert warn small" style={{ whiteSpace: "normal" }}>

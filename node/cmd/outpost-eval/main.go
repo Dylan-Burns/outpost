@@ -144,6 +144,7 @@ func main() {
 	notesFirst := flag.Bool("notes-first", ai.NotesFirst, "tell the model Outpost's notes win when sources disagree")
 	premise := flag.Bool("premise", ai.PremiseCheck, "tell the model to check what the question assumes")
 	notesOnly := flag.Bool("notes-only", ai.NotesOnly, "give the model only Outpost's notes when any match")
+	noteAnswer := flag.Bool("note-answer", false, "when Outpost's notes match, answer with them and do not ask the model")
 	clean := flag.Bool("clean", false, "score answers after removing text copied from the instructions, as the server does")
 	flag.Parse()
 	ai.TopicsStyle = *topicsStyle
@@ -241,7 +242,9 @@ func main() {
 			passages = append(passages, s.Text)
 		}
 		ans := ""
-		if !*retrieveOnly {
+		if na := ai.NoteAnswer(src); *noteAnswer && na != "" {
+			ans = na
+		} else if !*retrieveOnly {
 			msgs := ai.UngroundedPrompt(tc.Q)
 			if len(src) > 0 {
 				msgs = ai.BuildPrompt(tc.Q, src)
