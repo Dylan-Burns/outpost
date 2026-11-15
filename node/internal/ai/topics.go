@@ -62,7 +62,7 @@ var emergencies = []struct {
 	topics []string
 	none   []*regexp.Regexp // the rule does not apply if any of these match
 }{
-	{rx(`swallow|ingest|\bate\b|drank|drunk|chew|overdos|took too many|took (a |the )?(whole |entire |full )?(bottle|pack|packet|box)`, `pill|tablet|medic|bleach|chemical|cleaner|detergent|soap|laundry|pod|lye|drain|poison|berr|mushroom|batter|antifreeze|fuel|petrol|gasoline|paracetamol|tylenol|aspirin|iron|sleeping`), []string{"Poisoning", "Drug overdose"}, nil},
+	{rx(`swallow|ingest|\bate\b|drank|drunk|chew|overdos|took too many|took (a bunch|a lot|lots|loads|a handful|some) of|took (a |the )?(whole |entire |full )?(bottle|pack|packet|box)`, `pill|tablet|medic|bleach|chemical|cleaner|detergent|soap|laundry|pod|lye|drain|poison|berr|mushroom|batter|antifreeze|fuel|petrol|gasoline|paracetamol|tylenol|aspirin|iron|sleeping`), []string{"Poisoning", "Drug overdose"}, nil},
 	{rx(`generator|engine|stove|heater|grill|barbecue|charcoal|furnace|boiler|fire`, `headache|dizz|nause|vomit|drowsy|sleepy|confus|faint|collaps`), []string{"Carbon monoxide poisoning"}, nil},
 	{rx(`carbon monoxide|\bco (alarm|detector|poisoning|leak)|\bco2? alarm`), []string{"Carbon monoxide poisoning"}, nil},
 	{rx(`diabet|insulin|sugar`, `shak|sweat|confus|dizz|faint|pale|drowsy|unconscious|not making sense|weird`), []string{"Hypoglycemia"}, nil},
@@ -79,11 +79,11 @@ var emergencies = []struct {
 	{rx(`bent (the )?wrong way|wrong angle|out of place|deformed|crooked|sticking out`, `arm|leg|ankle|wrist|finger|toe|elbow|knee|shoulder|hip|bone`), []string{"Bone fracture", "Joint dislocation"}, nil},
 	{rx(`burn|scald`), []string{"Burn", "Thermal burn"}, rx(`wood|\blogs?\b|fuel|candle|calorie|\bfat\b|\bcds?\b|dvd|burns best|burn (the |our |my )?(trash|garbage|rubbish|waste|leaves)|heartburn|burn ?out|burning (smell|sensation when)`)},
 	{rx(`spill|spilt|splash|poured|knocked over|touched|grabbed|picked up`, `boiling|hot (water|coffee|tea|oil|soup|grease|pan|pot|stove|iron|metal)|stove|kettle|oven`), []string{"Burn", "Thermal burn"}, nil},
-	{rx(`heat ?stroke|sunstroke|overheat|too hot|heat exhaustion`), []string{"Heat stroke", "Heat exhaustion"}, nil},
+	{rx(`heat ?stroke|sunstroke|overheat|too hot|heat exhaustion|stopped sweating|not sweating|working (outside|in the sun) all day|out in the (heat|sun) all day`), []string{"Heat stroke", "Heat exhaustion"}, nil},
 	{rx(`hypotherm|freezing|so cold|shivering uncontrollab|fell in(to)? (cold|icy) water`), []string{"Hypothermia"}, rx(`pipe|freezer|\bcar\b|engine|food|water line|plant|garden|tank|battery`)},
 	// "old guy in the snow, shivering stopped and hes mumbling" found
 	// articles on whiskey, and the answer said to give him some.
-	{rx(`shiver|mumbl|confus|slurr|drowsy|sleepy|clumsy|stumbl|pale and cold|cold to the touch|ice cold`, `snow|cold|freez|\bice\b|icy|winter|frost|outside all night|out all night|wet and`), []string{"Hypothermia"}, rx(`pipe|freezer|engine|food|plant|garden`)},
+	{rx(`shiver|mumbl|confus|slurr|drowsy|sleepy|clumsy|stumbl|pale and cold|cold to the touch|ice cold`, `snow|cold|freez|soaked|drenched|wet|river|lake|creek|rain|\bice\b|icy|winter|frost|outside all night|out all night|wet and`), []string{"Hypothermia"}, rx(`pipe|freezer|engine|food|plant|garden`)},
 	{rx(`frostbit|frost nip|frozen (finger|toe|nose|ear)`), []string{"Frostbite"}, nil},
 	{rx(`numb|white|waxy|pale|hard|blister|grey|gray`, `toe|finger|feet|foot|ear|nose|hand|cheek`, `snow|cold|freez|\bice\b|frost|winter|below zero`), []string{"Frostbite"}, nil},
 	{rx(`hit (his|her|their|my) head|head injur|knocked out|concuss|fell on (his|her|their|my) head`), []string{"Head injury", "Concussion"}, nil},
@@ -117,6 +117,12 @@ var emergencies = []struct {
 	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},
 	{rx(`honey`, `baby|infant|month|newborn`), []string{"Botulism"}, nil},
 	// Topics with a note added from a standard first-aid and preparedness list.
+	{rx(`rash`, `glass|press|doesnt fade|doesn.?t (fade|go away)|wont fade|won.?t fade|fever|stiff neck|purple|spots`), []string{"Meningitis"}, nil},
+	{rx(`sudden|all of a sudden|today|this morning|overnight`, `confus|not making sense|talking nonsense|disorient|delirious|doesn.?t know where|does not know where`), []string{"Sudden confusion"}, rx(`snow|cold|freez|heat|sun|hot`)},
+	{rx(`tetanus|tetnus|tetnis|lockjaw|rusty|stepped on (a |an )?(old )?nail|puncture wound`), []string{"Tetanus"}, nil},
+	{rx(`toilet|poop|poo\b|sewage|human waste|latrine|bathroom`, `don.?t work|dont work|not working|no water|can.?t flush|cant flush|won.?t flush|broken|outage|flood|off grid|no plumbing`), []string{"Emergency toilet"}, nil},
+	{rx(`no heat|heat(ing)? (is )?(out|off|broken)|furnace|keep (the family|us|everyone|the kids|my family) warm|cold house|house is (freezing|cold)`, `winter|storm|snow|cold|freez|power|outage|ice`), []string{"Winter heating"}, nil},
+	{rx(`expired|out of date|old |leftover|left over|someone else|my (wife|husband|mom|mum|dad|friend|partner|son|daughter).?s|\bwith\b|together|mix|combine|same time`, `ibuprofen|tylenol|paracetamol|acetaminophen|aspirin|antibiotic|amoxicillin|pills|medication|medicine|meds\b|tablets|prescription|advil|motrin|naproxen`), []string{"Medicine safety"}, rx(`how (much|many)|dose`)},
 	{rx(`opioid|opiate|heroin|fentanyl|oxy(contin|codone)?\b|morphine|methadone|percocet|narcan|naloxone`), []string{"Opioid overdose"}, nil},
 	{rx(`overdos|too many pills|took a lot of`, `not breathing|barely breathing|breathing (slow|weird)|blue|wont wake|won.?t wake|can.?t wake|unresponsive|pinpoint`), []string{"Opioid overdose", "Poisoning"}, nil},
 	{rx(`drunk|alcohol|vodka|whiskey|tequila|beers?|shots|drinking`, `passed out|unconscious|won.?t wake|can.?t wake|wont wake|throwing up|vomit|puking|breathing|cold|blue|seizure|sleep it off`), []string{"Alcohol poisoning"}, nil},

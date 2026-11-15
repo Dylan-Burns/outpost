@@ -126,6 +126,7 @@ Rewarm in warm (not hot) water, about 37 to 39 °C, for 15 to 30 minutes, or wit
 Cover it loosely with clean dry dressings and get medical help.`, ""},
 	{"Head injury", "Head injury", "NHS guidance", `Get emergency help if the person was knocked out even briefly, is confused or very drowsy, vomits, has a seizure, has a worsening headache, has clear fluid or blood from the nose or ears, has trouble speaking, seeing or walking, or has weakness on one side.
 If a neck injury is possible, keep the head and neck still.
+Anyone who takes blood-thinning medicine (warfarin, apixaban, rivaroxaban, clopidogrel and others) needs to be checked urgently after any blow to the head, even if they seem fine: bleeding inside the skull can start slowly.
 Someone should stay with the person for the first 24 hours and get help if any of these signs appear.`, ""},
 	{"Asthma", "Asthma attack", "NHS and Asthma + Lung UK guidance", `Help the person sit upright, and keep them calm. Loosen tight clothing.
 If they have a reliever inhaler (usually blue), help them use it: one puff every 30 to 60 seconds, up to 10 puffs.
@@ -279,6 +280,34 @@ Chest pain, trouble breathing and a racing heart can also be signs of a heart at
 	{"Heat stroke", "Hot weather and heat waves", "CDC and NHS guidance", `In a heat wave, a fan alone may not keep someone safe once it is hotter than about 32 to 35 °C (90 to 95 °F). Cool showers or baths, wet cloths on the skin, and spending the hottest hours somewhere air-conditioned (a library, shop or cooling centre) help more.
 Drink water regularly, before feeling thirsty. Keep curtains closed on sunny windows and avoid hard work in the hottest part of the day.
 Check on older people, babies and people who live alone at least twice a day.`, ""},
+	{"Foreign body", "Something stuck in the nose or ear", "NHS guidance", `Do not try to dig it out with a finger, cotton bud or tweezers: it can be pushed further in.
+Nose: ask the child to blow gently through that nostril while you press the other one closed. If it does not come out, get medical help.
+Ear: an insect can sometimes be floated out by tilting the head and pouring in a little warm (not hot) water. Do not do this if the ear is painful or has discharge, which may mean a damaged eardrum.
+A button battery or magnets in the nose or ear is an emergency: get help straight away. So is trouble breathing, heavy bleeding or severe pain.`, ""},
+	{"Meningitis", "Rash that does not fade", "NHS and Meningitis Research Foundation guidance", `A rash that does not fade when you press the side of a glass firmly against it, in someone who is unwell or has a fever, can be meningitis or sepsis. Call emergency services now.
+Other warning signs: a stiff neck, dislike of bright light, very sleepy or hard to wake, confusion, cold hands and feet, pale or blotchy skin, a seizure, or a baby who is floppy or has a high-pitched cry.
+Do not wait for a rash: it can appear late or not at all. Trust your instinct if someone is getting worse quickly.`, ""},
+	{"Sudden confusion", "Sudden confusion", "NHS guidance", `Confusion that comes on suddenly, over hours or a day, needs urgent medical help the same day, above all in an older person. Common causes are an infection (often of the urine or chest), a stroke, low blood sugar, dehydration, a medicine, or a head injury.
+Call emergency services now if they also have a drooping face, a weak arm or slurred speech, chest pain, trouble breathing, a high temperature with drowsiness, or cannot be woken.
+If they have diabetes, check their blood sugar if you can; if it is low and they can swallow, give them something sugary.
+Keep them safe and calm, and give sips of water if they are awake.`, ""},
+	{"Tetanus", "Deep or dirty wounds and tetanus", "CDC and NHS guidance", `Clean the wound well under running water and remove any dirt you can see, then cover it.
+A deep or dirty wound, such as a puncture from a rusty nail, a wound with soil or manure in it, or an animal bite, can cause tetanus. Get a tetanus booster if your last one was more than 5 years ago or you do not know when it was, ideally within 48 hours.
+Get medical help for a deep puncture of the foot, a wound you cannot clean, or signs of infection: spreading redness, swelling, pus, fever, or stiffness of the jaw or neck.`, ""},
+	{"Emergency toilet", "When toilets do not work", "FEMA and CDC guidance", `Line the toilet bowl or a bucket with two strong plastic bags. After each use, cover the waste with a little cat litter, sawdust, soil or ash.
+Tie the bags when they are a third to half full and keep them in a covered container, away from people, food and water, until they can be collected or buried.
+If you bury waste, dig at least 30 cm (1 foot) deep and at least 60 metres (200 feet) from wells, streams and other water.
+Wash hands with soap and water, or use hand sanitiser, every time. Never pour waste into floodwater or near a water source.`, ""},
+	{"Mushroom poisoning", "Wild mushrooms", "NHS and poison centre guidance", `Never eat a wild mushroom unless an expert has identified it with certainty: some deadly species look like edible ones. White mushrooms with white gills and a ring on the stem can be death caps or destroying angels, which kill.
+Cooking, drying or peeling does not make a poisonous mushroom safe.
+If anyone, above all a child, has eaten a wild mushroom: call a poison centre or emergency services straight away, even if they seem fine, because the deadliest kinds cause symptoms only 6 to 24 hours later. Keep a piece of the mushroom to show.`, ""},
+	{"Winter heating", "No heating in winter", "CDC and Red Cross guidance", `Heat one room and close off the others. Hang blankets over windows and doors, and gather everyone there.
+Wear layers, hats and socks, use blankets and sleeping bags, and have warm drinks and food.
+Never heat the house with a gas stove or oven, a grill, a camp stove or a generator: they give off carbon monoxide, which kills. Use a fuel-burning heater only if it is made for indoor use, with fresh air coming in, and keep a working carbon monoxide alarm. A fireplace or wood stove needs a clear chimney.
+Check babies, older people and anyone ill often for signs of hypothermia: shivering, confusion, drowsiness.`, ""},
+	{"Medicine safety", "Mixing, old and someone else's medicines", "NHS and US FDA guidance", `Ask a pharmacist or doctor before taking two medicines together: some common ones interact. Anti-inflammatory painkillers such as ibuprofen and naproxen can raise blood pressure, weaken blood pressure medicines and harm the kidneys; paracetamol (acetaminophen) is usually the safer painkiller for people on blood pressure medicine, within the label's limits.
+Do not take antibiotics that are left over, out of date or prescribed for someone else: they may be the wrong medicine or not enough to work. A tooth or wound infection with swelling or fever needs a dentist or doctor.
+Do not take someone else's prescription medicine, even the same medicine at another strength.`, ""},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.

@@ -20,9 +20,10 @@ func TestAnswerWithNote(t *testing.T) {
 	}{
 		{qwen, note, true},     // the smallest model: the note answers
 		{tiny, note, true},     // unranked and small
-		{llama, note, false},   // a better model writes its own answer
-		{big, note, false},     // unranked and large
+		{llama, note, true},    // whatever the model: the note answers
+		{big, note, true},      // unranked and large too
 		{qwen, library, false}, // no note: the model answers from the library
+		{llama, library, false},
 	}
 	for _, c := range cases {
 		if got := answerWithNote(c.m, c.src); got != c.want {

@@ -322,3 +322,44 @@ func titles(n []Source) []string {
 	}
 	return out
 }
+
+func TestThirdSetGaps(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	want := map[string]string{
+		"my 4yr old pushed a bead up his nose and its stuck":                                 "nose or ear",
+		"been working outside all day headache dizzy stopped sweating now hes confused":      "Heat stroke",
+		"found a guy soaked and shivering by the river now hes stopped shivering and sleepy": "Hypothermia",
+		"my kid has a fever and a rash that doesnt go away when i press a glass on it":       "Rash that does not fade",
+		"my teenager took a bunch of pills i dont know what they were shes drowsy":           "Swallowed poison",
+		"my dad is 76 and suddenly confused today not making sense":                          "Sudden confusion",
+		"stepped on a rusty nail went in deep do i need a tetnus shot":                       "tetanus",
+		"toilet dont work no water how do we deal with poop for a family":                    "toilets do not work",
+		"found white mushrooms with gills and a ring on the stem safe to eat?":               "Wild mushrooms",
+		"no heat in a winter storm how do i keep the family warm":                            "No heating in winter",
+		"can i take ibuprofen with my blood pressure pills":                                  "Mixing, old",
+		"antibiotics expired 2 yrs ago ok to take them for my tooth":                         "Mixing, old",
+		"dad hit his head on a cabinet, he takes blood thinners but seems fine":              "Head injury",
+	}
+	for q, title := range want {
+		found := false
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	if n := Notes("dad hit his head, he takes blood thinners"); len(n) == 0 || !strings.Contains(n[0].Text, "blood-thinning") {
+		t.Errorf("head injury note lacks blood thinners: %v", titles(n))
+	}
+	for _, q := range []string{"how much ibuprofen can i give my 4 year old", "what toilet paper is best", "my rash is itchy after hiking"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "Mixing, old") || strings.Contains(n.Title, "toilets") || strings.Contains(n.Title, "does not fade") {
+				t.Errorf("%q got %s", q, n.Title)
+			}
+		}
+	}
+}
