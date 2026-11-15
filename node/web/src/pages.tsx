@@ -287,7 +287,7 @@ export function Assistant({ status }: { status: Status }) {
                   <p class="note-text">{s.note}</p>
                 </section>
               ))}
-              {t.sources.some((s) => s.note) && (t.a || !t.error) && <p class="answer-label">The assistant&apos;s answer, from your library:</p>}
+              {t.sources.some((s) => s.note) && (t.a || !t.error) && <p class="answer-label">The assistant&apos;s answer, from your library. Where it differs from the note above, follow the note.</p>}
               {t.a ? linkify(t.a, t.sources) : !t.error && <span class="muted"><span class="spinner" /> {t.status}</span>}
               {t.error && <p class="alert warn" style={{ whiteSpace: "normal" }}>{t.error}</p>}
               {t.unsupported && t.unsupported.length > 0 && (
