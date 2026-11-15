@@ -200,3 +200,41 @@ func TestFinalSetGaps(t *testing.T) {
 		t.Error("child question got the adult page")
 	}
 }
+
+func TestIndependentSetGaps(t *testing.T) {
+	has := func(q, want string) bool {
+		for _, g := range EmergencyTopics(q) {
+			if g == want {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"my 7 yr old nose wont stop bleeding should i tip his head back":            "Nosebleed",
+		"co alarm keeps going off and my head hurts and the kids feel sick":         "Carbon monoxide poisoning",
+		"power been out 6 hours is the food in the fridge still ok":                 "Food safety",
+		"my 2 month old feels hot temp is 38.4 should i worry or wait till morning": "Fever",
+		"found a tick on my kid how do i get it out":                                "Tick",
+		"water over the road on my way home looks maybe a foot deep":                "Flood",
+		"stuck in my car in a snowstorm should i walk for help or stay put":         "Winter car",
+		"my husband cant breathe or talk he is choking":                             "Choking",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: got %v, want %s", q, EmergencyTopics(q), want)
+		}
+	}
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	if n := Notes("my 2 month old feels hot temp is 38.4"); len(n) == 0 || !strings.Contains(n[0].Text, "under 3 months") {
+		t.Errorf("baby fever note: %+v", n)
+	}
+	if n := Notes("my 10 year old has a fever of 39"); len(n) != 0 {
+		t.Errorf("baby fever note for an older child: %+v", n)
+	}
+	for _, q := range []string{"how do i check the tick marks on a tape measure", "my power drill is broken"} {
+		if g := EmergencyTopics(q); len(g) != 0 {
+			t.Errorf("%q matched %v", q, g)
+		}
+	}
+}

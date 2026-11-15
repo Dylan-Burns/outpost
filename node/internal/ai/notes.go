@@ -203,6 +203,15 @@ Do not move them unless they are in immediate danger, such as fire or rising wat
 Keep the head and neck still in the position you found them: kneel behind their head and hold it steady with your hands on either side.
 Call emergency services. Keep them warm and keep checking their breathing.
 If they stop breathing normally, start CPR. If they vomit or you must leave them, roll them onto their side keeping the head, neck and body in line, with help if you can.`, ""},
+	{"Fever", "Fever in a young baby", "NHS guidance", `A baby under 3 months old with a temperature of 38 °C (100.4 °F) or higher needs urgent medical help: call a doctor or emergency services now. Do not wait until morning.
+A baby 3 to 6 months old with a temperature of 39 °C (102.2 °F) or higher also needs urgent advice.
+Get help at once, at any temperature, if the baby is floppy or hard to wake, will not feed, has a rash that does not fade when a glass is pressed on it, has a seizure, or is breathing fast or with difficulty.
+Keep the baby lightly dressed, offer feeds often, and check the nappies for dehydration. Ask a doctor or pharmacist before giving any fever medicine to a baby under 3 months.`, "baby"},
+	{"Winter car", "Stuck in a car in snow", "US National Weather Service and Red Cross guidance", `Stay with the car. It shelters you and is easier for rescuers to find; do not walk away in a storm.
+Keep the exhaust pipe clear of snow and run the engine only about 10 minutes each hour for heat, with a window open a crack, so carbon monoxide does not build up inside.
+Make the car easy to see: tie a bright cloth to the aerial or door, and turn on the inside light while the engine runs.
+Keep warm: put on extra clothes, use blankets, huddle together, and move your arms and legs now and then.
+Drink fluids. Watch each other for signs of hypothermia and frostbite.`, ""},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.

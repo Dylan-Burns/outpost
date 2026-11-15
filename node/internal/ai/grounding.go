@@ -165,6 +165,14 @@ func BuildPrompt(question string, sources []Source) []Message {
 	boundary := srcMarker + "-" + hex.EncodeToString(b)
 	var sys strings.Builder
 	sys.WriteString(systemPrompt(question))
+	if NotesFirst {
+		for _, src := range sources {
+			if src.Note != "" {
+				sys.WriteString("- Sources titled \"Outpost note\" are checked first-aid and safety guidance. Where another source disagrees with one, follow the note.\n")
+				break
+			}
+		}
+	}
 	var u strings.Builder
 	if QuestionFirst {
 		fmt.Fprintf(&u, "Question: %s\n\n", scrub(question, boundary))
@@ -184,6 +192,9 @@ func UngroundedPrompt(q string) []Message {
 		{Role: "user", Content: q},
 	}
 }
+
+// NotesFirst tells the model that Outpost's notes win when sources disagree.
+var NotesFirst = false
 
 // QuestionFirst also puts the question before the sources, not only after.
 var QuestionFirst = false
