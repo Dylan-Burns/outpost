@@ -144,6 +144,7 @@ func main() {
 	notesFirst := flag.Bool("notes-first", ai.NotesFirst, "tell the model Outpost's notes win when sources disagree")
 	premise := flag.Bool("premise", ai.PremiseCheck, "tell the model to check what the question assumes")
 	notesOnly := flag.Bool("notes-only", ai.NotesOnly, "give the model only Outpost's notes when any match")
+	safetyNet := flag.Bool("net", false, "put the \"when to get help now\" card before the model's answer to a health question no note matches, as the page shows it")
 	noteAnswer := flag.Bool("note-answer", false, "when Outpost's notes match, answer with them and do not ask the model")
 	clean := flag.Bool("clean", false, "score answers after removing text copied from the instructions, as the server does")
 	flag.Parse()
@@ -257,6 +258,9 @@ func main() {
 			if *clean && len(src) > 0 {
 				ans = ai.CleanAnswer(ans, msgs[0].Content)
 			}
+		}
+		if net, ok := ai.SafetyNet(tc.Q, src); *safetyNet && ok && ans != "" {
+			ans = net.Note + "\n\n" + ans
 		}
 		cancel()
 		r := score(tc, titles, passages, ans)

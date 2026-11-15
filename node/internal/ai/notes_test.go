@@ -530,3 +530,27 @@ func TestSixthRoundNoOverreach(t *testing.T) {
 		}
 	}
 }
+
+func TestOlderSetMisses(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"rattlesnake got my leg on a hike, we're 2 hours from the car":                                  "Snakebite",
+		"husband 54 has heavy pressure in his chest going down his left arm and hes sweaty":             "Heart attack",
+		"my husband sliced his hand open with a knife and it won't stop gushing":                        "Severe bleeding",
+		"mom is 78, suddenly cant lift her right arm and words are slurry but she says shes just tired": "Stroke",
+		"the only water we have is a muddy pond, how do we make it drinkable":                           "Making water safe",
+		"camping at like 8000 ft, creek water is cloudy, how long do i boil it":                         "Making water safe",
+		"How do I make oral rehydration solution at home?":                                              "dehydration",
+		"I think my shoulder is dislocated":                                                             "Broken bones",
+		"found a man unconscious on the floor, he is breathing. what position do i put him in?":         "Unconscious but breathing",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+}

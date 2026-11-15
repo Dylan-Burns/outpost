@@ -125,6 +125,10 @@ Keep fingers behind the edge, and carry and store the axe with its edge covered.
 	{"Finding a person", "Finding where someone lives", "Outpost", `Outpost cannot find or share where a private person lives or how to reach them, and will not help track anyone down.
 If you need to deliver legal papers or sort out child arrangements, a court or a solicitor (lawyer) can do this for you.
 If you are worried that someone is in danger, call the police. If you are afraid of someone, police and domestic abuse helplines can help you stay safe.`, ""},
+	{"Recovery position", "Unconscious but breathing", "NHS and Red Cross guidance", `Call emergency services.
+If they are breathing normally but will not wake, put them on their side in the recovery position: kneel beside them, put the arm nearest you at a right angle, bring the far arm across their chest with the back of their hand against the cheek nearest you, bend the far knee up, then pull on that knee to roll them towards you onto their side. Tilt the head back gently so the airway stays open.
+If you think they may have hurt their neck or back, keep them still and only roll them if they are vomiting or their airway is at risk.
+Keep checking their breathing until help arrives. If they stop breathing normally, roll them onto their back and start CPR.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -375,7 +379,7 @@ var noteTopics = []struct {
 	topic string
 }{
 	{regexp.MustCompile(`(?i)\bcann(ing|ed)\b|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|potato|carrot|peas|soup)|water ?bath|pressure can`), "Home canning"},
-	{regexp.MustCompile(`(?i)(purif|disinfect|treat|filter|safe to drink|drinkable|potable|boil).{0,40}water|water.{0,40}(purif|disinfect|safe to drink|drinkable|potable)|bleach.{0,30}(water|gallon|litre|liter)`), "Water purification"},
+	{regexp.MustCompile(`(?i)(purif|disinfect|treat|filter|safe to drink|drinkable|potable|boil).{0,40}water|water.{0,70}(purif|disinfect|safe to drink|drinkable|potable|boil)|(creek|stream|river|pond|lake|rain|well|muddy|cloudy|dirty|brown) ?water|water.{0,20}(muddy|cloudy|dirty|brown)|bleach.{0,30}(water|gallon|litre|liter)`), "Water purification"},
 }
 
 // Notes returns the notes for the emergencies a question names, as sources

@@ -215,7 +215,14 @@ func (s *Server) handleChat(w http.ResponseWriter, r *http.Request) {
 		// (Llama 3.2 3B refused to name any for some emergencies).
 		sources = s.gatherSources(ctx, q, models[0].Model)
 	}
-	send("sources", nonNil(sources))
+	// A health question that no note matches gets the "when to get help
+	// now" card on the page, above the model's answer. The model does not
+	// see it (see ai.SafetyNet).
+	shown := sources
+	if net, ok := ai.SafetyNet(q, sources); ok {
+		shown = append([]ai.Source{net}, sources...)
+	}
+	send("sources", nonNil(shown))
 	// A matching Outpost note is the answer, and the model is not asked.
 	// Small models agree with whatever a question assumes, even with the
 	// note in front of them ("probably just the battery, right?"), and a
