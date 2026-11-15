@@ -677,3 +677,74 @@ func TestNinthRoundNoOverreach(t *testing.T) {
 		}
 	}
 }
+
+func TestTenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"mates been on the cans all night now hes passed out snoring weird and wont wake, we just leave him to sleep it off yeah?": "Alcohol",
+		"son got hit in the head at rugby, now hes throwing up and keeps asking the same thing over and over":                      "Head injury",
+		"accidentally took my night pills twice, its the blood pressure ones":                                                      "Swallowed poison",
+		"toddler was holding a button battery from the remote and i cant find the other one":                                       "Swallowed poison",
+		"how do i get the woodstove going when everythings damp and theres no newspaper":                                           "Starting a fire",
+		"jellyfish got me on the leg at the beach, someone said pee on it":                                                         "Jellyfish",
+		"how do u know if a cut needs stitches, kitchen knife on my thumb gaping a bit":                                            "stitches",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	for q, bad := range map[string]string{
+		"mates been on the cans all night now hes passed out snoring weird and wont wake":                     "Fainting",
+		"son got hit in the head at rugby, now hes throwing up and keeps asking the same thing over and over": "dehydration",
+		"what size button battery does a car key fob take":                                                    "Swallowed",
+		"how do i light the gas stove when the igniter is broken":                                             "Starting a fire",
+	} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, bad) {
+				t.Errorf("%q wrongly got %q", q, n.Title)
+			}
+		}
+	}
+}
+
+func TestTenthRoundNoOverreach(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, title string) bool {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, bad := range map[string]string{
+		"how do I get a bee stinger out of my arm":                                               "Jellyfish",
+		"cut my hand open on a broken glass in the palm its pumping out blood and wont stop":     "Broken bones",
+		"sliced my palm open on a broken jar quite deep, blood keeps soaking thru the tea towel": "stitches",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q wrongly got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+	if q := "cut my hand open on a broken glass in the palm its pumping out blood and wont stop"; !has(q, "Severe bleeding") {
+		t.Errorf("%q: %v", q, titles(Notes(q)))
+	}
+	if q := "my teen cut her wrist on purpose not deep but its bleeding, she doesnt want me to tell anyone"; !has(q, "suicide") {
+		t.Errorf("%q: %v", q, titles(Notes(q)))
+	}
+}
+
+func TestOverdoseNoteComesAlone(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	n := titles(Notes("my roommate took something at a party and now his lips are blue and hes snoring weird and i cant wake him"))
+	if len(n) == 0 || !strings.Contains(n[0], "Opioid") {
+		t.Errorf("notes %v", n)
+	}
+}

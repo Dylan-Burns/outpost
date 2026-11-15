@@ -76,7 +76,8 @@ Find out what was swallowed, how much and when, and keep the container or packet
 With paracetamol (acetaminophen), people often feel fine at first while the liver is being damaged: they need hospital treatment even if they seem well.
 Do not make the person vomit, and do not give them anything to eat or drink unless a poison centre or medical professional tells you to.
 If they are unconscious but breathing, put them in the recovery position (on their side) and keep checking their breathing. If they stop breathing normally, start CPR.
-If a chemical got on the skin or in the eyes, rinse with plenty of running water.`, ""},
+If a chemical got on the skin or in the eyes, rinse with plenty of running water.
+A swallowed button battery, or one that may have been swallowed, is an emergency even if the child seems well: it can burn through the food pipe within 2 hours. Go to the emergency department now. Do not make them sick and do not wait for symptoms.`, ""},
 	{"Carbon monoxide poisoning", "Carbon monoxide", "CDC and NHS guidance", `Headache, dizziness, nausea, tiredness or confusion in several people sharing a space with a generator, stove, heater, grill or fire is a warning sign of carbon monoxide.
 Get everyone into fresh air straight away. Turn off the source only if it is safe, and do not go back inside. Call emergency services.
 Treat a carbon monoxide alarm that sounds as real, even if nobody feels ill: the gas has no smell and symptoms can come late. Get everyone out first, then call the fire service or gas company; do not assume it is the battery. A low-battery warning is usually a single chirp about once a minute, not the full alarm.
@@ -156,6 +157,13 @@ Do not cut or pull the cord. The afterbirth (placenta) usually comes within an h
 	{"Tsunami", "Tsunami", "US National Weather Service and Red Cross guidance", `If you hear a tsunami warning siren, feel a strong earthquake near the coast, or see the sea pull back unusually far, move at once to high ground or inland, on foot if you can. Do not wait for an official order and do not go to the shore to look.
 Go as high and as far inland as you can: at least 30 metres (100 feet) above sea level or 3 kilometres (2 miles) inland. If you cannot get out of the area, go to the upper floors or roof of a strong concrete building.
 A tsunami comes as a series of waves and later ones can be bigger: stay away from the coast until officials say it is safe, which can be many hours.`, ""},
+	{"Jellyfish sting", "Jellyfish stings", "NHS and Red Cross guidance", `Get out of the water. Rinse the area with seawater, not fresh water. Do not pee on it: urine does not help and can make it worse.
+Lift off any tentacles with tweezers, gloves or the edge of a card, not bare hands. Then soak the area in water as hot as can be tolerated (not scalding), or use hot packs, for about 30 minutes; painkillers can help. Vinegar helps only for some tropical box jellyfish.
+Call emergency services if they have trouble breathing, chest pain, a fit, swelling of the face or throat, collapse, or a sting over a large area or on the face or genitals, or if a box jellyfish or Portuguese man o' war stung them.`, ""},
+	{"Cut needing stitches", "Does a cut need stitches?", "NHS and Red Cross guidance", `First stop the bleeding: press firmly on the cut with a clean cloth for 10 minutes without lifting it, and raise the injured part.
+A cut needs a nurse or doctor (stitches, glue or strips) if its edges gape apart, it is deep or longer than about 2 cm, it is on the face, a joint, the hand or the genitals, it was made by something dirty or a bite, or you can see fat, muscle or bone. Go the same day: wounds are best closed within about 6 to 8 hours.
+Call emergency services if bleeding will not stop after 10 minutes of firm pressure, blood is spurting, or the hand or finger beyond the cut is numb, pale or cannot move normally.
+Until then, rinse it under running tap water, cover it with a clean dressing, and do not try to close a deep or dirty cut yourself.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -423,6 +431,14 @@ var supersedes = map[string]string{
 	"Burn": "Water purification",
 	// Being sick after a head injury is a warning sign of the injury.
 	"Head injury": "Dehydration",
+	// An unrousable drunk person needs the recovery position, not legs up.
+	"Alcohol poisoning": "Fainting",
+	"Recovery position": "Fainting",
+	// A severe bleed needs pressure now, not a guide to stitches.
+	"Bleeding": "Cut needing stitches",
+	// The overdose note has the recovery position and naloxone, which
+	// must come first.
+	"Opioid overdose": "Recovery position",
 }
 
 func Notes(q string) []Source {
