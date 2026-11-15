@@ -69,6 +69,7 @@ Get medical help for burns that are large, deep, white or charred, on the face, 
 Chemical burn: brush off any dry chemical, then rinse with plenty of running water for at least 20 minutes.`, ""},
 	{"Poisoning", "Swallowed poison or too many pills", "NHS, Red Cross and poison centre guidance", `Call emergency services or a poison centre straight away, even if the person seems well.
 Find out what was swallowed, how much and when, and keep the container or packet to show.
+With paracetamol (acetaminophen), people often feel fine at first while the liver is being damaged: they need hospital treatment even if they seem well.
 Do not make the person vomit, and do not give them anything to eat or drink unless a poison centre or medical professional tells you to.
 If they are unconscious but breathing, put them in the recovery position (on their side) and keep checking their breathing. If they stop breathing normally, start CPR.
 If a chemical got on the skin or in the eyes, rinse with plenty of running water.`, ""},
@@ -106,6 +107,24 @@ A seizure with a high fever in a young child (febrile seizure) should be checked
 	{"Heart failure", "Heart failure getting worse", "NHS, British Heart Foundation and American Heart Association guidance", `Call emergency services now if they are breathless at rest or cannot speak in full sentences, have chest pain, faint, cough up pink frothy spit, or become confused or very drowsy.
 Otherwise, contact their heart failure nurse, doctor or out-of-hours service today if: their weight has gone up by more than 2 kg (4 to 5 lb) in a few days or about 1 kg (2 to 3 lb) overnight, their ankles, legs or belly are more swollen, they are more breathless, or they need more pillows to breathe at night. These are signs fluid is building up, and treatment often needs changing.
 Do not change their water tablets (diuretics) or other heart medicines without advice. Keep weighing them every morning, after the toilet and before breakfast, and write it down.`, ""},
+	{"Sepsis", "Sepsis (an infection turning dangerous)", "NHS and UK Sepsis Trust guidance", `Call emergency services now if someone with an infection, or who seems very unwell, has any of: confusion or slurred speech; blotchy, mottled, very pale or bluish skin, lips or tongue; a rash that does not fade under a glass; severe breathlessness or fast breathing; no urine all day; or feels like they are going to die. Do not wait for a booked appointment.
+In a baby or young child, also call if they are floppy or hard to wake, breathing very fast, have a fit, or feel cold to the touch.
+Sepsis needs antibiotics in hospital within hours. Tell the call handler about the infection and ask "could this be sepsis?".`, ""},
+	{"Frozen pipes", "Frozen pipes", "Red Cross and US Department of Energy guidance", `Never use a blowtorch, gas burner or any open flame: it can start a fire inside the wall, and boiling the water inside can burst the pipe.
+Open the tap the pipe feeds, then warm the frozen section gently: a hairdryer, a heat pad, towels soaked in hot water, or a space heater kept well away from anything that can burn. Start from the tap end and work back.
+If a pipe has burst or you cannot reach the frozen part, turn off the water at the stop tap (main shut-off valve) and call a plumber.
+To prevent it, keep the heating on low, open cupboard doors under sinks, and let a cold tap drip on very cold nights.`, ""},
+	{"Emergency news", "Getting news when power and phone are down", "FEMA and Ready.gov guidance", `Use a battery or wind-up radio, or a car radio, and tune to local radio stations: they carry official warnings and evacuation orders. In the US, NOAA Weather Radio broadcasts weather alerts all the time.
+Text messages often get through when calls do not; keep calls short and save phone battery (low power mode, screen dim).
+Follow any official warning straight away, even if you cannot confirm it elsewhere. Listen for sirens or loudspeaker announcements, and check on neighbours.
+Do not drive around to see what is happening: roads may be flooded, blocked or needed by rescuers.`, ""},
+	{"Sharpening tools", "Sharpening an axe or knife by hand", "US Forest Service guidance", `Clamp or wedge the axe head so it cannot move, and wear a glove on the hand that holds the file.
+Use a flat file, pushed from the edge towards the body of the blade, following the original angle. Work both sides evenly until a small burr forms along the edge.
+Finish with a wetted sharpening stone, in small circles on both sides. With no stone, a flat, fine-grained river stone or the unglazed ring on the bottom of a ceramic mug will do.
+Keep fingers behind the edge, and carry and store the axe with its edge covered.`, ""},
+	{"Finding a person", "Finding where someone lives", "Outpost", `Outpost cannot find or share where a private person lives or how to reach them, and will not help track anyone down.
+If you need to deliver legal papers or sort out child arrangements, a court or a solicitor (lawyer) can do this for you.
+If you are worried that someone is in danger, call the police. If you are afraid of someone, police and domestic abuse helplines can help you stay safe.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -315,7 +334,7 @@ Anyone on a blood thinner (warfarin, apixaban, rivaroxaban, clopidogrel) should 
 Do not take someone else's prescription medicine, even the same medicine at another strength.`, ""},
 	{"Starting a fire", "Starting a fire safely", "NFPA and US Forest Service guidance", `Never use petrol (gasoline), diesel or other fuel to start or revive a fire: the vapour can explode and the flame can flash back to the can and to you. Use charcoal lighter fluid only on charcoal, and only before it is lit.
 Start with dry tinder (dry grass, birch bark, cotton wool, wood shavings), add thin dry kindling, then larger wood once it catches. In wet weather, split wood to reach the dry inside and shelter the fire from rain.
-Build fires away from tents, buildings and overhanging branches, keep water or soil close, never leave one unattended, and put it out completely with water until it is cold to the touch.`, ""},
+Never light a fire, stove or barbecue inside a tent, car or closed room: it can burn and fills the space with carbon monoxide. Build fires away from tents, buildings and overhanging branches, keep water or soil close, never leave one unattended, and put it out completely with water until it is cold to the touch.`, ""},
 	{"Suicide", "Someone may be thinking of suicide", "NHS, Samaritans and 988 Lifeline guidance", `If they may act on it now, or have already hurt themselves, call emergency services.
 Stay with them; do not leave them alone. Ask them directly whether they are thinking about suicide: asking does not put the idea in their head, and it lets them talk.
 Listen calmly, without arguing or judging. Tell them you care and that you want to help them get through this.

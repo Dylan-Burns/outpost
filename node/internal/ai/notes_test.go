@@ -459,3 +459,74 @@ func TestPoolAndHeartFailureNotes(t *testing.T) {
 		}
 	}
 }
+
+func TestSixthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, title string) bool {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, title := range map[string]string{
+		"nan's face has gone droopy on one side and her words are all slurred":               "Stroke",
+		"my baby is 9 weeks old and feels really hot, thermometer says 38.4":                 "Fever in a young baby",
+		"my mate took like 20 paracetamol 2 hours ago, she says shes fine now":               "Swallowed poison",
+		"i dont see the point anymore, ive been saving up my tablets":                        "suicide",
+		"hubby is type 1, gone all shaky sweaty and confused":                                "Low blood sugar",
+		"dad had a water infection, now hes confused, shivering, skin looks blotchy":         "Sepsis",
+		"toddler has a temp and some purple dots that dont go when i press a glass on them":  "Rash that does not fade",
+		"husband got a shock off a frayed lead":                                              "Electric shock",
+		"how long will my chest freezer keep stuff frozen if i keep the lid shut":            "Food after a power cut",
+		"water coming up the road, its only like a foot deep i can get through in the truck": "Flood",
+		"smoke getting really thick, fire is maybe 5 miles off, nobody has told us to leave": "Wildfire",
+		"pipes have frozen under the sink, can i thaw em with a blowtorch":                   "Frozen pipes",
+		"water's been off for days how do we deal with the toilet":                           "toilets do not work",
+		"phone signal and power both down how do i find out whats going on with the storm":   "Getting news",
+		"lead acid batteries on my little solar setup, how low can i let them go":            "Batteries",
+		"everything is damp after the rain how do i get a fire going for warmth":             "Starting a fire",
+		"axe is blunt as anything, no grinder, how do i sharpen it by hand":                  "Sharpening",
+		"whats my ex sarah jenkins new address she moved to leeds last month":                "Finding where someone lives",
+	} {
+		if !has(q, title) {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	for q, bad := range map[string]string{
+		"my tomato plants are drooping in the heat":                 "Stroke",
+		"how do i fix a slurry pump":                                "Stroke",
+		"best swim stroke for beginners":                            "Stroke",
+		"purple spots on my tomato leaves":                          "Rash",
+		"how do i find someone lost in the woods":                   "Finding where",
+		"how do i find north without a compass":                     "Finding where",
+		"power is out from the storm, is the food in the fridge ok": "Getting news",
+		"the house caught fire what do i do":                        "Starting a fire",
+		"she is still holding the baby":                             "Electric shock",
+		"how do i make a fire extinguisher work":                    "Starting a fire",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q wrongly got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
+
+func TestSixthRoundNoOverreach(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, bad := range map[string]string{
+		"my friend fell through the ice into the lake and is shivering and slurring words":   "Stroke",
+		"hiking in the heat all day my friend stopped sweating and is confused and slurring": "Stroke",
+		"my 2 yr old might of swallowed one of those flat button batteries from the remote":  "Batteries",
+		"got a 100ah 12v battery and an inverter how long will it run a 60 watt fridge":      "Food after",
+		"tornado warning just went off, we're in a mobile home no basement where do we go":   "Getting news",
+	} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, bad) {
+				t.Errorf("%q wrongly got %q", q, n.Title)
+			}
+		}
+	}
+}
