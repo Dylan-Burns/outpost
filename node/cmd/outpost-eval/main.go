@@ -142,11 +142,15 @@ func main() {
 	dump := flag.Bool("dump", false, "save the messages sent to the model with each result")
 	qFirst := flag.Bool("qfirst", false, "put the question before the sources as well as after")
 	notesFirst := flag.Bool("notes-first", ai.NotesFirst, "tell the model Outpost's notes win when sources disagree")
+	premise := flag.Bool("premise", ai.PremiseCheck, "tell the model to check what the question assumes")
+	notesOnly := flag.Bool("notes-only", ai.NotesOnly, "give the model only Outpost's notes when any match")
 	clean := flag.Bool("clean", false, "score answers after removing text copied from the instructions, as the server does")
 	flag.Parse()
 	ai.TopicsStyle = *topicsStyle
 	ai.QuestionFirst = *qFirst
 	ai.NotesFirst = *notesFirst
+	ai.PremiseCheck = *premise
+	ai.NotesOnly = *notesOnly
 	ai.UseNotes = *notes
 	ai.MaxSources, ai.PassageBudget = *maxSrc, *budget
 	if *temp >= 0 {
