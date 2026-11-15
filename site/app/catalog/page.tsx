@@ -67,7 +67,7 @@ export default function CatalogPage() {
       </div>
       <section className="ix-section-wrap">
         <div className="wrap">
-          <ContentIndex root={root} base={INDEX_BASE} />
+          <ContentIndex root={root} base={root.base || INDEX_BASE} />
           <div className="ix-sums">
             <h2 className="label">How the sizes add up</h2>
             <table className="cat-items">

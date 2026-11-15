@@ -67,6 +67,8 @@ export type Totals = {
 export type IndexRoot = {
   schema: number;
   generated: string;
+  /** Where this build's trees, leaves and search blocks are served. */
+  base?: string;
   catalogSequence: number;
   limit: number;
   collections: string[];

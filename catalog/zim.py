@@ -530,7 +530,7 @@ def cluster_offsets(src, spans, idxs, workers=None):
     zstd/xz block, so the prefix grows until the table decodes. Returns
     {cluster index: (compressed, offsets)}."""
     out = {}
-    want = {i: 4096 for i in idxs}
+    want = {i: 65536 for i in idxs}  # a zstd cluster's first block is usually inside 64 KB
     while want:
         order = sorted(want)
         reads = src.read_many([(spans[i][0], min(want[i], spans[i][1])) for i in order])

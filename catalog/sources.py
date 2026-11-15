@@ -164,6 +164,20 @@ class MediaWiki(Family):
         self.item_kind = self.KINDS.get(self.project, "article")
         self.subpages = self.project in self.BOOKS
 
+    WORDS_UP_TO = 5e9  # read the articles (for word counts) in archives up to this size
+
+    def wanted(self, rows):
+        if self.item["size"] > self.WORDS_UP_TO:
+            return set()
+        return {r.idx for r in rows if r.front and r.mime.startswith("text/html")}
+
+    def needs_duration(self, row):
+        return False
+
+    def extract(self, row, data):
+        h = data.decode("utf-8", "replace")
+        return {"words": media.words(media.html_text(h))}
+
     def items(self, rows, facts):
         out, skipped = [], collections.Counter()
         tops = set()

@@ -122,6 +122,7 @@ def main():
     ap.add_argument("--out", default=str(ROOT / "catalog" / ".cache" / "index"))
     ap.add_argument("--key", default=os.path.expanduser("~/.config/outpost-release/release_ed25519"))
     ap.add_argument("--no-sign", action="store_true")
+    ap.add_argument("--base", default="", help="where this build's files will be served, e.g. https://index.example.org/<build>")
     ap.add_argument("--only", nargs="*", help="build only these collections (for testing)")
     ap.add_argument("--allow-missing", action="store_true", help="leave out archives not listed yet (for testing)")
     args = ap.parse_args()
@@ -222,13 +223,18 @@ def main():
     shared_trees = {}  # primary id -> {member id: (items in edition, bytes in edition)}
 
     def build_shared(members):
-        primary = members[0]
-        per = [collection_items(m) for m in members]
-        base = per[0][2]
-        index = {x["_url"]: x for x in base}
-        for x in base:
-            x["ss"] = [None] * len(members)
-        for e, (_meta, _fam, its, _sk, _m) in enumerate(per):
+        """One tree for all editions; each edition's list is merged and dropped
+        before the next is read, so only one is ever held besides the tree."""
+        base, index, per = None, {}, []
+        for e, m in enumerate(members):
+            meta, fam, its, skipped, measured = collection_items(m)
+            stats_e = {"unmeasured": sum(1 for x in its if x.get("s") is None),
+                       "kinds": dict(collections.Counter(x["k"] for x in its).most_common())}
+            if base is None:
+                base = its
+                for x in base:
+                    x["ss"] = [None] * len(members)
+                    index[x["_url"]] = x
             for x in its:
                 y = index.get(x["_url"])
                 if y is None:
@@ -238,6 +244,9 @@ def main():
                     index[x["_url"]] = y
                     base.append(y)
                 y["ss"][e] = x.get("s") if x.get("s") is not None else -1
+            del its
+            per.append((meta, fam, stats_e, skipped, measured))
+        index.clear()
         for x in base:  # in each edition: a size, -1 (listed, not yet measured) or None (not in it)
             x.pop("_url", None)
         counts = {m["id"]: (sum(1 for x in base if x["ss"][e] is not None),
@@ -262,7 +271,7 @@ def main():
                 prim = members[0]
                 tree_rec = None
                 for e, m in enumerate(members):
-                    meta, fam, its, skipped, measured = per[e]
+                    meta, fam, stats_e, skipped, measured = per[e]
                     skipped = add_dropped(skipped, meta)
                     extra = zim_extra(m, meta, fam, measured)
                     if tree_rec is None:
@@ -270,8 +279,7 @@ def main():
                     rec = dict(tree_rec)
                     rec.update(extra)
                     rec.update({"id": m["id"], "title": m["title"], "items": counts[m["id"]][0], "itemBytes": counts[m["id"]][1],
-                                "unmeasured": sum(1 for x in its if x.get("s") is None),
-                                "kinds": dict(collections.Counter(x["k"] for x in its).most_common()),
+                                "unmeasured": stats_e["unmeasured"], "kinds": stats_e["kinds"],
                                 "other": dict(skipped.most_common()), "tree": prim["id"], "ed": e,
                                 "editions": [x["id"] for x in members]})
                     built[m["id"]] = rec
@@ -348,6 +356,7 @@ def main():
     root = {
         "schema": 1, "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "catalogSequence": cat["sequence"], "catalogGenerated": cat["generated"], "limit": tree.LIMIT,
+        "base": args.base,
         "collections": collections_order, "searchBlocks": nblocks,
         "totals": {
             "downloads": len(cat["items"]), "archives": len(zims), "mapRegions": len(regions), "models": len(models),
