@@ -15,6 +15,7 @@ import http.client
 import lzma
 import os
 import struct
+import threading
 import time
 import urllib.parse
 import urllib.request
@@ -68,9 +69,34 @@ class HttpSource:
         self.bytes = 0
         self.requests = 0
         self.failures = 0
-        start = zlib.crc32(url.encode()) % max(1, min(4, len(self.mirrors)))
-        self.order = self.mirrors[start:] + self.mirrors[:start]
+        self.order = sorted(self.mirrors, key=lambda u: -self._speed(u))
         self._use_next(first=True)
+
+    SPEED = {}  # mirror host -> bytes per second, measured once per run
+    _speed_lock = threading.Lock()
+
+    @classmethod
+    def _speed(cls, u):
+        host = urllib.parse.urlsplit(u).netloc
+        with cls._speed_lock:
+            if host in cls.SPEED:
+                return cls.SPEED[host]
+        try:
+            parts = urllib.parse.urlsplit(u)
+            c = http.client.HTTPSConnection(parts.netloc, timeout=20)
+            t = time.time()
+            c.request("GET", parts.path, headers={"Range": "bytes=0-524287", "User-Agent": UA})
+            r = c.getresponse()
+            n = len(r.read())
+            c.close()
+            speed = n / max(0.05, time.time() - t) if r.status == 206 else 0
+        except Exception:
+            speed = 0
+        with cls._speed_lock:
+            cls.SPEED[host] = speed
+        import sys
+        print(f"  mirror {host}: {speed / 1e6:.1f} MB/s", file=sys.stderr, flush=True)
+        return speed
 
     @staticmethod
     def _metalink(url):
@@ -246,6 +272,12 @@ class HttpSource:
                 import sys
                 print(f"  re-read {self.host}: {e!r}", file=sys.stderr, flush=True)
                 self.conn = None
+                self.failures += 1
+                if self.failures >= 3 and len(self.order) > 1:
+                    try:
+                        self._use_next()
+                    except Exception:
+                        pass
                 continue
             if len(data) == n:
                 self.bytes += n

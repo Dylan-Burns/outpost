@@ -65,7 +65,10 @@ def measure(item, refresh=False):
     facts = collections.defaultdict(dict)
     if part.exists():
         for line in part.read_text().splitlines():
-            rec = json.loads(line)
+            try:
+                rec = json.loads(line)
+            except ValueError:
+                continue  # a line cut short when a run was stopped
             if "done" in rec:
                 done_clusters.update(rec["done"])
             else:
