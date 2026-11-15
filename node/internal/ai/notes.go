@@ -93,7 +93,8 @@ With paracetamol (acetaminophen), people often feel fine at first while the live
 Do not make the person vomit, and do not give them anything to eat or drink unless a poison centre or medical professional tells you to.
 If they are unconscious but breathing, put them in the recovery position (on their side) and keep checking their breathing. If they stop breathing normally, start CPR.
 If a chemical got on the skin or in the eyes, rinse with plenty of running water.
-A swallowed button battery, or one that may have been swallowed, is an emergency even if the child seems well: it can burn through the food pipe within 2 hours. Go to the emergency department now. Do not make them sick and do not wait for symptoms.`, ""},
+A swallowed button battery, or one that may have been swallowed, is an emergency even if the child seems well: it can burn through the food pipe within 2 hours. Go to the emergency department now. Do not make them sick and do not wait for symptoms.
+Swallowed magnets: more than one magnet, or a magnet and anything metal, can pull together through the bowel wall and tear it. Go to the emergency department now, even if the child seems well.`, ""},
 	{"Carbon monoxide poisoning", "Carbon monoxide", "CDC and NHS guidance", `Headache, dizziness, nausea, tiredness or confusion in several people sharing a space with a generator, stove, heater, grill or fire is a warning sign of carbon monoxide.
 Get everyone into fresh air straight away. Turn off the source only if it is safe, and do not go back inside. Call emergency services.
 Treat a carbon monoxide alarm that sounds as real, even if nobody feels ill: the gas has no smell and symptoms can come late. Get everyone out first, then call the fire service or gas company; do not assume it is the battery. A low-battery warning is usually a single chirp about once a minute, not the full alarm.
@@ -207,6 +208,12 @@ Stop charging and unplug it, and switch the device off if you can do so without 
 If it is not smoking and you can move it safely, put it on a non-flammable surface (concrete, a metal tray, sand) away from anything that burns, outside if possible, and keep people and pets away.
 If it smokes, hisses, sparks or catches fire, leave the room, close the door, get everyone out and call the fire service. Do not use water on a large lithium battery fire.
 Take the device to a repair shop or a battery recycling point; never put it in household rubbish.`, ""},
+	{"Fish hook", "Fish hook stuck in the skin", "NHS, Red Cross and wilderness first aid guidance", `Do not yank it out: a barbed hook tears the skin. Cut the fishing line, keep the hook still, and cover it loosely.
+Get it removed at a minor injuries unit, urgent care centre or doctor's surgery, especially if it is deep, past the barb, or in the face, eye, a joint, or a tendon. A hook in or near the eye is an emergency: do not touch it, cover both eyes loosely and call emergency services.
+Afterwards, wash the wound with soap and water and watch for infection (spreading redness, swelling, pus, fever). Check that tetanus jabs are up to date; get a booster if the last one was more than 10 years ago.`, ""},
+	{"Older person unwell", "An older person going downhill", "NHS and Age UK guidance", `An older person who has stopped eating or drinking, or who is suddenly more confused, sleepy or unsteady than usual, may have an infection (often a urine or chest infection), dehydration, or a side effect of medicine. These can become serious quickly.
+Call their doctor or a nurse line (NHS 111) today. Call emergency services if they are very hard to wake, struggling to breathe, have a fever with shivering or blotchy skin, have not passed urine all day, or have a new weakness on one side or slurred speech.
+Meanwhile offer small sips of fluid often, keep them warm and safe from falls, and make a list of their medicines and when they last ate, drank and passed urine.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.

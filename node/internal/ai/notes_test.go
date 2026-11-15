@@ -960,3 +960,24 @@ func TestDroppedG(t *testing.T) {
 		t.Errorf("insulin question: %v", n)
 	}
 }
+
+func TestFifteenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"my 3yo just swallowed one of those little round magnet balls off his brothers toy, he seems totally fine": "magnets",
+		"got a fish hook stuck in me finger past the barb, mates reckon push it thru and snip the barb off":        "Fish hook",
+		"my nan is 89 and has basically stopped eating the last 4 days, barely drinking, more confused and sleepy": "going downhill",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, want) || strings.Contains(n.Text, want)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), want)
+		}
+	}
+	if n := Notes("magnets on the fridge keep falling off"); len(n) > 0 {
+		t.Errorf("fridge magnets: %v", titles(n))
+	}
+}

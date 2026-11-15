@@ -124,6 +124,9 @@ var emergencies = []struct {
 	{rx(`lightning|electrical storm`, `storm|golf|outside|outdoors|hide|shelter|field|hill|boat|lake|tent|camping|struck|hit|open|beach|pitch`), []string{"Lightning"}, rx(`lightning (mcqueen|cable|connector|port|charger)|bolt`)},
 	{rx(`pregnan|preggo|months along|weeks? pregnant|wks pregnant|expecting`, `ibuprofen|nurofen|advil|motrin|aspirin|naproxen|aleve|codeine|tramadol|painkillers?|medicines?|tablets|pills|take (anything|something)|cold and flu|antihistamine|antibiotics?`), []string{"Medicines in pregnancy"}, nil},
 	{rx(`batter(y|ies)|power ?bank|vape|e.?bike|e.?scooter|hoverboard`, `swell|swollen|swole|bulg|puff(ed|ing|y)|popping out|pushing out|hot to (the )?touch|overheat|smok|hiss|sizzl|burning smell|chemical smell`), []string{"Battery fire risk"}, rx(`swallow|button|car battery (died|dead|flat)`)},
+	{rx(`magnets?|magnetic (balls?|beads?)`, `swallow|ate|eaten|gulped|in (his|her|their) mouth|down (his|her|their) throat|missing`), []string{"Poisoning"}, rx(`fridge|stuck to|magnet (fishing|toys? for)`)},
+	{rx(`fish ?hook|hook (stuck|caught|went|is) (in|into|through)|fishing hook`), []string{"Fish hook"}, nil},
+	{rx(`(nan|gran|grandma|grandad|grandpa|granny|mum|mom|dad|father|mother|elderly|old (man|lady|woman)|\b(7|8|9)\d\b)`, `stopped (eating|drinking)|(not|isn.?t|barely|hardly) (eating|drinking)|off (her|his|their) food|(more|getting|very|so) (confused|muddled|sleepy|drowsy|unsteady)|going downhill|not (him|her)self`), []string{"Older person unwell"}, rx(`baby|pregnan`)},
 	// From a second paraphrase test (450, regional voices, teenagers,
 	// older people, symptoms described, never named).
 	{rx(`water (comin|coming|pouring|rushing|getting) (in|into)|house (is )?filling (up )?(with|up)|(river|creek|burn|water) (has )?(come|coming) up (into|to)|knee.?deep water|drains (are )?backing up`), []string{"Flood"}, nil},
