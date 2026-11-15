@@ -1,6 +1,9 @@
 package ai
 
-import "regexp"
+import (
+	"regexp"
+	"slices"
+)
 
 // Notes are short first-aid and safety notes that Outpost ships itself, for
 // the emergencies where a small model is most likely to go wrong. The
@@ -38,6 +41,7 @@ var notes = []note{
 	{"Choking", "Choking (adult or child over 1)", "NHS and Red Cross guidance", `These steps are for adults and children over 1 year old.
 If the person can cough, speak or breathe, encourage them to keep coughing. Do not hit their back or start CPR while they can cough.
 If they cannot cough, speak or breathe: give up to 5 sharp back blows between the shoulder blades with the heel of your hand. If that fails, give up to 5 abdominal thrusts: stand behind them, put a fist just above the belly button, hold it with your other hand and pull sharply inwards and upwards. Keep repeating 5 back blows and 5 abdominal thrusts. Call emergency services.
+If you are alone and choking: call emergency services if you can (an open line helps), then give yourself abdominal thrusts with your fist above your belly button, or lean over the back of a chair and push down onto it sharply.
 If the person becomes unresponsive and stops breathing normally, call emergency services and start CPR.`, "older"},
 	{"Choking", "Choking (baby under 1)", "NHS and Red Cross guidance", `These steps are for a baby under 1 year old.
 If the baby can cough or cry, let them keep coughing and stay with them.
@@ -136,6 +140,12 @@ Otherwise keep the child calm and upright on your lap: crying makes it worse. Gi
 A red line or streak spreading from the wound up the arm or leg means the infection is spreading: get medical help urgently, today.
 Call emergency services if they also have a high temperature or shivering, feel very unwell, confused, or breathe fast: this can be sepsis.
 Meanwhile keep the wound clean with tap water, cover it with a clean dressing, and raise the limb. Mark the edge of the redness with a pen to see if it spreads.`, ""},
+	{"Power line on vehicle", "Power line on a car", "Red Cross and electricity utility guidance", `Stay inside the vehicle: it is the safest place. Call emergency services and tell them a power line is on the car. Warn others to stay at least 10 metres (about 33 feet) away; nobody should touch the car or the line.
+Only get out if the car is on fire. Then open the door without touching the ground, jump clear with both feet together so you never touch the car and the ground at the same time, and shuffle away with small steps, feet together, without lifting them, until you are at least 10 metres away.
+Never try to move the line, even with something wooden: treat every fallen line as live.`, ""},
+	{"Go bag", "What to pack in a go bag", "FEMA, Ready.gov and Red Cross guidance", `Water (about 4 litres or a gallon per person per day, for 3 days) and food that keeps; a torch, a battery or wind-up radio and spare batteries; a first-aid kit; a whistle; phone charger and power bank; cash; copies of IDs, insurance and medical documents in a waterproof bag; warm clothes, sturdy shoes and a blanket; hygiene items; and anything babies, older people or pets need.
+Medicines: at least a week's supply of every prescription, in original packets, with a written list of medicines, doses, allergies and doctors' numbers. Insulin keeps at room temperature (below about 30 °C) for about 4 weeks once out of the fridge: carry it in an insulated bag with a cool pack, never directly on ice, with needles, a glucose meter and fast-acting sugar. For someone on blood thinners, put the medicine name on the list: it matters to anyone treating an injury.
+Keep the bag by the door and check it every 6 months.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -392,19 +402,29 @@ var noteTopics = []struct {
 
 // Notes returns the notes for the emergencies a question names, as sources
 // without labels. It returns nothing unless UseNotes is set.
+// supersedes lists notes whose topic, when it matches, removes a more general
+// note that would contradict it, since every model copies a note whole.
+var supersedes = map[string]string{
+	// The shock note says to push the source away with something dry and
+	// wooden; with a line on a car, everyone must stay clear and inside.
+	"Power line on vehicle": "Electrical injury",
+	// "boiling water went on her arm" is a scald, not drinking water.
+	"Burn": "Water purification",
+}
+
 func Notes(q string) []Source {
 	if !UseNotes {
 		return nil
 	}
 	topics := EmergencyTopics(q)
 	for _, t := range noteTopics {
-		// "boiling water went on her arm" is a scald, not a question
-		// about drinking water.
-		if t.topic == "Water purification" && contains(topics, "Burn") {
-			continue
-		}
 		if t.re.MatchString(q) && !contains(topics, t.topic) {
 			topics = append(topics, t.topic)
+		}
+	}
+	for specific, general := range supersedes {
+		if contains(topics, specific) {
+			topics = slices.DeleteFunc(topics, func(t string) bool { return t == general })
 		}
 	}
 	var out []Source

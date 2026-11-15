@@ -596,3 +596,41 @@ func TestScaldIsNotDrinkingWater(t *testing.T) {
 		t.Errorf("boiling drinking water: %v", n)
 	}
 }
+
+func TestEighthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"my 2 yr old drank kerosene from the bottle by mistake, coughing a lot, should i make him vomit with salt water": "Swallowed poison",
+		"storm knocked a power line onto our car in the driveway and my husband is still inside it":                      "Power line on a car",
+		"eating steak alone and somethings stuck i can barely breath no one here wat do i do":                            "Choking (adult",
+		"my husbands still holding the hedge trimmer cable and twitching he got shocked":                                 "Electric shock",
+		"think my 3 yr old got into the calpol and drank half the bottle maybe more":                                     "Swallowed poison",
+		"kid fell off the trampoline banged his head, hes thrown up twice now":                                           "Head injury",
+		"my mate texted saying hes going to end it tonight and hes got his dads pills":                                   "suicide",
+		"just had a big shake, we're on 9th floor in delhi, should we run down the stairs":                               "Earthquake",
+		"what should go in a go bag for my mum shes on insulin and blood thinners":                                       "go bag",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	for _, n := range Notes("my 2 yr old drank kerosene from the bottle by mistake, should i make him vomit") {
+		if strings.Contains(n.Title, "dehydration") {
+			t.Errorf("kerosene got %s", n.Title)
+		}
+	}
+}
+
+func TestPowerLineOnCarHasNoShockNote(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	n := titles(Notes("storm knocked a power line onto our car and my husband is still inside it"))
+	if len(n) != 1 || !strings.Contains(n[0], "Power line on a car") {
+		t.Errorf("notes %v", n)
+	}
+}
