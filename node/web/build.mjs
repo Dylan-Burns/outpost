@@ -6,6 +6,17 @@ const out = new URL("../internal/server/ui/dist/", import.meta.url).pathname;
 await rm(out, { recursive: true, force: true });
 await mkdir(out + "assets", { recursive: true });
 
+// MapLibre 6 runs its tile parsing in a module worker that it loads from a
+// file of its own (which imports a shared file). They are copied beside the
+// bundle in a folder named for the version, because /assets/ is cached as
+// immutable, and the page is told where they are.
+const maplibre = JSON.parse(await readFile("node_modules/maplibre-gl/package.json", "utf8")).version;
+const workerDir = `maplibre-gl-${maplibre}`;
+await mkdir(out + "assets/" + workerDir, { recursive: true });
+for (const f of ["maplibre-gl-worker.mjs", "maplibre-gl-shared.mjs"]) {
+  await writeFile(`${out}assets/${workerDir}/${f}`, await readFile(`node_modules/maplibre-gl/dist/${f}`));
+}
+
 const result = await esbuild.build({
   entryPoints: { app: "src/main.tsx" },
   bundle: true,
@@ -24,7 +35,7 @@ const result = await esbuild.build({
   legalComments: "linked",
   // The two typefaces travel inside the program: an Outpost has no internet to fetch them from.
   loader: { ".woff2": "file" },
-  define: { "process.env.NODE_ENV": '"production"' },
+  define: { "process.env.NODE_ENV": '"production"', __MAPLIBRE_WORKER__: JSON.stringify(`/assets/${workerDir}/maplibre-gl-worker.mjs`) },
   logLevel: "warning",
 });
 

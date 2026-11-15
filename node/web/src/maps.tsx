@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Protocol } from "pmtiles";
 import { layers, namedFlavor } from "@protomaps/basemaps";
 import { api, type Status } from "./api";
 import { Link } from "./router";
+
+// Where the build put MapLibre's worker (see build.mjs).
+declare const __MAPLIBRE_WORKER__: string;
+maplibregl.setWorkerUrl(__MAPLIBRE_WORKER__);
 
 type Region = { id: string; name: string; group: string; bbox: number[]; file: string };
 type MapsInfo = { regions: Region[]; world: string; assets: boolean };
@@ -75,7 +79,7 @@ export default function Maps({ status }: { status: Status }) {
       });
       map.current.addControl(new maplibregl.NavigationControl(), "top-right");
       map.current.addControl(new maplibregl.ScaleControl({}), "bottom-left");
-      map.current.on("error", (e) => console.warn("map:", e.error?.message));
+      map.current.on("error", (e: maplibregl.ErrorEvent) => console.warn("map:", e.error?.message));
     } else {
       map.current.setStyle(style);
     }
