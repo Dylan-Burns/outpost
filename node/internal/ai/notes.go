@@ -482,6 +482,7 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
+	"Panic attack":              {"Anaphylaxis"},
 	"Pregnancy warning signs":   {"Anaphylaxis", "Meningitis", "Eye injury"},
 	"Food safety":               {"Power outage"},
 	"Hypoglycemia":              {"Sudden confusion"},
@@ -519,6 +520,12 @@ var supersedes = map[string][]string{
 // emergency ("my kid ate a mushroom from the garden, help").
 var everydayRE = regexp.MustCompile(`(?i)\b(sales|revenue|startup|quarter|burn rate|bleeding (cash|money)|drowning in (emails?|work|debt|paperwork|admin)|emails?|productivity|choked in the|(team|we|they) choked|coach(es)?|hydraulic|wordpress|plugin|blender|effects|emoji|poker|slang|sourdough|starter|chilli|chili|strobe|nosebleed seats?|stadium|posters?|school project|freestyle|backstroke|breaststroke|100m|swim(ming)? (lesson|technique)|cake|cocktail|risotto|movie|film|album|song|band|spotify|netflix|quotes?|game|gaming|minecraft|fortnite|roblox|mod|toys?|lego|theme park|ride at|rollercoaster|(cpr|first aid|online|training|refresher) course|certification|class(es)? near|price|best deals|cheapest|where to buy|shopping|photoshop|excel|chrome|browser|software|goats?|radiators?|brakes|chainsaw|mower|traffic noise|noise at night|seat hinge|soft close|tattoo|costume|meme|joke|lyrics)\b`)
 
+// gDropRE finds a dropped final g ("shakin'", "breathin"); the "in"
+// must follow at least three letters so "in", "skin" and "pain" stay as
+// they are, and words that really end in -in keep their match on the
+// original text.
+var gDropRE = regexp.MustCompile(`(?i)\b([a-z]{3,}[^aeiou\s'])in'?\b`)
+
 // metaphorRE recognises figures of speech and machinery that use injury
 // words: these never need a note, even though "bleeding" also sounds urgent.
 var metaphorRE = regexp.MustCompile(`(?i)\b(bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
@@ -533,6 +540,17 @@ func Notes(q string) []Source {
 		return nil
 	}
 	topics := EmergencyTopics(q)
+	// Also read "shakin", "breathin", "goin blue" as "shaking", "breathing",
+	// "going blue": people type as they speak, and every rule would
+	// otherwise need both spellings.
+	if g := gDropRE.ReplaceAllString(q, "${1}ing"); g != q {
+		for _, t := range EmergencyTopics(g) {
+			if !contains(topics, t) {
+				topics = append(topics, t)
+			}
+		}
+		q = q + " " + g
+	}
 	for _, t := range noteTopics {
 		if t.re.MatchString(q) && !contains(topics, t.topic) {
 			topics = append(topics, t.topic)

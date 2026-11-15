@@ -102,7 +102,7 @@ var emergencies = []struct {
 	{rx(`nose ?bleed|bleeding (from (the |his |her |their |my )?)?nose|nose.{0,20}(bleed|blood)|epistaxis`), []string{"Nosebleed"}, nil},
 	{rx(`tooth|teeth`, `knock|out|fell out|lost|broke`), []string{"Tooth avulsion"}, nil},
 	{rx(`altitude|high camp|mountain sickness|above \d+ ?(m|ft|feet|metres|meters)`), []string{"Altitude sickness"}, nil},
-	{rx(`panic attack|hyperventilat|anxiety attack|(it|this|doc|doctor|gp).{0,30}(anxiety|panic)|(feel|feels|felt) like (i.?m|im|i am|she.?s|he.?s) (dying|going to die|gonna die)`), []string{"Panic attack"}, nil},
+	{rx(`panic attack|hyperventilat|(walls|room) (are |were |was )?clos|rush of (terror|panic|fear|dread)|(heart|chest).{0,40}(doc|doctor|gp|hospital) (says|said|told me).{0,25}(fine|nothing wrong|ok)|exam hall|(supermarket|shop|queue|bus|train|crowd).{0,80}(felt like|going to die|gonna die|couldn.?t breathe)|happen(s|ed)? .{0,25}times (a|this) (week|day)|anxiety attack|(it|this|doc|doctor|gp).{0,30}(anxiety|panic)|(feel|feels|felt) like (i.?m|im|i am|she.?s|he.?s) (dying|going to die|gonna die)`), []string{"Panic attack"}, nil},
 	{rx(`sting|stung|stinger`), []string{"Bee sting"}, nil},
 	{rx(`splinter`), []string{"Splinter"}, nil},
 	// "how do I clean a dirty cut" found iFixit guides to cleaning a mouse.

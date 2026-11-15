@@ -937,3 +937,26 @@ func TestFourteenthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestDroppedG(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"me nan's shakin all over on the kitchen floor":   "Seizure",
+		"my mate's not breathin and goin blue":            "CPR",
+		"lips swellin up after the prawns, throat closin": "anaphylaxis",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v", q, titles(Notes(q)))
+		}
+	}
+	// Words that really end in -in are rewritten too ("cousing"), but the
+	// original text is always matched as well, so they lose nothing.
+	if n := titles(Notes("my cousin in darwin took her insulin and is shaky and sweaty")); len(n) == 0 || !strings.Contains(n[0], "Low blood sugar") {
+		t.Errorf("insulin question: %v", n)
+	}
+}
