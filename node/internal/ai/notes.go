@@ -103,10 +103,14 @@ Do not hold them down and do not put anything in their mouth.
 Time the seizure. When it stops, roll them onto their side (recovery position) and stay with them until they are fully awake.
 Call emergency services if the seizure lasts more than 5 minutes, they have another one, it is their first seizure, they are hurt, have trouble breathing, or it happened in water.
 A seizure with a high fever in a young child (febrile seizure) should be checked by a doctor. Do not put the child in a cold bath.`, ""},
+	{"Heart failure", "Heart failure getting worse", "NHS, British Heart Foundation and American Heart Association guidance", `Call emergency services now if they are breathless at rest or cannot speak in full sentences, have chest pain, faint, cough up pink frothy spit, or become confused or very drowsy.
+Otherwise, contact their heart failure nurse, doctor or out-of-hours service today if: their weight has gone up by more than 2 kg (4 to 5 lb) in a few days or about 1 kg (2 to 3 lb) overnight, their ankles, legs or belly are more swollen, they are more breathless, or they need more pillows to breathe at night. These are signs fluid is building up, and treatment often needs changing.
+Do not change their water tablets (diuretics) or other heart medicines without advice. Keep weighing them every morning, after the toilet and before breakfast, and write it down.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
-Anyone pulled from the water after struggling to breathe should be checked by a doctor, even if they seem well.`, ""},
+Anyone pulled from the water after struggling to breathe should be checked by a doctor, even if they seem well.
+For the next day, watch them closely: get urgent medical help if they keep coughing, breathe fast or with effort, have chest pain, become unusually sleepy or confused, vomit, or look pale or blue. Breathing problems can start hours later.`, ""},
 	{"Bone fracture", "Broken bones", "NHS and Red Cross guidance", `Keep the injured part still and support it in the position you found it. Do not try to straighten it.
 To splint, pad it and fix it to something rigid (a board, rolled newspaper or the other leg) so that the joints above and below the break cannot move. Check that the fingers or toes beyond it stay warm and pink.
 If bone is through the skin, cover the wound with a clean dressing and press around it, not on the bone.

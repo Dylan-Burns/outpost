@@ -442,3 +442,20 @@ func TestAdultDoseGenericWords(t *testing.T) {
 		}
 	}
 }
+
+func TestPoolAndHeartFailureNotes(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"pulled my 5yo out of the pool he was under a few seconds, coughed a lot now acting normal, can i just let him play": "Drowning",
+		"husband has heart failure, ankles way more swollen and he gained like 3 pounds since yesterday":                     "Heart failure",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v", q, titles(Notes(q)))
+		}
+	}
+}

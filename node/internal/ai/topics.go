@@ -73,7 +73,7 @@ var emergencies = []struct {
 	{rx(`chok|something stuck in (his|her|their|my) throat|can.?t breathe or (talk|speak)`), []string{"Choking"}, nil},
 	{rx(`stroke|face (is )?droop|slurred speech|one side (of|is) (the |his |her |their )?(face|body)`), []string{"Stroke"}, rx(`(heat|sun) ?stroke`)},
 	{rx(`seiz|convuls|epilep|having a fit|took a fit|a fit on|fitting|jerking|shaking all over`), []string{"Seizure", "Epilepsy"}, nil},
-	{rx(`drown|pulled .* (from|out of) (the )?water|under ?water|went under|go under|went in the (pool|lake|river|water)|fell in(to)? the (pool|lake|river|pond|water)|submerged|swallowed (a lot of )?water`), []string{"Drowning"}, nil},
+	{rx(`drown|pulled .* (from|out of) (the )?(water|pool|lake|river|sea|bath|pond)|was under (the water|for|a few|a bit)|under ?water|went under|go under|went in the (pool|lake|river|water)|fell in(to)? the (pool|lake|river|pond|water)|submerged|swallowed (a lot of )?water`), []string{"Drowning"}, nil},
 	{rx(`bleed|blood (is )?(spurt|pour|everywhere)|deep cut|gash|laceration`), []string{"Bleeding", "Hemorrhage", "Tourniquet"}, nil},
 	{rx(`broke|broken|fractur|snapped|crack`, `bone|arm|leg|ankle|wrist|hip|rib|collarbone|finger|toe|foot|hand|elbow|knee|shoulder|jaw|nose|skull`), []string{"Bone fracture", "Splint (medicine)"}, rx(`broke(n)? (the |my |his |her |their )?skin|skin (was |is )?broken`)},
 	{rx(`bent (the )?wrong way|wrong angle|out of place|deformed|crooked|sticking out`, `arm|leg|ankle|wrist|finger|toe|elbow|knee|shoulder|hip|bone`), []string{"Bone fracture", "Joint dislocation"}, nil},
@@ -117,6 +117,7 @@ var emergencies = []struct {
 	{rx(`\bcann(ing|ed)\b|water ?bath|pressure can|\bcan (green |the |my |some )?(beans|vegetables|corn|meat|tomato|tomatoes|peas|soup)`), []string{"Canning (food preservation method)", "Botulism"}, nil},
 	{rx(`honey`, `baby|infant|month|newborn`), []string{"Botulism"}, nil},
 	// Topics with a note added from a standard first-aid and preparedness list.
+	{rx(`heart failure|\bchf\b|congestive|weak heart`, `swell|swollen|ankles|weight|gain|pounds|lbs|\bkg|breath|propped|pillows|cough|worse|lie (down|flat)|lying (down|flat)`), []string{"Heart failure"}, nil},
 	{rx(`suicid|kill (my|him|her|them)sel(f|ves)|want(s|ed)? to die|wish (i|she|he) (was|were) dead|end (my|his|her|their|it all)|no one would miss|better off (dead|without)|self.?harm|hurt(ing)? (my|him|her|them)self|cutting (my|him|her|them)self`), []string{"Suicide"}, nil},
 	{rx(`pregnan|weeks? pregnant|wks pregnant|expecting|due date|my bump`, `headache|vision|flashing|blurr|swell|bleed|blood|spotting|fluid|waters|leak|not moving|moving less|less movement|kicks|cramp|pain|contraction|fell|fall|slipped|fever`), []string{"Pregnancy warning signs"}, nil},
 	{rx(`how (much|many)|dose|dosage|max(imum)?`, `ibuprofen|tylenol|paracetamol|acetaminophen|aspirin|benadryl|antihistamine|diphenhydramine|loratadine|cetirizine|advil|motrin|aleve|naproxen|(pills|tablets|medicine|medication|meds)\b.{0,25}\b(can|should|do|to) (i|you|we) take|(can|should) (i|you|we) take`), []string{"Adult medicine dose"}, rx(`child|kid|son|daughter|toddler|baby|infant|year.?old|month.?old|\b\d+ ?(yr|yo)\b`)},
