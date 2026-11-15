@@ -225,3 +225,32 @@ Each task ends with its check. Tasks 1 to 6 give a complete, organised page; 7 a
 - Lengths are pages only where pages exist; words, minutes or answers elsewhere.
 - Item purposes come from the source's own descriptions plus the collection's hand-written purpose.
 - Measurements that are not done read "not yet measured" rather than a guess.
+
+## 11. As built (2026-11-14/15), and where it differs from the plan
+
+- **Purposes** live in `catalog/source.json` (`purposes`) and in the signed index root, not in
+  `catalog.json`. The catalog the nodes read is unchanged, so no node release or catalog re-signing
+  was needed for this.
+- **Listing** (`catalog/zimlist.py`) read the directory of all 90 archives: 113.5 million entries,
+  50.0 million kept as candidate items, 8.3 GB of range reads. Directories are now read in whole
+  4 MB pieces and checked against Kiwix's SHA-1 piece hashes from the metalink.
+- **Measuring** (`catalog/zimfacts.py`) gets every item's exact size from the offset table at the
+  start of its cluster, without reading the content. Content is read only where a family needs it:
+  Stack Exchange questions (tags, dates, answers, score, words), iFixit guides and device pages,
+  TED talk pages, Khan Academy lesson pages, YouTube channel descriptors, LibreTexts' page tree,
+  document-library records, and the articles of wikis up to 5 GB (words). PDFs are read whole for
+  page counts; videos from their first 64 KB for their length.
+- **Words are not counted** for the full Wikipedias, Wiktionary and Gutenberg: their text runs to
+  tens of gigabytes. Their rows show size, not length.
+- **Items are what each file really contains.** "Best of Wikipedia" holds 224,146 articles (the
+  50,000 most read and the articles they link to); Stack Exchange archives include user profiles;
+  each is shown, under its own shelf.
+- **Editions share one tree** (Wikipedia with pictures, text only, introductions only; the same for
+  Wikivoyage, Wikiquote and the subject Wikipedias). Rows carry a size per edition.
+- **Search** matches the start of a title (as Kiwix's own title search does), across every
+  collection, plus collection names and purposes anywhere in the text.
+- **Hosting:** trees, leaves and search blocks are served by a separate static Vercel project
+  (`catalog/publish_index.py`), each build in its own folder, cached forever, the previous build
+  kept beside it. The site carries only the signed `root.json`, which names where its files are.
+- **Security review fixes:** https-only mirrors, same file name required on redirect, cluster and
+  PDF stream decompression capped, every index file's SHA-256 listed in the signed root.
