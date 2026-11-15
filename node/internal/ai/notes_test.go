@@ -238,3 +238,26 @@ func TestIndependentSetGaps(t *testing.T) {
 		}
 	}
 }
+
+func TestBabyCPRAndChildDoseNotes(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	n := Notes("how do you do cpr on a newborn baby")
+	if len(n) == 0 || !strings.Contains(n[0].Text, "two fingers") || strings.Contains(n[0].Text, "heel of one hand") {
+		t.Errorf("baby CPR: %+v", n)
+	}
+	n = Notes("my husband collapsed and is not breathing, how do i do cpr")
+	if len(n) == 0 || !strings.Contains(n[0].Text, "heel of one hand") || strings.Contains(n[0].Text, "nipple line") {
+		t.Errorf("adult CPR: %+v", n)
+	}
+	n = Notes("how much tylenol can i give my 2 year old she weighs 26 lbs")
+	found := false
+	for _, x := range n {
+		if strings.Contains(x.Title, "children") && !doseRE.MatchString(x.Text) {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("child dose note missing or states a dose: %+v", n)
+	}
+}

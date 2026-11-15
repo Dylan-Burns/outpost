@@ -45,13 +45,17 @@ If the baby cannot cough, cry or breathe: lay the baby face down along your fore
 If that fails, turn the baby face up along your arm and give up to 5 chest thrusts: press two fingers in the middle of the chest, just below the nipple line, sharply downwards.
 Keep repeating 5 back blows and 5 chest thrusts, and call emergency services. Never use abdominal thrusts on a baby.
 If the baby becomes unresponsive and stops breathing normally, call emergency services and start CPR.`, "baby"},
-	{"Cardiopulmonary resuscitation", "CPR", "NHS, Red Cross and American Heart Association guidance", `CPR is only for someone who is unresponsive and not breathing normally.
+	{"Cardiopulmonary resuscitation", "CPR (adult or child over 1)", "NHS, Red Cross and American Heart Association guidance", `CPR is only for someone who is unresponsive and not breathing normally. These steps are for adults and children over 1 year old.
 Call emergency services, or have someone else call, and send someone for a defibrillator (AED) if there is one.
-Adult: kneel beside them, put the heel of one hand in the centre of the chest with the other hand on top, and push down hard and fast, about 5 to 6 cm (2 to 2.4 inches) deep, 100 to 120 times a minute, letting the chest come back up each time.
-Child: use one hand; baby: use two fingers. Press down about a third of the depth of the chest.
+Kneel beside them, put the heel of one hand in the centre of the chest with the other hand on top, and push down hard and fast, about 5 to 6 cm (2 to 2.4 inches) deep for an adult, 100 to 120 times a minute, letting the chest come back up each time. For a child, use one hand and press about a third of the depth of the chest.
 If you are trained, give 2 rescue breaths after every 30 compressions. If not, keep doing chest compressions only.
 Use the defibrillator as soon as it arrives and follow its spoken instructions.
-Keep going until help takes over, the person starts breathing normally, or you are too exhausted to continue.`, ""},
+Keep going until help takes over, the person starts breathing normally, or you are too exhausted to continue.`, "older"},
+	{"Cardiopulmonary resuscitation", "CPR (baby under 1)", "NHS, Red Cross and American Heart Association guidance", `CPR is only for a baby who is unresponsive and not breathing normally. These steps are for a baby under 1 year old.
+Shout for help and have someone call emergency services. If you are alone, give CPR for 1 minute first, then call.
+Lay the baby on its back on a firm surface and tilt the head back only slightly. Give 5 rescue breaths, covering the baby's mouth and nose with your mouth, each just enough to make the chest rise.
+Then give 30 chest compressions with two fingers in the middle of the chest, just below the nipple line, pressing down about a third of the depth of the chest (about 4 cm or 1.5 inches), 100 to 120 times a minute.
+Then give 2 rescue breaths, and keep repeating 30 compressions and 2 breaths until help takes over or the baby starts breathing normally.`, "baby"},
 	{"Bleeding", "Severe bleeding", "NHS, Red Cross and Stop the Bleed guidance", `Press firmly on the wound with a clean cloth or dressing, and keep pressing hard without stopping to look. If blood soaks through, put more cloth on top; do not remove the first layer.
 Call emergency services if the bleeding is heavy.
 If an object is stuck in the wound, do not pull it out: press around it, not on it.
@@ -212,6 +216,11 @@ Keep the exhaust pipe clear of snow and run the engine only about 10 minutes eac
 Make the car easy to see: tie a bright cloth to the aerial or door, and turn on the inside light while the engine runs.
 Keep warm: put on extra clothes, use blankets, huddle together, and move your arms and legs now and then.
 Drink fluids. Watch each other for signs of hypothermia and frostbite.`, ""},
+	{"Child medicine dose", "Medicine doses for children", "NHS and US FDA guidance", `A child's dose depends on the child's age and weight and on the strength of the medicine, which differs between products (infant drops, children's liquid, tablets). Read the dose from the table on the packet or leaflet of the medicine you have.
+Measure liquid medicine with the syringe or spoon that comes with it, not a kitchen spoon.
+Leave the gap between doses that the label gives, and never give more doses in 24 hours than it allows.
+Do not give two medicines that contain the same ingredient, such as paracetamol (acetaminophen) in a cold remedy and on its own.
+Do not give aspirin to anyone under 16. If you are unsure, the child is under 3 months, or has another illness, ask a pharmacist or doctor.`, ""},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.
