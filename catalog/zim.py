@@ -22,6 +22,7 @@ from compression import zstd
 UA = "outpost-catalog-builder/1 (+https://projectoutpost.org)"
 
 REDIRECT, LINKTARGET, DELETED = 0xFFFF, 0xFFFE, 0xFFFD
+MAX_CLUSTER = 512 << 20  # a cluster that inflates past this is refused (real ones are a few MB)
 COMP_NONE, COMP_XZ, COMP_ZSTD = 1, 4, 5
 
 
@@ -89,6 +90,8 @@ class HttpSource:
     @staticmethod
     def _probe(u):
         parts = urllib.parse.urlsplit(u)
+        if parts.scheme != "https":
+            raise RuntimeError(f"not https: {u}")
         c = http.client.HTTPSConnection(parts.netloc, timeout=15) if parts.scheme == "https" else http.client.HTTPConnection(parts.netloc, timeout=15)
         c.request("GET", parts.path, headers={"Range": "bytes=0-0", "User-Agent": UA})
         r = c.getresponse()
@@ -115,7 +118,12 @@ class HttpSource:
                     r.read()
                     c.close()
                     if r.status in (301, 302, 303, 307, 308):
-                        u = urllib.parse.urljoin(u, r.getheader("Location"))
+                        nxt = urllib.parse.urljoin(u, r.getheader("Location"))
+                        if urllib.parse.urlsplit(nxt).scheme != "https":
+                            raise RuntimeError(f"refusing a redirect away from https: {nxt}")
+                        if nxt.rsplit("/", 1)[-1] != url.rsplit("/", 1)[-1]:
+                            raise RuntimeError(f"mirror redirected to a different file: {nxt}")
+                        u = nxt
                         continue
                     if r.status == 206:
                         return u, int(r.getheader("Content-Range").rsplit("/", 1)[1])
@@ -393,10 +401,11 @@ def decode_cluster(raw):
     ext = bool(raw[0] & 0x10)
     if comp in (0, COMP_NONE):
         data = raw[1:]
-    elif comp == COMP_ZSTD:
-        data = zstd.decompress(raw[1:])
-    elif comp == COMP_XZ:
-        data = lzma.decompress(raw[1:])
+    elif comp in (COMP_ZSTD, COMP_XZ):
+        d = zstd.ZstdDecompressor() if comp == COMP_ZSTD else lzma.LZMADecompressor()
+        data = d.decompress(raw[1:], max_length=MAX_CLUSTER)
+        if len(data) >= MAX_CLUSTER and not d.eof:
+            raise ValueError(f"cluster inflates past {MAX_CLUSTER} bytes")
     else:
         raise ValueError(f"cluster compression {comp}")
     w = 8 if ext else 4

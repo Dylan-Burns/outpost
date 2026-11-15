@@ -19,16 +19,15 @@ _INFO_DATE = re.compile(rb"/(ModDate|CreationDate)\s*\(D:(\d{4})(\d{2})?(\d{2})?
 _INFO_TITLE = re.compile(rb"/Title\s*\(((?:\\.|[^\\)])*)\)")
 
 
+MAX_STREAM = 64 << 20  # an object stream that inflates past this is not read
+
+
 def _inflated(data):
     for m in _STREAM.finditer(data):
-        s = m.group(1)
         try:
-            yield zlib.decompress(s)
+            yield zlib.decompressobj().decompress(m.group(1), MAX_STREAM)
         except Exception:
-            try:
-                yield zlib.decompressobj().decompress(s)
-            except Exception:
-                continue
+            continue
 
 
 def pdf_facts(data):

@@ -22,6 +22,7 @@ Usage: python3 catalog/index.py [--out DIR] [--key PATH] [--allow-unmeasured]
 import argparse
 import collections
 import gzip
+import hashlib
 import json
 import os
 import shutil
@@ -276,6 +277,12 @@ def main():
         },
         "subjects": subjects,
     }
+    # The signature over root.json covers every other file through these digests.
+    root["files"] = {str(f.relative_to(out)): hashlib.sha256(f.read_bytes()).hexdigest()
+                     for f in sorted(out.rglob("*")) if f.is_file() and f.name not in ("root.json", "root.json.sig")}
+    root["provenance"] = ("Titles, sections and sizes were read from each archive on a Kiwix mirror by byte range over https, after "
+                          "checking the mirror's file size against the signed catalog. The ranges themselves cannot be checked "
+                          "against the archive's SHA-256, which covers the whole file.")
     (out / "root.json").write_text(json.dumps(root, ensure_ascii=False, separators=(",", ":")))
     if not args.no_sign and Path(args.key).exists():
         subprocess.run(["ssh-keygen", "-Y", "sign", "-f", args.key, "-n", NAMESPACE, str(out / "root.json")], check=True, capture_output=True)
