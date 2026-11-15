@@ -35,7 +35,7 @@ type note struct {
 // copy a note whole: given one note with steps for adults and for babies,
 // Qwen3 1.7B and Llama 3.2 3B both told the reader to give a choking baby
 // abdominal thrusts. A note for one situation only holds that situation.
-var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|\d+[- ]?(day|week|month)s?[- ]old)\b`)
+var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|bub|bubs|bubba|wee one|in the cot|in her cot|in his cot|\d+[- ]?(day|week|month)s?[- ]old)\b`)
 
 var notes = []note{
 	{"Choking", "Choking (adult or child over 1)", "NHS and Red Cross guidance", `These steps are for adults and children over 1 year old.
@@ -175,6 +175,9 @@ Do not go back in. Afterwards, do not use the stove again until a chimney sweep 
 A cut needs a nurse or doctor (stitches, glue or strips) if its edges gape apart, it is deep or longer than about 2 cm, it is on the face, a joint, the hand or the genitals, it was made by something dirty or a bite, or you can see fat, muscle or bone. Go the same day: wounds are best closed within about 6 to 8 hours.
 Call emergency services if bleeding will not stop after 10 minutes of firm pressure, blood is spurting, or the hand or finger beyond the cut is numb, pale or cannot move normally.
 Until then, rinse it under running tap water, cover it with a clean dressing, and do not try to close a deep or dirty cut yourself.`, ""},
+	{"Family reunification", "Finding family after a disaster", "Red Cross and FEMA guidance", `Register yourself at the evacuation centre or shelter desk and ask staff to check their lists for your family member; centres keep records of who has arrived.
+Leave a written note at your home or your agreed meeting place saying you are safe and where you have gone. Text rather than call: texts often get through when calls do not, and a family member out of the area can pass messages between you.
+The Red Cross helps reunite families after disasters (in the US, the "Safe and Well" service; worldwide, Restoring Family Links). If a child or someone vulnerable is missing, tell the police or emergency services straight away.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -435,38 +438,61 @@ var noteTopics = []struct {
 // without labels. It returns nothing unless UseNotes is set.
 // supersedes lists notes whose topic, when it matches, removes a more general
 // note that would contradict it, since every model copies a note whole.
-var supersedes = map[string]string{
+var supersedes = map[string][]string{
 	// The shock note says to push the source away with something dry and
 	// wooden; with a line on a car, everyone must stay clear and inside.
-	"Power line on vehicle": "Electrical injury",
 	// The household shock note says to push the source away with wood:
 	// deadly near a power line.
-	"Downed power line": "Electrical injury",
+	"Downed power line":     {"Electrical injury"},
+	"Family reunification":  {"Finding a person"},
+	"Power line on vehicle": {"Electrical injury", "Downed power line"},
+	"Nosebleed":             {"Bleeding"},
+	"Shock":                 {"Fainting"},
+	"Toxic gas":             {"Burn"},
+	"Generator":             {"Power outage"},
+	"Food safety":           {"Power outage"},
+	"Hypoglycemia":          {"Sudden confusion"},
+	"Winter car":            {"Winter heating"},
 	// "boiling water went on her arm" is a scald, not drinking water.
-	"Burn": "Water purification",
+	"Burn": {"Water purification"},
 	// Being sick after a head injury is a warning sign of the injury.
-	"Head injury": "Dehydration",
+	"Head injury": {"Dehydration"},
 	// An unrousable drunk person needs the recovery position, not legs up.
-	"Alcohol poisoning": "Fainting",
-	"Recovery position": "Fainting",
+	"Alcohol poisoning": {"Fainting", "Dehydration"},
+	"Recovery position": {"Fainting"},
 	// A severe bleed needs pressure now, not a guide to stitches.
-	"Bleeding": "Cut needing stitches",
+	"Bleeding": {"Cut needing stitches"},
 	// The overdose note has the recovery position and naloxone, which
 	// must come first.
-	"Opioid overdose": "Recovery position",
+	"Opioid overdose": {"Recovery position", "Alcohol poisoning"},
+	// Gasping is not breathing: that person needs CPR, not the recovery
+	// position.
+	"Cardiopulmonary resuscitation": {"Recovery position"},
 	// Notes whose words borrow from another: a jellyfish sting "burning",
 	// a tick someone wants to "burn off", bleach for drinking water, a
 	// person jerking on a live cable.
-	"Jellyfish sting":    "Burn",
-	"Box jellyfish":      "Jellyfish sting",
-	"Chimney fire":       "Starting a fire",
-	"Tick":               "Burn",
-	"Water purification": "Toxic gas",
-	"Electrical injury":  "Seizure",
+	"Jellyfish sting":    {"Burn"},
+	"Box jellyfish":      {"Jellyfish sting"},
+	"Chimney fire":       {"Starting a fire"},
+	"Tick":               {"Burn"},
+	"Water purification": {"Toxic gas"},
+	"Electrical injury":  {"Seizure"},
 }
+
+// everydayRE recognises a question about something other than an emergency
+// that only borrows an emergency word: a cocktail called a hurricane, a
+// Minecraft tornado mod, a laptop "having a seizure", bleeding a radiator.
+// urgentRE keeps the notes when the question also sounds like a real
+// emergency ("my kid ate a mushroom from the garden, help").
+var everydayRE = regexp.MustCompile(`(?i)\b(recipes?|cake|cocktail|risotto|movie|film|album|song|band|spotify|netflix|quotes?|game|gaming|minecraft|fortnite|roblox|mod|toys?|lego|theme park|ride at|rollercoaster|course|certification|class(es)? near|price|best deals|cheapest|where to buy|shopping|photoshop|excel|chrome|browser|software|goats?|radiators?|brakes|chainsaw|mower|traffic noise|noise at night|seat hinge|soft close|tattoo|costume|meme|joke|lyrics)\b`)
+
+var urgentRE = regexp.MustCompile(`(?i)\b(help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|blood|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
 
 func Notes(q string) []Source {
 	if !UseNotes {
+		return nil
+	}
+	if everydayRE.MatchString(q) && !urgentRE.MatchString(q) {
 		return nil
 	}
 	topics := EmergencyTopics(q)
@@ -477,7 +503,7 @@ func Notes(q string) []Source {
 	}
 	for specific, general := range supersedes {
 		if contains(topics, specific) {
-			topics = slices.DeleteFunc(topics, func(t string) bool { return t == general })
+			topics = slices.DeleteFunc(topics, func(t string) bool { return slices.Contains(general, t) })
 		}
 	}
 	var out []Source
