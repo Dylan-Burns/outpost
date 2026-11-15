@@ -307,10 +307,38 @@ Never heat the house with a gas stove or oven, a grill, a camp stove or a genera
 Check babies, older people and anyone ill often for signs of hypothermia: shivering, confusion, drowsiness.`, ""},
 	{"Medicine safety", "Mixing, old and someone else's medicines", "NHS and US FDA guidance", `Ask a pharmacist or doctor before taking two medicines together: some common ones interact. Anti-inflammatory painkillers such as ibuprofen and naproxen can raise blood pressure, weaken blood pressure medicines and harm the kidneys; paracetamol (acetaminophen) is usually the safer painkiller for people on blood pressure medicine, within the label's limits.
 Do not take antibiotics that are left over, out of date or prescribed for someone else: they may be the wrong medicine or not enough to work. A tooth or wound infection with swelling or fever needs a dentist or doctor.
+Anyone on a blood thinner (warfarin, apixaban, rivaroxaban, clopidogrel) should not take ibuprofen, naproxen or aspirin unless their doctor says so: together they raise the risk of serious bleeding.
 Do not take someone else's prescription medicine, even the same medicine at another strength.`, ""},
 	{"Starting a fire", "Starting a fire safely", "NFPA and US Forest Service guidance", `Never use petrol (gasoline), diesel or other fuel to start or revive a fire: the vapour can explode and the flame can flash back to the can and to you. Use charcoal lighter fluid only on charcoal, and only before it is lit.
 Start with dry tinder (dry grass, birch bark, cotton wool, wood shavings), add thin dry kindling, then larger wood once it catches. In wet weather, split wood to reach the dry inside and shelter the fire from rain.
 Build fires away from tents, buildings and overhanging branches, keep water or soil close, never leave one unattended, and put it out completely with water until it is cold to the touch.`, ""},
+	{"Suicide", "Someone may be thinking of suicide", "NHS, Samaritans and 988 Lifeline guidance", `If they may act on it now, or have already hurt themselves, call emergency services.
+Stay with them; do not leave them alone. Ask them directly whether they are thinking about suicide: asking does not put the idea in their head, and it lets them talk.
+Listen calmly, without arguing or judging. Tell them you care and that you want to help them get through this.
+Remove or lock away anything they could use to harm themselves: medicines, firearms, knives, ropes, car keys.
+Get help with them: in the US call or text 988 (Suicide and Crisis Lifeline); in the UK and Ireland call Samaritans on 116 123; elsewhere, a local crisis line or the emergency number. Stay with them until help arrives or they are with someone they trust.
+If it is you who feels this way, tell someone you trust now, or call one of those numbers.`, ""},
+	{"Pregnancy warning signs", "Warning signs in pregnancy", "NHS and ACOG guidance", `Call your midwife, maternity unit or emergency services now for any of these:
+a severe headache that will not go away, blurred vision or flashing lights, pain under the ribs, or sudden swelling of the face, hands or feet (signs of pre-eclampsia, which is dangerous for mother and baby);
+any bleeding from the vagina; fluid leaking (waters breaking) before 37 weeks; the baby moving less than usual or not at all (do not wait until the next day);
+severe or constant tummy pain; a fever; regular contractions before 37 weeks; or a fall or blow to the bump.`, ""},
+	{"Adult medicine dose", "Medicine doses for adults", "NHS and US FDA guidance", `Take the adult dose printed on the packet or leaflet, and never more than the most it allows in 24 hours.
+Check that nothing else you take contains the same ingredient: cold and flu remedies often contain paracetamol (acetaminophen) or an antihistamine.
+Antihistamines such as diphenhydramine (Benadryl) cause drowsiness: do not drive or drink alcohol after taking them.
+Ask a pharmacist first if you take other medicines, are pregnant, or have liver, kidney or heart problems.
+Hives with swelling of the lips, tongue or throat, or trouble breathing, is an emergency: use an adrenaline auto-injector if there is one and call emergency services.`, ""},
+	{"Water storage", "Storing drinking water", "FEMA and CDC guidance", `Store at least 4 litres (1 gallon) of water per person per day, for at least 3 days, and for 2 weeks if you can. Count pets too.
+Use food-grade containers: sealed bottled water, or clean plastic drink bottles such as soda bottles. Do not use milk or juice jugs: milk and sugar are hard to wash out, bacteria grow, and the thin plastic breaks down. Never use a container that held chemicals.
+Wash containers with soap and water, rinse, then swirl in a solution of 1 teaspoon of unscented bleach to 1 litre (1 quart) of water, and rinse again.
+Fill with tap water, close tightly, label with the date, store somewhere cool and dark, and replace every 6 months.`, ""},
+	{"Batteries", "Batteries, inverters and what they will run", "US Department of Energy guidance", `Stored energy in watt-hours is the battery's amp-hours times its voltage: a 100 Ah 12 V battery holds about 1,200 Wh.
+You can safely use only part of it: about half for a lead-acid battery, about 80 to 90% for a lithium (LiFePO4) one. An inverter loses roughly another 10 to 15%.
+A fridge's watt rating is what it draws while the compressor runs, but it runs only part of the time. Its daily use is on its label as kWh per year: divide by 365. Many fridges use 1 to 2 kWh a day.
+So divide usable watt-hours by the fridge's daily watt-hours to get days of running. Recharge before a lead-acid battery goes below half full, or it wears out fast.`, ""},
+	{"Power outage", "Power cut", "FEMA and Red Cross guidance", `Nobody, this library included, can say when the power will come back. Report the outage to the electricity company if you can reach it, and follow its outage updates or local radio.
+Meanwhile keep the fridge and freezer closed, unplug electronics so a surge does not damage them when power returns, and use torches rather than candles.
+Never run a generator, grill or camp stove indoors.
+Check on neighbours who are older or rely on powered medical equipment. If someone's equipment cannot wait, go somewhere with power or call emergency services.`, ""},
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.

@@ -392,3 +392,53 @@ func TestFourthSetGaps(t *testing.T) {
 		}
 	}
 }
+
+func TestFifthRoundNotes(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	want := map[string]string{
+		"my 15 yr old just told me she wants to die and no one would miss her":                  "suicide",
+		"my son is having a fit on the floor jerking been about 2 min":                          "Seizure",
+		"im 33 wks pregnant and got a really bad headache wont go away, seeing flashing lights": "Warning signs in pregnancy",
+		"on warfarin for my afib, got a bad back, ok to take advil or aleve":                    "Mixing, old",
+		"broke out in hives all over how many benadryl can i take im 190 lbs":                   "doses for adults",
+		"can i store emergency water in old milk jugs washed out":                               "Storing drinking water",
+		"got a 100ah 12v battery and an inverter how long will it run a 60 watt fridge":         "Batteries",
+		"when will the power come back on on my street, the utility wont answer":                "Power cut",
+	}
+	for q, title := range want {
+		found := false
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, title) {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+	if n := Notes("on warfarin, ok to take advil"); len(n) == 0 || !strings.Contains(n[0].Text, "blood thinner") {
+		t.Errorf("medicine note lacks blood thinners: %v", titles(n))
+	}
+	for _, q := range []string{"will these jeans fit me", "how do i keep fit off grid", "how much water do chickens need", "how many tablets of yeast for bread"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "Seizure") || strings.Contains(n.Title, "doses for adults") || strings.Contains(n.Title, "suicide") {
+				t.Errorf("%q got %s", q, n.Title)
+			}
+		}
+	}
+}
+
+func TestAdultDoseGenericWords(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for _, q := range []string{"how many pills can i take for a bad headache", "whats the max dose of advil"} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, "doses for adults")
+		}
+		if !ok {
+			t.Errorf("%q: notes %v", q, titles(Notes(q)))
+		}
+	}
+}
