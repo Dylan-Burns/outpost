@@ -134,7 +134,7 @@ def list_archive(item, tmpdir):
         info = {
             "id": item["id"], "file": item["file"], "url": src.url if hasattr(src, "url") else item["url"],
             "size": src.size, "zim_version": f"{z.major}.{z.minor}", "entries": z.entry_count, "clusters": z.cluster_count,
-            "front_listing": listing, "kept": kept, "counts": dict(sorted(counts.items())), "metadata": values,
+            "front_listing": listing, "kept": kept, "directory_verified_bytes": getattr(z, "verified", 0), "counts": dict(sorted(counts.items())), "metadata": values,
             "fetched_bytes": getattr(src, "bytes", 0), "seconds": round(time.time() - t0, 1),
         }
         tmp_meta = meta_path.with_suffix(".part")

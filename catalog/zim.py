@@ -10,6 +10,7 @@ Format: https://wiki.openzim.org/wiki/ZIM_file_format
 Standard library only (Python 3.14+ for zstd).
 """
 import array
+import hashlib
 import http.client
 import lzma
 import os
@@ -17,6 +18,8 @@ import struct
 import time
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
+import zlib
 from compression import zstd
 
 UA = "outpost-catalog-builder/1 (+https://projectoutpost.org)"
@@ -48,44 +51,104 @@ class LocalSource:
 
 
 class HttpSource:
-    """Byte ranges of one file on a mirror, over one kept-alive connection.
+    """Byte ranges of one file on a Kiwix mirror, over one kept-alive connection.
 
-    download.kiwix.org redirects each request to a mirror; the mirror is
-    resolved once and then used for every range."""
+    The mirror list and the file's SHA-1 piece hashes come from Kiwix's
+    metalink (<file>.meta4). Archives are spread over the best few mirrors,
+    a mirror that keeps failing is swapped for the next one, and whole pieces
+    can be checked against the piece hashes (verify)."""
 
     MAX_RANGES = 120  # per request; keeps the Range header well under 8 KB
 
     def __init__(self, url, expect_size=None):
         self.name = url
-        final, size = self._resolve(url)
-        if expect_size and size != expect_size:
-            raise RuntimeError(f"{url}: mirror has {size} bytes, catalog says {expect_size}")
-        self.url = final
-        self.size = size
-        u = urllib.parse.urlsplit(final)
-        self.host, self.path, self.https = u.netloc, u.path, u.scheme == "https"
+        self.mirrors, self.piece_len, self.pieces = self._metalink(url)
+        self.expect = expect_size
         self.conn = None
         self.bytes = 0
         self.requests = 0
+        self.failures = 0
+        start = zlib.crc32(url.encode()) % max(1, min(4, len(self.mirrors)))
+        self.order = self.mirrors[start:] + self.mirrors[:start]
+        self._use_next(first=True)
 
-    MIRRORS = []  # mirror bases ("https://host/kiwix/zim/") that answered before
-
-    @classmethod
-    def _resolve(cls, url):
-        """A mirror that answered before is tried first (Kiwix's redirector can
-        take most of a minute); otherwise the redirect is followed once."""
-        rel = url.split("/zim/", 1)[1] if "/zim/" in url else None
-        for base in list(cls.MIRRORS) if rel else []:
+    @staticmethod
+    def _metalink(url):
+        last = None
+        for i in range(6):
             try:
-                return cls._probe(base + rel)
-            except Exception:
-                continue
-        u, n = cls._follow(url)
-        if rel and u.endswith("/" + rel):
-            base = u[: -len(rel)]
-            if base not in cls.MIRRORS:
-                cls.MIRRORS.append(base)
-        return u, n
+                req = urllib.request.Request(url + ".meta4", headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=60) as r:
+                    if urllib.parse.urlsplit(r.geturl()).scheme != "https":
+                        raise RuntimeError("metalink served over plain http")
+                    root = ET.fromstring(r.read())
+                break
+            except Exception as e:
+                last = e
+                time.sleep(3 * (i + 1))
+        else:
+            raise RuntimeError(f"{url}.meta4: {last!r}")
+        ns = {"m": "urn:ietf:params:xml:ns:metalink"}
+        f = root.find("m:file", ns)
+        urls = sorted(((int(u.get("priority", "99")), u.text.strip()) for u in f.findall("m:url", ns)
+                       if u.text and u.text.strip().startswith("https://")), key=lambda x: x[0])
+        name = url.rsplit("/", 1)[-1]
+        mirrors = [u for _p, u in urls if u.rsplit("/", 1)[-1] == name]
+        pc = f.find("m:pieces", ns)
+        pieces = [h.text.strip() for h in pc.findall("m:hash", ns)] if pc is not None and pc.get("type") == "sha-1" else []
+        plen = int(pc.get("length")) if pc is not None else 0
+        if not mirrors:
+            raise RuntimeError(f"{url}: no https mirror in the metalink")
+        return mirrors, plen, pieces
+
+    def _use_next(self, first=False):
+        """Switch to the next mirror that answers with the expected size."""
+        if not first:
+            self.order = self.order[1:] + self.order[:1]
+        last = None
+        for _ in range(len(self.order)):
+            u = self.order[0]
+            try:
+                final, size = self._probe(u)
+                if self.expect and size != self.expect:
+                    raise RuntimeError(f"mirror has {size} bytes, catalog says {self.expect}")
+                self.url, self.size = final, size
+                parts = urllib.parse.urlsplit(final)
+                self.host, self.path, self.https = parts.netloc, parts.path, True
+                try:
+                    self.conn and self.conn.close()
+                except Exception:
+                    pass
+                self.conn = None
+                self.failures = 0
+                if not first:
+                    import sys
+                    print(f"  switched to {self.host}", file=sys.stderr, flush=True)
+                return
+            except Exception as e:
+                last = e
+                self.order = self.order[1:] + self.order[:1]
+        raise RuntimeError(f"{self.name}: no mirror answered ({last!r})")
+
+    def verify(self, off, data):
+        """Check every whole piece inside [off, off + len(data)) against Kiwix's
+        SHA-1 piece hashes. Returns the number of bytes checked."""
+        if not self.pieces or not self.piece_len:
+            return 0
+        checked = 0
+        first = -(-off // self.piece_len)
+        k = first
+        while True:
+            start = k * self.piece_len
+            end = min(start + self.piece_len, self.size)
+            if end > off + len(data) or k >= len(self.pieces):
+                break
+            got = hashlib.sha1(data[start - off:end - off]).hexdigest()
+            if got != self.pieces[k]:
+                raise ValueError(f"{self.name}: piece {k} does not match Kiwix's hash")
+            checked += end - start
+            k += 1
+        return checked
 
     @staticmethod
     def _probe(u):
@@ -152,6 +215,7 @@ class HttpSource:
                     r.read()
                     raise RuntimeError(f"{self.url}: HTTP {r.status} for a range")
                 self.requests += 1
+                self.failures = 0
                 return r
             except Exception as e:
                 import sys
@@ -161,9 +225,15 @@ class HttpSource:
                 except Exception:
                     pass
                 self.conn = None
+                self.failures += 1
+                if self.failures >= 3 and len(self.order) > 1:
+                    try:
+                        self._use_next()
+                    except Exception:
+                        pass
                 if i == 7:
                     raise
-                time.sleep(min(60, 2 ** i))
+                time.sleep(min(20, 2 ** i))
 
     def read(self, off, n):
         if n <= 0:
@@ -306,7 +376,7 @@ class Zim:
 
     def _read_big(self, off, n):
         out = bytearray()
-        step = 64 << 20
+        step = 8 << 20
         while len(out) < n:
             out += self.src.read(off + len(out), min(step, n - len(out)))
         return bytes(out)
@@ -334,10 +404,17 @@ class Zim:
         """Copy the directory block to a local file. Returns (base offset, path)."""
         up = self.url_ptrs()
         lo, hi = min(up), max(up)
-        n = hi - lo + 4096
-        n = min(n, self.src.size - lo)
+        n = min(hi - lo + 4096, self.src.size - lo)
+        plen = getattr(self.src, "piece_len", 0)
+        if plen:  # widen to whole pieces so the block can be checked against Kiwix's hashes
+            a = lo // plen * plen
+            n = min(-(-(lo + n) // plen) * plen, self.src.size) - a
+            lo = a
         with open(tmp_path, "wb") as out:
             self.src.copy_to(lo, n, out)
+        if plen:
+            with open(tmp_path, "rb") as f:
+                self.verified = self.src.verify(lo, f.read())
         return lo, tmp_path
 
     @staticmethod
