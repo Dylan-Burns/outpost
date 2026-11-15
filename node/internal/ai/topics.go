@@ -97,7 +97,7 @@ var emergencies = []struct {
 	{rx(`rabies|rabid`), []string{"Rabies"}, nil},
 	{rx(`generator|grill|charcoal|camp ?stove|propane|kerosene|paraffin heater|gas heater|bbq|barbecue`, `inside|indoors|in the (house|home|garage|basement|tent|cabin|kitchen)|garage|basement|tent|window|enclosed`), []string{"Carbon monoxide poisoning"}, nil},
 	{rx(`fire|smoke|flames|burning`, `house|home|building|apartment|flat|hallway|room|kitchen|stairs|trapped|escape|stove|pan|oil|grease|fat`), []string{"Smoke inhalation"}, rx(`start (a |the )?fire|fire ?wood|campfire|tinder|kindling|wood ?stove|wildfire|bush ?fire|forest fire|brush fire`)},
-	{rx(`lightning|thunder`), []string{"Lightning", "Lightning burn"}, nil},
+	{rx(`lightning|thunder`), []string{"Lightning", "Lightning burn"}, rx(`lightning (mcqueen|cable|connector|port|charger|adapter|network|fast|quick)|thunder (cat|cake|bolts? (movie|film))|thunderbird`)},
 	{rx(`live wire|electrocut|electric(al)? shock|shocked by|power line|downed line|(got|had|getting|took) a (bad |big )?shock|(got|been|was|is) shocked|shock (off|from) (a|the)|frayed (lead|wire|cable|cord)|stuck to (the|a) .{0,20}(cable|wire|lead|cord|plug|socket)|(cable|wire|lead|cord).{0,20}(cut through|sliced through|chopped)`), []string{"Electrical injury"}, nil},
 	{rx(`nose ?bleed|bleeding (from (the |his |her |their |my )?)?nose|nose.{0,20}(bleed|blood)|epistaxis`), []string{"Nosebleed"}, nil},
 	{rx(`tooth|teeth`, `knock|out|fell out|lost|broke`), []string{"Tooth avulsion"}, nil},
@@ -119,6 +119,11 @@ var emergencies = []struct {
 	// Topics with a note added from a standard first-aid and preparedness list.
 	{rx(`power ?lines?|(electric|power|live) (wire|cable|line)s?|wires? (down|came down)`, `(still|stuck|trapped|we.?re|were|im|i.?m|i am|kids?|we are) (in|inside) (the |my |our )?(car|truck|ute|van|vehicle)?|in the (car|truck|ute|van)|(car|truck|ute|van|vehicle)`, `(still )?inside|in the (car|truck|ute|van)|get out|run for it|jump out`), []string{"Power line on vehicle"}, nil},
 	{rx(`wood ?stove|log ?burner|wood ?burner|fireplace|chimney|flue|stove ?pipe`, `smok(y|ing|es) (into|back|the (room|house|cabin))|making .{0,20}smoky|smoky|puff(ing|s)? (smoke )?back|won.?t draw|doesn.?t draw|creosote|tar(ry)?\b|black (stuff|liquid)`), []string{"Wood stove smoke"}, rx(`roar|glowing|red.?hot|flames (from|out)|on fire`)},
+	{rx(`carbon mon\w*|carbon mono|\bco\b (alarm|detector|monitor)|(alarm|detector).{0,20}\bco\b`), []string{"Carbon monoxide poisoning"}, nil},
+	{rx(`mushies|shrooms|toadstools?|fungi|fungus`, `ate|eaten|eating|picked|foraged|safe|spewing|sick|cramps|vomit`), []string{"Mushroom poisoning"}, rx(`magic|trip|grow (my|our)|athlete|toenail|nail fungus`)},
+	{rx(`lightning|electrical storm`, `storm|golf|outside|outdoors|hide|shelter|field|hill|boat|lake|tent|camping|struck|hit|open|beach|pitch`), []string{"Lightning"}, rx(`lightning (mcqueen|cable|connector|port|charger)|bolt`)},
+	{rx(`pregnan|preggo|months along|weeks? pregnant|wks pregnant|expecting`, `ibuprofen|nurofen|advil|motrin|aspirin|naproxen|aleve|codeine|tramadol|painkillers?|medicines?|tablets|pills|take (anything|something)|cold and flu|antihistamine|antibiotics?`), []string{"Medicines in pregnancy"}, nil},
+	{rx(`batter(y|ies)|power ?bank|vape|e.?bike|e.?scooter|hoverboard`, `swell|swollen|swole|bulg|puff(ed|ing|y)|popping out|pushing out|hot to (the )?touch|overheat|smok|hiss|sizzl|burning smell|chemical smell`), []string{"Battery fire risk"}, rx(`swallow|button|car battery (died|dead|flat)`)},
 	// From a second paraphrase test (450, regional voices, teenagers,
 	// older people, symptoms described, never named).
 	{rx(`water (comin|coming|pouring|rushing|getting) (in|into)|house (is )?filling (up )?(with|up)|(river|creek|burn|water) (has )?(come|coming) up (into|to)|knee.?deep water|drains (are )?backing up`), []string{"Flood"}, nil},

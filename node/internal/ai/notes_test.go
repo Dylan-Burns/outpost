@@ -909,3 +909,31 @@ func TestThirteenthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestFourteenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"carbon monixide alarm keeps beeping and we all got headaches and the dog is sleepy, its probably just the battery": "Carbon monoxide",
+		"20 weeks pregnant can i take ibuprofen for my back":                                                                "Medicines in pregnancy",
+		"laptop battery swelling up and the trackpad is popping out, is that like an emergency":                             "Swollen, hot or smoking battery",
+		"ate some wild mushies off the back lawn about 6 hrs ago now got cramps and been spewing":                           "Wild mushrooms",
+		"lightning storm and im on the golf course, nowhere to hide":                                                        "Lightning",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, q := range []string{"my phone battery drains fast", "batteries for the tv remote which size", "lightning cable for iphone keeps breaking"} {
+		if n := Notes(q); len(n) > 0 {
+			t.Errorf("%q got %v", q, titles(n))
+		}
+	}
+}
