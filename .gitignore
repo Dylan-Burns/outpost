@@ -7,3 +7,9 @@ node_modules/
 .env*
 *.part
 .DS_Store
+__pycache__/
+# Content index: only root.json and its signature are kept in git; the trees,
+# leaves and search blocks are built by catalog/index.py and published separately.
+site/public/catalog/v1/index/c/
+site/public/catalog/v1/index/p/
+site/public/catalog/v1/index/s/
