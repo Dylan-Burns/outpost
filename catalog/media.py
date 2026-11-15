@@ -14,7 +14,6 @@ import zlib
 
 _PAGES_COUNT = re.compile(rb"/Type\s*/Pages\b[^>]*?/Count\s+(\d+)|/Count\s+(\d+)[^>]*?/Type\s*/Pages\b", re.S)
 _PAGE = re.compile(rb"/Type\s*/Page(?![a-zA-Z])")
-_STREAM = re.compile(rb"stream\r?\n(.*?)\r?\nendstream", re.S)
 _INFO_DATE = re.compile(rb"/(ModDate|CreationDate)\s*\(D:(\d{4})(\d{2})?(\d{2})?")
 _INFO_TITLE = re.compile(rb"/Title\s*\(((?:\\.|[^\\)])*)\)")
 
@@ -22,10 +21,37 @@ _INFO_TITLE = re.compile(rb"/Title\s*\(((?:\\.|[^\\)])*)\)")
 MAX_STREAM = 64 << 20  # an object stream that inflates past this is not read
 
 
+def _streams(data):
+    """The bytes of each stream object, found by a linear scan. (A regex with a
+    lazy body backtracks to the end of the file at every stream whose end
+    marker is not on its own line, which made one 14 MB PDF take hours.)"""
+    pos = 0
+    while True:
+        i = data.find(b"stream", pos)
+        if i < 0:
+            return
+        if data[i - 3:i] == b"end":
+            pos = i + 6
+            continue
+        start = i + 6
+        if data[start:start + 2] == b"\r\n":
+            start += 2
+        elif data[start:start + 1] in (b"\n", b"\r"):
+            start += 1
+        else:
+            pos = start
+            continue
+        end = data.find(b"endstream", start)
+        if end < 0:
+            return
+        yield data[start:end]
+        pos = end + 9
+
+
 def _inflated(data):
-    for m in _STREAM.finditer(data):
+    for s in _streams(data):
         try:
-            yield zlib.decompressobj().decompress(m.group(1), MAX_STREAM)
+            yield zlib.decompressobj().decompress(s, MAX_STREAM)
         except Exception:
             continue
 
@@ -129,14 +155,29 @@ def media_seconds(head, tail=b""):
 
 # --- text -----------------------------------------------------------------------
 
-_DROP = re.compile(r"<(script|style|svg|noscript|head)\b.*?</\1\s*>", re.S | re.I)
 _TAG = re.compile(r"<[^>]+>")
 _WORD = re.compile(r"[^\W_]+(?:['’-][^\W_]+)*")
 
 
+_OPEN = re.compile(r"<(script|style|svg|noscript|head)\b", re.I)
+
+
 def html_text(h):
-    h = _DROP.sub(" ", h)
-    return html.unescape(_TAG.sub(" ", h))
+    """Visible text of a page. Blocks that hold no reading text are cut by a
+    linear scan, so an unclosed <script> costs one pass, not one per tag."""
+    out, pos, low = [], 0, h.lower()
+    while True:
+        m = _OPEN.search(h, pos)
+        if not m:
+            out.append(h[pos:])
+            break
+        out.append(h[pos:m.start()])
+        end = low.find("</" + m.group(1).lower(), m.end())
+        if end < 0:
+            break
+        close = low.find(">", end)
+        pos = len(h) if close < 0 else close + 1
+    return html.unescape(_TAG.sub(" ", " ".join(out)))
 
 
 def words(text):

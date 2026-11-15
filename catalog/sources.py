@@ -661,6 +661,9 @@ class LibreTexts(Family):
 
     def items(self, rows, facts):
         pages = next((f["pages"] for f in facts.values() if isinstance(f.get("pages"), list)), [])
+        if not pages:  # book tree not read yet: list the pages by title rather than drop them
+            pages = [[r.url[len("index/page_"):], html.unescape(r.title), r.url] for r in rows
+                     if r.url.startswith("index/page_") and r.title and r.title != r.url]
         by_path = {p[2]: p for p in pages}
         children = collections.Counter(p[2].rsplit("/", 1)[0] for p in pages if "/" in p[2])
         rows_by = {r.url: r for r in rows}
