@@ -168,6 +168,10 @@ Call emergency services if they have trouble breathing, chest pain, a fit, swell
 Pour plenty of vinegar over the sting for at least 30 seconds before touching any tentacles; then remove them carefully with tweezers or gloves. If there is no vinegar, rinse with seawater, never fresh water.
 Watch their breathing closely: a box jellyfish sting can stop the heart. If they stop breathing normally, start CPR and keep going until help arrives.
 Severe pain, sweating, vomiting, or chest or back pain an hour or so later can be Irukandji syndrome: call emergency services.`, ""},
+	{"Wood stove smoke", "Wood stove smoking into the room", "US EPA Burn Wise, NFPA and CDC guidance", `Smoke coming into the room also brings carbon monoxide. If anyone has a headache, dizziness, sickness or sleepiness, get everyone into fresh air and call emergency services. Fit a carbon monoxide alarm near any stove.
+To stop the smoke: open the stove's air vents fully before lighting, warm a cold flue first by burning a twist of newspaper or small dry kindling, open a nearby window slightly, and open the stove door slowly.
+Burn only dry, seasoned wood (split and dried for 6 months or more). Never burn wet or green wood, rubbish, or treated or painted wood: they smoke and coat the chimney with creosote.
+Black, tarry liquid or heavy smoke from the flue means creosote, which can catch fire: stop using the stove until a chimney sweep has cleaned and checked the chimney.`, ""},
 	{"Chimney fire", "Chimney fire", "NFPA, London Fire Brigade and Red Cross guidance", `A loud roaring or rumbling, a stove pipe or flue glowing red, or flames or sparks from the top of the chimney mean a chimney fire. Get everyone out of the house and call the fire service.
 Only if it is safe and quick on the way out: close the stove door and its air vents to starve the fire of air. Do not throw water into a hot stove or onto a glowing pipe: steam and cracking metal can injure you.
 Do not go back in. Afterwards, do not use the stove again until a chimney sweep has inspected the chimney, as a chimney fire can crack it.`, ""},
@@ -443,16 +447,19 @@ var supersedes = map[string][]string{
 	// wooden; with a line on a car, everyone must stay clear and inside.
 	// The household shock note says to push the source away with wood:
 	// deadly near a power line.
-	"Downed power line":     {"Electrical injury"},
-	"Family reunification":  {"Finding a person"},
-	"Power line on vehicle": {"Electrical injury", "Downed power line"},
-	"Nosebleed":             {"Bleeding"},
-	"Shock":                 {"Fainting"},
-	"Toxic gas":             {"Burn"},
-	"Generator":             {"Power outage"},
-	"Food safety":           {"Power outage"},
-	"Hypoglycemia":          {"Sudden confusion"},
-	"Winter car":            {"Winter heating"},
+	"Downed power line":         {"Electrical injury"},
+	"Family reunification":      {"Finding a person"},
+	"Power line on vehicle":     {"Electrical injury", "Downed power line"},
+	"Nosebleed":                 {"Bleeding"},
+	"Shock":                     {"Fainting"},
+	"Toxic gas":                 {"Burn"},
+	"Generator":                 {"Power outage"},
+	"Carbon monoxide poisoning": {"Dehydration"},
+	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
+	"Seizure":                   {"Eye injury"},
+	"Food safety":               {"Power outage"},
+	"Hypoglycemia":              {"Sudden confusion"},
+	"Winter car":                {"Winter heating"},
 	// "boiling water went on her arm" is a scald, not drinking water.
 	"Burn": {"Water purification"},
 	// Being sick after a head injury is a warning sign of the injury.

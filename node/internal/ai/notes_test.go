@@ -867,3 +867,45 @@ func TestTwelfthRoundWording(t *testing.T) {
 		t.Errorf("lighting a stove: %q", f)
 	}
 }
+
+func TestPowerLineOnTopOfCar(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	n := titles(Notes("power line came down on top of my car in the storm and im still inside, kids screaming in the back. do we get out and run for it"))
+	if len(n) != 1 || !strings.Contains(n[0], "Power line on a car") {
+		t.Errorf("notes %v", n)
+	}
+	n = titles(Notes("power line came down in the storm, my husband touched it and hes lying next to it not moving"))
+	if len(n) == 0 || !strings.Contains(n[0], "Fallen power line") {
+		t.Errorf("bystander notes %v", n)
+	}
+}
+
+func TestThirteenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"been running the genny in the shed during the outage and working in there, now im dizzy and threw up and my wife is sleepy": "Carbon monoxide",
+		"my mate took a load of pills at the party and isnt waking up properly, breathing really slow n snoring like":                "Opioid overdose",
+		"found my friend shaking on the floor, eyes rolled back, jerkin all over":                                                    "Seizure",
+		"kid bit into one of those dishwasher pod things, foaming a bit at the mouth and crying":                                     "Swallowed poison",
+		"wood stove making the cabin smoky every time i open the door, chimney prob dirty? creosote?":                                "Wood stove smoking",
+		"how long can i run my generator for and wheres safe to put it, powers been out 2 days":                                      "Generator safety",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, n := range Notes("been running the genny in the shed during the outage and working in there, now im dizzy and threw up") {
+		if strings.Contains(n.Title, "dehydration") {
+			t.Errorf("carbon monoxide got %s", n.Title)
+		}
+	}
+}
