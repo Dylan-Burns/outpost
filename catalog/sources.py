@@ -203,11 +203,17 @@ SE_ANSWERS = re.compile(r'<div id="answer-\d+"')
 SE_ANSWERS2 = re.compile(r'data-answerid="\d+"')
 
 
+def is_question(url):
+    """questions/<number>/<slug>, not the per-tag lists under questions/tagged/."""
+    p = url.split("/")
+    return len(p) == 3 and p[0] == "questions" and p[1].isdigit()
+
+
 class StackExchange(Family):
     name = "stackexchange"
 
     def wanted(self, rows):
-        return {r.idx for r in rows if r.front and r.url.startswith("questions/") and r.url.count("/") == 2}
+        return {r.idx for r in rows if r.front and is_question(r.url)}
 
     def needs_duration(self, row):
         return False
@@ -241,7 +247,7 @@ class StackExchange(Family):
             tags = [t.strip() for t in f.get("tags", []) if t and t.strip()]
             clean[i] = tags
             tag_count.update(tags)
-        questions = [r for r in rows if r.front and r.url.startswith("questions/") and r.url.count("/") == 2]
+        questions = [r for r in rows if r.front and is_question(r.url)]
         main = {}
         for r in questions:
             tags = clean.get(r.idx) or []
@@ -262,7 +268,7 @@ class StackExchange(Family):
                                          "asked": f.get("asked"), "tags": ", ".join(tags) if tags else None}.items() if v is not None})
             out.append(it)
         for r in rows:
-            if r.front and r.url.startswith("questions/") and r.url.count("/") == 2:
+            if r.front and is_question(r.url):
                 continue
             if r.front and r.url.startswith("users/"):
                 it = self.make(r, facts, "user profile", ("User profiles",))
@@ -690,6 +696,8 @@ class Web(Family):
 
     def path_of(self, r):
         parts = r.url.split("/")[1:-1]
+        if re.search(r"/tags?/", r.url):
+            return ("Tag pages",)
         if "cd3wd" in self.item["book"]:
             # Collections and documents: CD3WD/AGRIC/R0041E/... -> ("Agric", "R0041E")
             parts = [p for p in parts if p and p.upper() != "CD3WD"] or parts
@@ -701,6 +709,8 @@ class Web(Family):
 
     def kind_of(self, r):
         k = super().kind_of(r)
+        if k and r.mime.startswith("text/html") and re.search(r"/tags?/", r.url):
+            return "tag page"
         if k and r.mime.startswith("text/html") and self.item["book"].startswith("nhs") and r.url.count("/") <= 3:
             return "medicine"
         if k and r.mime.startswith("text/html") and self.item["book"].startswith("nhs"):
