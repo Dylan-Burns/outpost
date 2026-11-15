@@ -254,3 +254,9 @@ Each task ends with its check. Tasks 1 to 6 give a complete, organised page; 7 a
   kept beside it. The site carries only the signed `root.json`, which names where its files are.
 - **Security review fixes:** https-only mirrors, same file name required on redirect, cluster and
   PDF stream decompression capped, every index file's SHA-256 listed in the signed root.
+- **Opening items** (asked for on 2026-11-14): every item and collection gets "Preview online",
+  which opens the same file in Kiwix's online library (browse.library.kiwix.org/content/<file>/<path>;
+  it hosts all 90 of the catalog's files, behind a one-click access check), and "Open on my
+  Outpost", which opens it from the visitor's own Outpost (<host>:8081/content/<file without its
+  date>/<path>) once they enter its address. The address stays in that browser. Rows carry their
+  path inside the archive only when it is not simply the title with underscores.

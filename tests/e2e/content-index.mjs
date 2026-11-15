@@ -94,6 +94,11 @@ for (const [kind, it] of want) {
   await hit.waitFor({ timeout: 20000 }).catch(() => fail(`${kind} “${it.title}” in ${it.col}: link did not open its row`));
   const text = await hit.locator("summary .ix-name").textContent();
   if (text !== it.title) fail(`${kind}: link opened “${text}”, expected “${it.title}”`);
+  const zim = root.subjects.flatMap((s) => s.collections).find((c) => (c.tree || c.id) === it.col && !c.ed)?.zim;
+  if (zim) {
+    const href = await hit.locator(".ix-open a").first().getAttribute("href");
+    if (!href?.startsWith(`https://browse.library.kiwix.org/content/${zim}/`)) fail(`${kind}: preview link is ${href}`);
+  }
   step(`${kind}: “${it.title.slice(0, 60)}” opens by its link`);
 }
 

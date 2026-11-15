@@ -168,6 +168,7 @@ def main():
     def zim_extra(it, meta, fam, measured):
         md = meta.get("metadata", {})
         return {"purpose": purposes["items"][it["id"]], "description": it.get("description") or md.get("Description", ""),
+                "zim": it["file"][:-4],
                 "longDescription": md.get("LongDescription", ""), "edition": it.get("date") or md.get("Date", "")[:7],
                 "built": md.get("Date", ""), "size": it["size"], "license": it.get("license", ""),
                 "publisher": it.get("publisher") or md.get("Publisher", ""), "creator": md.get("Creator", ""),
@@ -218,6 +219,8 @@ def main():
         url_of = {r.idx: r.url for r in rows}
         for x in its:
             x["_url"] = url_of.get(x["idx"], "")
+            if x["_url"] and x["_url"] != x["t"].replace(" ", "_"):
+                x["u"] = x["_url"]  # path inside the archive, for links (omitted when it is the title)
         return meta, fam, its, skipped, measured
 
     shared_trees = {}  # primary id -> {member id: (items in edition, bytes in edition)}

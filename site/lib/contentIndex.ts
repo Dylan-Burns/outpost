@@ -24,6 +24,8 @@ export type Collection = {
   publisher?: string;
   creator?: string;
   file?: string;
+  /** The archive's file name without .zim: its address in Kiwix's online library. */
+  zim?: string;
   sha256?: string;
   entries?: number;
   measured: boolean;

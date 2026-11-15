@@ -670,3 +670,11 @@ table.hw { width: calc(100% + 2 * var(--pad)); margin: 0 calc(-1 * var(--pad)); 
   .ix-about dd,
   .ix-facts dd { margin-bottom: 0.4rem; }
 }
+.ix-outpost { margin: 0 0 1.75rem; }
+.ix-outpost label { display: block; margin-bottom: 0.5rem; color: var(--dim); }
+.ix-outpost > div { display: flex; border: 1px solid var(--line-2); }
+.ix-outpost input { flex: 1; min-width: 0; padding: 0.6rem 1rem; border: 0; border-radius: 0; background: var(--bg); color: var(--fg); font: 400 0.9rem var(--mono); }
+.ix-outpost input:focus { outline: 2px solid var(--fg); outline-offset: -2px; }
+.ix-outpost button { appearance: none; border: 0; border-left: 1px solid var(--fg); border-radius: 0; background: var(--fg); color: var(--bg); font: 700 0.66rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; padding: 0 1.25rem; cursor: pointer; }
+.ix-outpost small { display: block; margin-top: 0.5rem; font-size: 0.8rem; color: var(--dim); }
+.ix-open { display: inline-flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; }

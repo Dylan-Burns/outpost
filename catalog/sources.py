@@ -415,11 +415,15 @@ class YouTube(Family):
                 if slug not in uploads and v["id"] not in home:
                     home[v["id"]] = pl.get("title") or slug
         out, skipped, used = [], collections.Counter(), set()
+        by_url = {r.url: r for r in rows}
         for r, v in vids:
             fr = files.get(v["id"])
             f = facts.get(fr.idx, {}) if fr else {}
+            page = by_url.get("index/" + v["slug"])  # the video's own page, for links
             it = {"t": html.unescape(v.get("title") or v["slug"]), "k": "video", "path": (home.get(v["id"], "Not in a playlist"),),
-                  "idx": r.idx, "s": f.get("s")}
+                  "idx": (page or r).idx, "s": f.get("s")}
+            if page:
+                used.add(page.idx)
             secs = dur.get(v["id"]) or f.get("secs")
             if secs:
                 it["min"] = round(secs / 60, 1)

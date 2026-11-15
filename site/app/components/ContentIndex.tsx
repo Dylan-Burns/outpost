@@ -3,7 +3,7 @@
  * › item. Subjects and collections come with the page; a collection's section
  * tree is fetched when it is opened, and a shelf's rows (at most 200) when that
  * shelf is opened, each by one byte-range read of a packed file. */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Collection, IndexRoot, Subject } from "@/lib/contentIndex";
 
 type TreeNode = { l: string; n: number; s: number; ss?: number[]; u?: number; cr?: [number, number, number]; d?: string; c?: TreeNode[]; r?: [number, number, number] };
@@ -34,6 +34,8 @@ type Row = {
   rank?: number;
   qs?: number;
   ss?: (number | null)[];
+  /** Path inside the archive, when it is not simply the title with underscores. */
+  u?: string;
 };
 type Ref = [number, string, number];
 type Hit = [string, Ref[]];
@@ -77,6 +79,91 @@ function sizeText(r: Row, ed: number) {
   return s === undefined || s === null || s < 0 ? "not yet measured" : bytes(s);
 }
 const nodeSize = (n: TreeNode, ed: number) => (n.ss ? n.ss[ed] : n.s);
+
+// --- links to the items themselves --------------------------------------------
+
+const KIWIX = "https://browse.library.kiwix.org/content";
+const OUTPOST_KEY = "outpost-address";
+
+/** An Outpost serves its library with kiwix-serve, addressing each archive by
+ *  its file name without the _YYYY-MM date (see node/internal/server/api.go). */
+function undated(zim: string) {
+  return zim.replace(/_\d{4}-\d{2}$/, "");
+}
+
+function encPath(p: string) {
+  return p.split("/").map(encodeURIComponent).join("/");
+}
+
+/** The library address of an Outpost, from the address its dashboard is opened
+ *  at: same machine, the library port (8081 unless the owner changed it). */
+export function libraryOf(addr: string): string | null {
+  let a = addr.trim();
+  if (!a) return null;
+  if (!/^https?:\/\//i.test(a)) a = "http://" + a;
+  try {
+    const u = new URL(a);
+    const port = u.port === "" || u.port === "8080" ? "8081" : u.port;
+    return `${u.protocol}//${u.hostname}:${port}`;
+  } catch {
+    return null;
+  }
+}
+
+const OutpostCtx = createContext<string | null>(null);
+
+function itemPath(r: Row) {
+  return r.u ?? r.t.replace(/ /g, "_");
+}
+
+function OpenLinks({ zim, path }: { zim?: string; path: string }) {
+  const lib = useContext(OutpostCtx);
+  if (!zim) return null;
+  return (
+    <span className="ix-open">
+      <a href={`${KIWIX}/${zim}/${encPath(path)}`} target="_blank" rel="noopener noreferrer">
+        Preview online
+      </a>
+      {lib ? (
+        <a href={`${lib}/content/${undated(zim)}/${encPath(path)}`} target="_blank" rel="noopener">
+          Open on my Outpost
+        </a>
+      ) : (
+        <a href="#outpost-address" className="quiet">
+          Open on my Outpost: set its address above
+        </a>
+      )}
+    </span>
+  );
+}
+
+function OutpostAddress({ value, set }: { value: string; set: (v: string) => void }) {
+  const [draft, setDraft] = useState(value);
+  const lib = libraryOf(draft);
+  return (
+    <form
+      className="ix-outpost"
+      onSubmit={(e) => {
+        e.preventDefault();
+        set(draft.trim());
+      }}
+    >
+      <label htmlFor="outpost-address" className="label">
+        Have an Outpost? Its address, as you open its dashboard
+      </label>
+      <div>
+        <input id="outpost-address" value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="e.g. 192.168.1.20:8080 or mymac.local:8080" autoComplete="off" />
+        <button type="submit">Save</button>
+      </div>
+      <small className="quiet">
+        {value && lib
+          ? `Items open from ${libraryOf(value)} on your own network. Kept in this browser only.`
+          : "Then each item can open from your own Outpost, with no internet. Kept in this browser only."}{" "}
+        Without one, “Preview online” opens the same file in Kiwix&apos;s online library.
+      </small>
+    </form>
+  );
+}
 
 // --- data access ---------------------------------------------------------------
 
@@ -123,6 +210,27 @@ function fetchPacked<T>(url: string, off: number, len: number): Promise<T> {
 
 export default function ContentIndex({ root, base }: { root: IndexRoot; base: string }) {
   const [target, setTarget] = useState<{ col: string; path: number[]; row: number } | null>(null);
+  const [outpost, setOutpost] = useState("");
+  useEffect(() => {
+    let v = "";
+    try {
+      v = localStorage.getItem(OUTPOST_KEY) || "";
+    } catch {
+      v = "";
+    }
+    // Read once after mount: the page is rendered on the server without it.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (v) setOutpost(v);
+  }, []);
+  const saveOutpost = useCallback((v: string) => {
+    setOutpost(v);
+    try {
+      if (v) localStorage.setItem(OUTPOST_KEY, v);
+      else localStorage.removeItem(OUTPOST_KEY);
+    } catch {
+      /* private mode: kept for this visit only */
+    }
+  }, []);
   const colIndex = useMemo(() => new Map(root.collections.map((c, i) => [c, i])), [root]);
   const subjectsOf = useMemo(() => {
     const m = new Map<string, Subject[]>();
@@ -149,8 +257,10 @@ export default function ContentIndex({ root, base }: { root: IndexRoot; base: st
   }, []);
 
   return (
+    <OutpostCtx.Provider value={libraryOf(outpost)}>
     <div className="ix">
       <Search root={root} base={base} go={go} />
+      <OutpostAddress key={outpost} value={outpost} set={saveOutpost} />
       <div className="ix-head" aria-hidden="true">
         <span>Name</span>
         <span>Kind</span>
@@ -162,6 +272,7 @@ export default function ContentIndex({ root, base }: { root: IndexRoot; base: st
         <SubjectRow key={s.id} s={s} base={base} target={target} go={go} subjectsOf={subjectsOf} />
       ))}
     </div>
+    </OutpostCtx.Provider>
   );
 }
 
@@ -279,6 +390,14 @@ function CollectionRow({ c, base, target, go, also, home }: { c: Collection; bas
               <dd>{also.map((s) => <a key={s} href={`#subject-${s}`}>{s}</a>)}</dd>
             </div>
           )}
+          {c.zim && (
+            <div>
+              <dt>Open</dt>
+              <dd>
+                <OpenLinks zim={c.zim} path="" />
+              </dd>
+            </div>
+          )}
           {c.file && (
             <div>
               <dt>File</dt>
@@ -293,20 +412,20 @@ function CollectionRow({ c, base, target, go, also, home }: { c: Collection; bas
       </div>
       {err && <p className="ix-note lvl-2">Could not load this collection&apos;s contents ({err}).</p>}
       {open && !tree && !err && <p className="ix-note lvl-2">Loading…</p>}
-      {tree && <Children node={tree} col={treeId} ed={ed} path={[]} depth={2} base={base} target={wanted ? target : null} go={go} />}
+      {tree && <Children node={tree} col={treeId} ed={ed} zim={c.zim} path={[]} depth={2} base={base} target={wanted ? target : null} go={go} />}
     </details>
   );
 }
 
-type Where = { node: TreeNode; col: string; ed: number; path: number[]; depth: number; base: string; target: Tgt; go: Go };
+type Where = { node: TreeNode; col: string; ed: number; zim?: string; path: number[]; depth: number; base: string; target: Tgt; go: Go };
 
-function Children({ node, col, ed, path, depth, base, target, go }: Where) {
+function Children({ node, col, ed, zim, path, depth, base, target, go }: Where) {
   return (
     <>
       {(node.c || []).map((ch, i) => (
-        <Section key={i} node={ch} col={col} ed={ed} path={[...path, i]} depth={depth} base={base} target={target} go={go} />
+        <Section key={i} node={ch} col={col} ed={ed} zim={zim} path={[...path, i]} depth={depth} base={base} target={target} go={go} />
       ))}
-      {node.r && <Leaf node={node} col={col} ed={ed} path={path} depth={depth} base={base} target={target} go={go} />}
+      {node.r && <Leaf node={node} col={col} ed={ed} zim={zim} path={path} depth={depth} base={base} target={target} go={go} />}
     </>
   );
 }
@@ -315,7 +434,7 @@ function onPath(target: Tgt, path: number[]) {
   return !!target && path.every((p, i) => target.path[i] === p) && target.path.length >= path.length;
 }
 
-function Section({ node, col, ed, path, depth, base, target, go }: Where) {
+function Section({ node, col, ed, zim, path, depth, base, target, go }: Where) {
   const [open, setOpen] = useState(false);
   const [kids, setKids] = useState<TreeNode[] | null>(node.c || null);
   const [err, setErr] = useState("");
@@ -344,13 +463,13 @@ function Section({ node, col, ed, path, depth, base, target, go }: Where) {
       {err && <p className={`ix-note lvl-${Math.min(depth + 1, 7)}`}>Could not load this section ({err}).</p>}
       {open && node.cr && !kids && !err && <p className={`ix-note lvl-${Math.min(depth + 1, 7)}`}>Loading…</p>}
       {open && (kids || !node.cr) && (
-        <Children node={{ ...node, c: kids || node.c }} col={col} ed={ed} path={path} depth={depth + 1} base={base} target={wanted ? target : null} go={go} />
+        <Children node={{ ...node, c: kids || node.c }} col={col} ed={ed} zim={zim} path={path} depth={depth + 1} base={base} target={wanted ? target : null} go={go} />
       )}
     </details>
   );
 }
 
-function Leaf({ node, col, ed, path, depth, base, target, go }: Where) {
+function Leaf({ node, col, ed, zim, path, depth, base, target, go }: Where) {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [err, setErr] = useState("");
   useEffect(() => {
@@ -367,13 +486,13 @@ function Leaf({ node, col, ed, path, depth, base, target, go }: Where) {
   return (
     <>
       {rows.map((r, i) => (
-        <Item key={i} r={r} ed={ed} id={`row-${col}-${where}-${i}`} depth={depth} hit={i === hit} link={() => go(col, path, i)} />
+        <Item key={i} r={r} ed={ed} zim={zim} id={`row-${col}-${where}-${i}`} depth={depth} hit={i === hit} link={() => go(col, path, i)} />
       ))}
     </>
   );
 }
 
-function Item({ r, ed, id, depth, hit, link }: { r: Row; ed: number; id: string; depth: number; hit: boolean; link: () => void }) {
+function Item({ r, ed, zim, id, depth, hit, link }: { r: Row; ed: number; zim?: string; id: string; depth: number; hit: boolean; link: () => void }) {
   const facts: [string, string][] = [];
   if (r.by) facts.push([r.k === "talk" ? "Speaker" : r.k === "book" ? "Author" : "By", r.by]);
   if (r.x) facts.push(["About", r.x]);
@@ -406,6 +525,14 @@ function Item({ r, ed, id, depth, hit, link }: { r: Row; ed: number; id: string;
             <dd>{v}</dd>
           </div>
         ))}
+        {zim && !(r.ss && r.ss[ed] === null) && (
+          <div>
+            <dt>Open</dt>
+            <dd>
+              <OpenLinks zim={zim} path={itemPath(r)} />
+            </dd>
+          </div>
+        )}
         <div>
           <dt>Link</dt>
           <dd>
