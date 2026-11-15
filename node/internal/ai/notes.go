@@ -141,6 +141,10 @@ Otherwise keep the child calm and upright on your lap: crying makes it worse. Gi
 A red line or streak spreading from the wound up the arm or leg means the infection is spreading: get medical help urgently, today.
 Call emergency services if they also have a high temperature or shivering, feel very unwell, confused, or breathe fast: this can be sepsis.
 Meanwhile keep the wound clean with tap water, cover it with a clean dressing, and raise the limb. Mark the edge of the redness with a pen to see if it spreads.`, ""},
+	{"Downed power line", "Fallen power line", "Red Cross and electricity utility guidance", `Stay at least 10 metres (33 feet) away from a fallen power line and anything touching it, including a person, a fence, a car or a puddle. Treat every fallen line as live, even if it is not sparking.
+Do not try to rescue someone who is touching it or lying near it, and do not try to move the line with anything, even wood: high voltage can arc through the air and the ground. Keep everyone else back.
+Call emergency services now and tell them a power line is down and a person is hurt, so they can have the power cut. Only go to the person once the power company or emergency services say it is off. Then, if they are not breathing normally, start CPR.
+If you feel tingling in your feet as you get close, shuffle away with small steps, feet together.`, ""},
 	{"Power line on vehicle", "Power line on a car", "Red Cross and electricity utility guidance", `Stay inside the vehicle: it is the safest place. Call emergency services and tell them a power line is on the car. Warn others to stay at least 10 metres (about 33 feet) away; nobody should touch the car or the line.
 Only get out if the car is on fire. Then open the door without touching the ground, jump clear with both feet together so you never touch the car and the ground at the same time, and shuffle away with small steps, feet together, without lifting them, until you are at least 10 metres away.
 Never try to move the line, even with something wooden: treat every fallen line as live.`, ""},
@@ -213,8 +217,9 @@ Shelter in a closed building or a hard-topped metal vehicle with the windows shu
 If you are caught outside with no shelter: get off hilltops, ridges and other high ground, and away from open fields, water, metal fences and isolated tall trees. Never shelter under a lone tree. A group should spread out.
 Wait 30 minutes after the last thunder before going back out.
 A person struck by lightning carries no electric charge and is safe to touch. Call emergency services, and if they are not breathing normally, start CPR.`, ""},
-	{"Electrical injury", "Electric shock", "NHS and Red Cross guidance", `Do not touch the person while they may still be in contact with the electricity. Switch off the power at the mains or unplug the device first.
-If you cannot switch it off, stand on something dry that does not conduct electricity (wood, plastic, a rubber mat) and push the source away with a dry wooden object. Stay at least 18 metres (20 yards) away from high-voltage power lines and call emergency services.
+	{"Electrical injury", "Electric shock", "NHS and Red Cross guidance", `These steps are for household electricity: an appliance, a cable, a socket. For a fallen power line, do not go near at all.
+Do not touch the person while they may still be in contact with the electricity. Switch off the power at the mains or unplug the device first.
+If you cannot switch it off, stand on something dry that does not conduct electricity (wood, plastic, a rubber mat) and push the source away with a dry wooden object.
 Once it is safe, call emergency services. If they are not breathing normally, start CPR.
 Cool any burns with running water. Anyone who has had an electric shock should be checked by a doctor, even if they seem fine.`, ""},
 	{"Nosebleed", "Nosebleed", "NHS guidance", `Sit down and lean forward, not back, so blood does not run down the throat.
@@ -427,6 +432,9 @@ var supersedes = map[string]string{
 	// The shock note says to push the source away with something dry and
 	// wooden; with a line on a car, everyone must stay clear and inside.
 	"Power line on vehicle": "Electrical injury",
+	// The household shock note says to push the source away with wood:
+	// deadly near a power line.
+	"Downed power line": "Electrical injury",
 	// "boiling water went on her arm" is a scald, not drinking water.
 	"Burn": "Water purification",
 	// Being sick after a head injury is a warning sign of the injury.

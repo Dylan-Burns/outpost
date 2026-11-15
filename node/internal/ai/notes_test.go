@@ -791,3 +791,25 @@ func TestEleventhRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestFallenPowerLineNotHouseholdShock(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	n := titles(Notes("power line came down in the storm, my husband touched it and hes lying next to it not moving"))
+	if len(n) == 0 || !strings.Contains(n[0], "Fallen power line") {
+		t.Errorf("notes %v", n)
+	}
+	for _, x := range n {
+		if strings.Contains(x, "Electric shock") {
+			t.Errorf("household shock note with a power line: %v", n)
+		}
+	}
+	n = titles(Notes("storm knocked a power line onto our car and my husband is still inside it"))
+	if len(n) != 1 || !strings.Contains(n[0], "Power line on a car") {
+		t.Errorf("car notes %v", n)
+	}
+	n = titles(Notes("my husbands still holding the hedge trimmer cable and twitching he got shocked"))
+	if len(n) == 0 || !strings.Contains(n[0], "Electric shock") {
+		t.Errorf("household notes %v", n)
+	}
+}
