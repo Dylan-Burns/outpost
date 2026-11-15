@@ -261,3 +261,17 @@ func TestBabyCPRAndChildDoseNotes(t *testing.T) {
 		t.Errorf("child dose note missing or states a dose: %+v", n)
 	}
 }
+
+func TestHypothermiaInPlainWords(t *testing.T) {
+	for _, q := range []string{"old guy in the snow shivering stopped and hes mumbling, got him in the car", "my son was out all night in the cold and now hes confused and clumsy"} {
+		found := false
+		for _, g := range EmergencyTopics(q) {
+			if g == "Hypothermia" {
+				found = true
+			}
+		}
+		if !found {
+			t.Errorf("%q: got %v", q, EmergencyTopics(q))
+		}
+	}
+}
