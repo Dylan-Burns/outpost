@@ -184,7 +184,7 @@ type Source = { label: string; title: string; book: string; path: string; note?:
 type Turn = { q: string; a: string; sources: Source[]; ungrounded: boolean; unsupported?: string[]; dose?: boolean; error: string; status: string; done: boolean; model?: string };
 
 export function Assistant({ status }: { status: Status }) {
-  const [info, err] = usePoll<{ available: boolean; models: { id: string; title: string }[] }>("/api/assistant", 0);
+  const [info, err] = usePoll<{ available: boolean; models: { id: string; title: string; rank?: number }[] }>("/api/assistant", 0);
   const [model, setModel] = useState("");
   const [useLib, setUseLib] = useState(true);
   const [q, setQ] = useState("");
@@ -252,6 +252,12 @@ export function Assistant({ status }: { status: Status }) {
         <div>
           <h1>Assistant</h1>
           <p class="muted small" style={{ margin: 0 }}>It runs on this computer and it can be wrong. Check the sources it lists, above all on medical or safety questions.</p>
+          {status.signedIn && !info.models.some((m) => m.rank && m.rank < 4) && (
+            <p class="muted small" style={{ margin: "0.4rem 0 0" }}>
+              Tip: in Outpost&apos;s tests on emergency questions, Llama 3.2 3B and Phi-4 mini answered more accurately than the smallest model. If
+              this computer has 8 GB of memory or more, <Link href="/content">add one under Content</Link>.
+            </p>
+          )}
         </div>
         <div class="row">
           <label class="switch small" style={{ padding: 0 }}>
@@ -271,6 +277,17 @@ export function Assistant({ status }: { status: Status }) {
             <div class="msg q">{t.q}</div>
             <div class="msg a">
               {t.ungrounded && <p class="alert warn small" style={{ whiteSpace: "normal" }}>Nothing in your library matched, so this answer comes from the AI model alone, with no source to check.</p>}
+              {/* Outpost's own notes are vetted, so they show first and at once,
+                  before the model has written anything: the reader has the
+                  right steps even if a small model then gets them wrong. */}
+              {t.sources.filter((s) => s.note).map((s) => (
+                <section class="note-card" key={s.label}>
+                  <h3>{s.title.replace(/^Outpost note: /, "")}</h3>
+                  <p class="note-basis">Outpost&apos;s {s.book.replace(/^Summary of /, "summary of ")}</p>
+                  <p class="note-text">{s.note}</p>
+                </section>
+              ))}
+              {t.sources.some((s) => s.note) && (t.a || !t.error) && <p class="answer-label">The assistant&apos;s answer, from your library:</p>}
               {t.a ? linkify(t.a, t.sources) : !t.error && <span class="muted"><span class="spinner" /> {t.status}</span>}
               {t.error && <p class="alert warn" style={{ whiteSpace: "normal" }}>{t.error}</p>}
               {t.unsupported && t.unsupported.length > 0 && (
@@ -286,26 +303,21 @@ export function Assistant({ status }: { status: Status }) {
               {t.sources.length > 0 && (() => {
                 // Once the answer is done, list what it rests on; the other
                 // passages it was shown are a footnote, not evidence.
-                const used = t.done ? cited(t) : t.sources;
-                const shown = used.length > 0 ? used : t.sources;
-                const rest = t.sources.filter((s) => !shown.includes(s));
+                const lib = t.sources.filter((s) => !s.note); // notes are shown above
+                if (lib.length === 0) return null;
+                const used = t.done ? cited(t).filter((s) => !s.note) : lib;
+                const shown = used.length > 0 ? used : lib;
+                const rest = lib.filter((s) => !shown.includes(s));
                 return (
                   <>
                     <div class="sources">
-                      {shown.map((s) =>
-                        s.note ? (
-                          <details key={s.label} class="note-src">
-                            <summary>[{s.label}] {s.title} · {s.book}</summary>
-                            <p>{s.note}</p>
-                          </details>
-                        ) : (
-                          <a key={s.label} href={base + s.path} target="_blank" rel="noopener">[{s.label}] {s.title} · {s.book}</a>
-                        ),
-                      )}
+                      {shown.map((s) => (
+                        <a key={s.label} href={base + s.path} target="_blank" rel="noopener">[{s.label}] {s.title} · {s.book}</a>
+                      ))}
                     </div>
                     {rest.length > 0 && (
                       <p class="muted small" style={{ margin: 0 }}>
-                        Also searched: {rest.map((s, i) => <>{i > 0 && " · "}{s.note ? <span key={s.label}>{s.title}</span> : <a key={s.label} href={base + s.path} target="_blank" rel="noopener">{s.title}</a>}</>)}
+                        Also searched: {rest.map((s, i) => <>{i > 0 && " · "}<a key={s.label} href={base + s.path} target="_blank" rel="noopener">{s.title}</a></>)}
                       </p>
                     )}
                   </>
