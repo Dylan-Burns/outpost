@@ -146,6 +146,16 @@ Never try to move the line, even with something wooden: treat every fallen line 
 	{"Go bag", "What to pack in a go bag", "FEMA, Ready.gov and Red Cross guidance", `Water (about 4 litres or a gallon per person per day, for 3 days) and food that keeps; a torch, a battery or wind-up radio and spare batteries; a first-aid kit; a whistle; phone charger and power bank; cash; copies of IDs, insurance and medical documents in a waterproof bag; warm clothes, sturdy shoes and a blanket; hygiene items; and anything babies, older people or pets need.
 Medicines: at least a week's supply of every prescription, in original packets, with a written list of medicines, doses, allergies and doctors' numbers. Insulin keeps at room temperature (below about 30 °C) for about 4 weeks once out of the fridge: carry it in an insulated bag with a cool pack, never directly on ice, with needles, a glucose meter and fast-acting sugar. For someone on blood thinners, put the medicine name on the list: it matters to anyone treating an injury.
 Keep the bag by the door and check it every 6 months.`, ""},
+	{"Newborn jaundice", "Yellow skin in a newborn (jaundice)", "NHS and NICE guidance", `Many babies look a little yellow in their first week. Call a midwife, health visitor, doctor or nurse line (NHS 111) the same day if a baby has yellow skin or yellow whites of the eyes, especially in the first 24 hours of life or after 2 weeks.
+Get urgent help now (emergency services or A&E) if a yellow baby is very sleepy or hard to wake, feeding poorly, floppy, has a high-pitched cry, or has pale chalky poo or dark urine.
+Keep feeding often. Do not put the baby in direct sunlight to treat it, and do not give water or medicines unless a doctor says so: jaundice is treated in hospital with special light if it is needed.`, ""},
+	{"Emergency birth", "A baby arriving before help can get there", "NHS and Red Cross guidance", `Call emergency services now and keep the line open: the call handler will talk you through the birth.
+Wash your hands. Lay down clean towels and keep the room warm. Let the mother take the position she wants, often on her side or on all fours. Do not try to delay the birth or pull on the baby.
+As the head comes, support it gently; the body usually follows with the next contraction. Dry the baby straight away, place them skin to skin on the mother's chest, and cover them both, including the baby's head. If the baby is not breathing or crying after drying and rubbing, follow the call handler's instructions for baby CPR.
+Do not cut or pull the cord. The afterbirth (placenta) usually comes within an hour: keep it for the medics. Heavy bleeding afterwards is an emergency: tell the call handler at once.`, ""},
+	{"Tsunami", "Tsunami", "US National Weather Service and Red Cross guidance", `If you hear a tsunami warning siren, feel a strong earthquake near the coast, or see the sea pull back unusually far, move at once to high ground or inland, on foot if you can. Do not wait for an official order and do not go to the shore to look.
+Go as high and as far inland as you can: at least 30 metres (100 feet) above sea level or 3 kilometres (2 miles) inland. If you cannot get out of the area, go to the upper floors or roof of a strong concrete building.
+A tsunami comes as a series of waves and later ones can be bigger: stay away from the coast until officials say it is safe, which can be many hours.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -340,7 +350,7 @@ A deep or dirty wound, such as a puncture from a rusty nail, a wound with soil o
 Get medical help for a deep puncture of the foot, a wound you cannot clean, or signs of infection: spreading redness, swelling, pus, fever, or stiffness of the jaw or neck.`, ""},
 	{"Emergency toilet", "When toilets do not work", "FEMA and CDC guidance", `Line the toilet bowl or a bucket with two strong plastic bags. After each use, cover the waste with a little cat litter, sawdust, soil or ash.
 Tie the bags when they are a third to half full and keep them in a covered container, away from people, food and water, until they can be collected or buried.
-If you bury waste, dig at least 30 cm (1 foot) deep and at least 60 metres (200 feet) from wells, streams and other water.
+If you bury waste, dig at least 30 cm (1 foot) deep and at least 60 metres (200 feet) from wells, streams and other water. A pit latrine or long drop should also be at least 30 metres (100 feet) from any well or water source, downhill from it, and with its bottom well above the water table.
 Wash hands with soap and water, or use hand sanitiser, every time. Never pour waste into floodwater or near a water source.`, ""},
 	{"Mushroom poisoning", "Wild mushrooms", "NHS and poison centre guidance", `Never eat a wild mushroom unless an expert has identified it with certainty: some deadly species look like edible ones. White mushrooms with white gills and a ring on the stem can be death caps or destroying angels, which kill.
 Cooking, drying or peeling does not make a poisonous mushroom safe.
@@ -352,6 +362,7 @@ Check babies, older people and anyone ill often for signs of hypothermia: shiver
 	{"Medicine safety", "Mixing, old and someone else's medicines", "NHS and US FDA guidance", `Ask a pharmacist or doctor before taking two medicines together: some common ones interact. Anti-inflammatory painkillers such as ibuprofen and naproxen can raise blood pressure, weaken blood pressure medicines and harm the kidneys; paracetamol (acetaminophen) is usually the safer painkiller for people on blood pressure medicine, within the label's limits.
 Do not take antibiotics that are left over, out of date or prescribed for someone else: they may be the wrong medicine or not enough to work. A tooth or wound infection with swelling or fever needs a dentist or doctor.
 Anyone on a blood thinner (warfarin, apixaban, rivaroxaban, clopidogrel) should not take ibuprofen, naproxen or aspirin unless their doctor says so: together they raise the risk of serious bleeding.
+Do not drink alcohol with sleeping tablets, opioid painkillers (codeine, tramadol), benzodiazepines (diazepam) or drowsy antihistamines: together they can slow breathing dangerously. If someone has, do not let them sleep alone; if they are very drowsy, hard to wake or breathing slowly, call emergency services and put them on their side.
 Do not take someone else's prescription medicine, even the same medicine at another strength.`, ""},
 	{"Starting a fire", "Starting a fire safely", "NFPA and US Forest Service guidance", `Never use petrol (gasoline), diesel or other fuel to start or revive a fire: the vapour can explode and the flame can flash back to the can and to you. Use charcoal lighter fluid only on charcoal, and only before it is lit.
 Start with dry tinder (dry grass, birch bark, cotton wool, wood shavings), add thin dry kindling, then larger wood once it catches. In wet weather, split wood to reach the dry inside and shelter the fire from rain.
@@ -410,6 +421,8 @@ var supersedes = map[string]string{
 	"Power line on vehicle": "Electrical injury",
 	// "boiling water went on her arm" is a scald, not drinking water.
 	"Burn": "Water purification",
+	// Being sick after a head injury is a warning sign of the injury.
+	"Head injury": "Dehydration",
 }
 
 func Notes(q string) []Source {

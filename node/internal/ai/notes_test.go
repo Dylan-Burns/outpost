@@ -634,3 +634,46 @@ func TestPowerLineOnCarHasNoShockNote(t *testing.T) {
 		t.Errorf("notes %v", n)
 	}
 }
+
+func TestNinthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, title := range map[string]string{
+		"husband sweating gone grey colour says his jaw and left arm ache, he reckons its just indigestion": "Heart attack",
+		"splitting wood axe slipped, big toe nearly off":                                                    "Severe bleeding",
+		"puked like 6 times since last night now my wee is dark brown n i feel dizzy standing up":           "dehydration",
+		"fell off the trampoline forearm looks bent like an S":                                              "Broken bones",
+		"had 2 glasses of wine and took my sleeping tablet, feel weird is that bad":                         "Mixing",
+		"3 day old looks yellow even the whites of her eyes, really sleepy":                                 "jaundice",
+		"wifes waters broke 37 wk baby coming quick she wants to push were snowed in":                       "baby arriving",
+		"rivers coming up over the road at the bottom of the lane do we stay or go, got 2 dogs":             "Flood",
+		"can i run the genny in the garage w the door open its lashing outside":                             "Generator",
+		"loadshedding stage 6 and my mom is on an oxygen concentrator at home, what do we do":               "Power cut",
+		"tsunami siren going and you can see the sea going way way out":                                     "Tsunami",
+		"digging a long drop, how far does it need to be from the well":                                     "toilets do not work",
+	} {
+		ok := false
+		for _, n := range Notes(q) {
+			ok = ok || strings.Contains(n.Title, title)
+		}
+		if !ok {
+			t.Errorf("%q: notes %v, topics %v; want %q", q, titles(Notes(q)), EmergencyTopics(q), title)
+		}
+	}
+}
+
+func TestNinthRoundNoOverreach(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, bad := range map[string]string{
+		"flood water gone down, going back in the house tomorrow, carpets soaked, the fuse box got wet":   "baby arriving",
+		"my son came off his bike n his wrist looks bent funny like a dinner fork":                        "Severe bleeding",
+		"son banged his head at the park, knocked out for a few seconds, now really sleepy and been sick": "dehydration",
+	} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, bad) {
+				t.Errorf("%q wrongly got %q", q, n.Title)
+			}
+		}
+	}
+}
