@@ -998,3 +998,44 @@ func TestPufferAndDam(t *testing.T) {
 		}
 	}
 }
+
+func TestSixteenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"my son is 14 and woke up with really bad pain in one of his balls, its swollen, should we wait for the gp":           "testicle",
+		"my 5 month olds soft spot on top of his head is bulging up and he's hot and doing this high pitched cry":             "soft spot",
+		"dad is 72, all of a sudden got this tearing pain in his back going round into his stomach, hes sweaty and gone grey": "tearing pain",
+		"my daughter 6 fell off the trampoline onto the metal frame 2 hrs ago, no blood but now her belly looks swollen":      "Belly injury",
+		"mate did a few lines at a party, now says his chest is crushing and his hearts going mental":                         "Heart attack",
+		"the sea just went way way out at the beach, people walking out to look at the fish":                                  "Tsunami",
+		"everythings shaking should i run outside":                                                                            "Earthquake",
+		"spilled drain cleaner on my forearm its stinging bad, should i put vinegar on it to neutralise it":                   "Burns",
+		"found a bloke slumped in his car in the supermarket car park, windows up, its roasting today":                        "Heat stroke",
+		"theres a bug in my kids ear i can hear it buzzing and she's screaming":                                               "nose or ear",
+		"cant get my contact out its gone up under my eyelid somewhere":                                                       "Eye injuries",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, n := range Notes("dad is 72, sudden tearing pain in his back going into his stomach") {
+		if strings.Contains(n.Title, "Heart attack") {
+			t.Error("aortic dissection got the heart attack note (aspirin)")
+		}
+	}
+	for _, q := range []string{"the tide went out so far this morning, great for rock pools", "tore my hamstring at footy, tearing pain at the back of my leg"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "Tsunami") || strings.Contains(n.Title, "tearing pain") {
+				t.Errorf("%q got %s", q, n.Title)
+			}
+		}
+	}
+}

@@ -86,7 +86,7 @@ Remove clothing and jewellery near the burn, unless it is stuck to the skin.
 Cover the burn loosely with cling film or a clean, non-fluffy dressing.
 Do not use ice, iced water, butter, toothpaste or creams. Do not burst blisters.
 Call emergency services for burns that are large, deep, white or charred, caused by electricity, or on a baby. Get medical help the same day for burns on the face, hands, feet, joints or genitals, chemical burns, and burns on a young child.
-Chemical burn: brush off any dry chemical, then rinse with plenty of running water for at least 20 minutes.`, ""},
+Chemical burn: brush off any dry chemical, take off contaminated clothing, then rinse with plenty of running water for at least 20 minutes. Do not try to neutralise it with vinegar, baking soda or anything else: that can make the burn worse.`, ""},
 	{"Poisoning", "Swallowed poison or too many pills", "NHS, Red Cross and poison centre guidance", `Call emergency services or a poison centre straight away, even if the person seems well.
 Find out what was swallowed, how much and when, and keep the container or packet to show.
 With paracetamol (acetaminophen), people often feel fine at first while the liver is being damaged: they need hospital treatment even if they seem well.
@@ -116,7 +116,8 @@ They need hospital care even if they recover.`, ""},
 Call emergency services straight away.
 Help them sit down and rest, and keep them calm.
 If they are not allergic to aspirin and have not been told to avoid it, give them one adult aspirin to chew slowly.
-If they become unresponsive and stop breathing normally, start CPR.`, ""},
+If they become unresponsive and stop breathing normally, start CPR.
+Chest pain after cocaine, speed or other stimulants is an emergency too: call emergency services and tell them what was taken.`, ""},
 	{"Stroke", "Stroke", "NHS and American Stroke Association guidance (FAST)", `Think FAST. Face: has one side drooped? Arms: can they lift both arms and keep them up? Speech: is it slurred or confused? Time: call emergency services straight away.
 Note the time the symptoms started.
 Do not give them anything to eat or drink, and do not give aspirin; some strokes are caused by bleeding.
@@ -214,6 +215,14 @@ Afterwards, wash the wound with soap and water and watch for infection (spreadin
 	{"Older person unwell", "An older person going downhill", "NHS and Age UK guidance", `An older person who has stopped eating or drinking, or who is suddenly more confused, sleepy or unsteady than usual, may have an infection (often a urine or chest infection), dehydration, or a side effect of medicine. These can become serious quickly.
 Call their doctor or a nurse line (NHS 111) today. Call emergency services if they are very hard to wake, struggling to breathe, have a fever with shivering or blotchy skin, have not passed urine all day, or have a new weakness on one side or slurred speech.
 Meanwhile offer small sips of fluid often, keep them warm and safe from falls, and make a list of their medicines and when they last ate, drank and passed urine.`, ""},
+	{"Testicle pain", "Sudden pain in a testicle", "NHS and American Urological Association guidance", `Sudden, severe pain in a testicle, or swelling with pain in the scrotum or lower belly, can be a twisted testicle (testicular torsion). Go to the emergency department straight away, or call emergency services; do not wait for a doctor's appointment. Surgery within a few hours can save the testicle.
+This applies to boys and men of any age, including after a knock or exercise, and even if the pain eases.`, ""},
+	{"Bulging fontanelle", "Bulging soft spot in a baby", "NHS and NICE guidance", `A soft spot (fontanelle) on top of a baby's head that bulges or feels tense when the baby is calm and upright, especially with a fever, vomiting, a high-pitched cry, unusual sleepiness or floppiness, can mean meningitis or pressure in the head. Call emergency services or go to the emergency department now.
+A sunken soft spot can mean dehydration: get urgent medical advice the same day.`, ""},
+	{"Aortic dissection", "Sudden tearing pain in the chest or back", "NHS and American Heart Association guidance", `A sudden, severe, tearing or ripping pain in the chest, back or belly, especially in an older person or someone with high blood pressure, can be a tear in the body's main artery (aortic dissection). Call emergency services now.
+Keep them lying still and calm. Do not give aspirin, food or drink. If they become unresponsive and stop breathing normally, start CPR.`, ""},
+	{"Belly injury", "Belly injury after a fall or blow", "NHS and American College of Surgeons guidance", `After a fall, crash or blow to the belly (bike handlebars, a trampoline frame, a seatbelt), bleeding inside can start slowly and show up hours later. Call emergency services or go to the emergency department now if the belly is swollen, tight or very tender, if they are pale, sweaty, faint or unusually sleepy, if they vomit, if there is blood in their urine, or if pain spreads to the shoulder.
+Keep them lying still and warm and give them nothing to eat or drink until they have been checked.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -352,7 +361,8 @@ See a dentist as soon as possible, ideally within 1 hour: the sooner, the better
 	{"Eye injury", "Eye injuries", "NHS and American Academy of Ophthalmology guidance", `Chemical in the eye: rinse it straight away with clean running water for at least 15 to 20 minutes, holding the eyelids open, with the water running away from the other eye. Take out contact lenses. Then get urgent medical help.
 Dust or grit: blink, and rinse with clean water. Do not rub the eye.
 Something stuck in or through the eye: do not remove it or press on the eye. Cover the eye loosely (a paper cup works), ask the person to keep both eyes still, and get emergency help.
-A blow to the eye: hold a cold cloth gently against it, and get it checked if sight changes or it stays painful.`, ""},
+A blow to the eye: hold a cold cloth gently against it, and get it checked if sight changes or it stays painful.
+A contact lens stuck or lost under the eyelid: wash your hands, rinse the eye with sterile saline or lens solution, look in the opposite direction and gently massage the closed lid to move it out. It cannot go behind the eye. Do not put creams in or near the eye. Get it checked if it stays painful, red or blurred.`, ""},
 	{"Opioid overdose", "Opioid overdose", "CDC and SAMHSA guidance", `Signs: very slow, noisy or stopped breathing, blue or grey lips, tiny pupils, and the person cannot be woken.
 Call emergency services.
 Give naloxone (Narcan) if you have it: spray it into one nostril. It is safe to give even if you are not sure it is an opioid overdose. If there is no response after 2 to 3 minutes, give a second dose.
@@ -489,6 +499,8 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
+	"Aortic dissection":         {"Myocardial infarction"},
+	"Bulging fontanelle":        {"Fever"},
 	"Panic attack":              {"Anaphylaxis"},
 	"Pregnancy warning signs":   {"Anaphylaxis", "Meningitis", "Eye injury"},
 	"Food safety":               {"Power outage"},
