@@ -648,7 +648,8 @@ var supersedes = map[string][]string{
 	"Drowning":                   {"Rip current"},
 	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
-	"Harming someone":            {"Weapons refusal", "Suicide", "Medicine safety", "Poisoning"},
+	"Finding a person":           {"Weapons refusal"},
+	"Harming someone":            {"Weapons refusal", "Medicine safety", "Poisoning"},
 	"Toxic gas refusal":          {"Toxic gas", "Chemical cloud"},
 	"Contaminated water":         {"Water purification"},
 	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
@@ -706,6 +707,11 @@ var supersedes = map[string][]string{
 	"Water purification": {"Toxic gas"},
 	"Electrical injury":  {"Seizure"},
 }
+
+// coercionRE recognises a threat of self-harm used to control someone ("if
+// i leave he'll hurt himself"): there the abuse note leads, not the crisis
+// note, which would tell the reader to stay with him.
+var coercionRE = regexp.MustCompile(`(?i)\bif (i|we) (leave|go|break up|end it)\b|\b(he|she|they).?(ll|will|would|.?s gonna|is going to) (hurt|kill|harm) (himself|herself|themselves)\b.{0,40}\b(if|unless|or me|and me)\b|threatens? to (kill|hurt|harm) (himself|herself|themselves)`)
 
 // refusalTopics are the notes that decline a harmful request.
 var refusalTopics = map[string]bool{"Weapons refusal": true, "Forged documents": true, "Illegal request": true, "Finding a person": true, "Harming someone": true, "Toxic gas refusal": true}
@@ -824,8 +830,19 @@ func Notes(q string) []Source {
 	// The crisis note leads when someone is thinking of harming themselves
 	// but has not yet taken or done anything: once they have, the poisoning
 	// or bleeding note comes first, because that is what can kill now.
-	if j := slices.Index(topics, "Suicide"); j > 0 && !slices.Contains(topics, "Poisoning") && !slices.Contains(topics, "Bleeding") {
+	// It also follows a note about someone else being the danger (abuse, or a
+	// request to hurt someone), which is what the reader needs first; the
+	// crisis note still shows.
+	if j := slices.Index(topics, "Suicide"); j > 0 && !slices.Contains(topics, "Poisoning") && !slices.Contains(topics, "Bleeding") && !(slices.Contains(topics, "Abuse and threats") && coercionRE.MatchString(q)) && !slices.Contains(topics, "Harming someone") {
 		topics = append([]string{"Suicide"}, slices.Delete(topics, j, j+1)...)
+	}
+	for _, other := range []string{"Abuse and threats", "Harming someone"} {
+		if other == "Abuse and threats" && !coercionRE.MatchString(q) {
+			continue
+		}
+		if j, k := slices.Index(topics, "Suicide"), slices.Index(topics, other); j >= 0 && k > j {
+			topics = slices.Insert(slices.Delete(topics, k, k+1), j, other)
+		}
 	}
 	var out []Source
 	for _, t := range topics {
