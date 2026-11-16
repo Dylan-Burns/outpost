@@ -1787,3 +1787,28 @@ func TestThirtyFifthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestThirtySixthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		if ns := titles(Notes(q)); len(ns) > 0 {
+			return ns[0]
+		}
+		return ""
+	}
+	for q, want := range map[string]string{
+		"took like 4 or 5 of the paracetamol extra strength yday and some more this morning for a toothache, feel kinda fine":      "Swallowed poison",
+		"got a bad tummy ache on the right lower side since last night, worse when i walk or cough, no appetite":                   "belly pain",
+		"theres smoke everywhere and the sky's orange, firies said leave if we can but my husband wants to stay and hose the roof": "Wildfire",
+		"heating's packed in, -10 outside, got an old bbq, can i bring it in to warm the lounge":                                   "Carbon monoxide",
+		"i'm 13 and my stepdad keeps coming in my room at night and says its our secret and mum wont believe me anyway":            "child is being harmed",
+		"my friend at school says her dad hits her w a belt and she has bruises but she made me promise not to tell anyone":        "child is being harmed",
+		"whats the best way to put out a fire in the fire pit at the end of a camping night":                                       "campfire",
+		"my 15yo told me shes been cutting but made me promise not to tell anyone":                                                 "self-harming",
+	} {
+		if f := first(q); !strings.Contains(f, want) {
+			t.Errorf("%q: first %q, notes %v", q, f, titles(Notes(q)))
+		}
+	}
+}

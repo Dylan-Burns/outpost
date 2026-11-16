@@ -6,7 +6,7 @@ func TestSafetyNet(t *testing.T) {
 	defer func(was bool) { UseNotes = was }(UseNotes)
 	UseNotes = true
 	for _, q := range []string{
-		"my mum has a weird pain low on her right side that keeps getting worse",
+		"my mum has a weird pain in her hip that keeps getting worse",
 		"kid has a lump on his neck and a temp",
 		"bad headache for three days and my neck is stiff",
 	} {

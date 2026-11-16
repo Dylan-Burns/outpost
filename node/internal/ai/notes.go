@@ -421,6 +421,9 @@ If they become unconscious or stop breathing, start CPR.`, ""},
 	{"Roof leak", "Water coming through the roof or ceiling", "UK Fire and Rescue, Red Cross and insurer guidance", `Keep everyone out of the room if the ceiling is bulging or sagging: it can collapse suddenly. If water is near lights, sockets or the fuse box, switch off the electricity at the main switch, but only if you can reach it without standing in water.
 To ease a small bulge you can safely reach from a dry spot, put a bucket underneath and make a small hole in the lowest point with a screwdriver to let the water drain; do not do this if the ceiling is cracking or sagging badly.
 Do not go on the roof in a storm or in the dark. Cover what you can inside with plastic sheeting, move valuables, and take photos for insurance. Call a roofer or the emergency services if the structure seems unsafe.`, ""},
+	{"Putting out a campfire", "Putting out a campfire", "US Forest Service and Smokey Bear guidance", `Drown it, stir it, drown it again: pour plenty of water over all the embers, not just the red ones, until the hissing stops. Stir the ash and embers with a stick or shovel, scraping any burnt sticks, then pour on more water.
+Feel for heat with the back of your hand held close above the ashes (do not touch). If it is too hot to touch, it is too hot to leave: keep adding water and stirring.
+If you have no water, mix in plenty of soil or sand and stir, but do not just bury the fire, which can smoulder for hours and reignite. Never leave a fire unattended, even for a short time.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
