@@ -1354,3 +1354,33 @@ func TestTwentyFifthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestTwentySixthRoundCrisis(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"whats even the point anymore. dont think i want to be here, everyone would be better off": "suicide",
+		"whats the dose of my mums sleeping tablets that would mean i just dont wake up":           "suicide",
+		"wood stove keeps smoking out the whole cabin every time i light it":                       "Wood stove",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for _, n := range titles(Notes("whats the dose of my mums sleeping tablets that would mean i just dont wake up")) {
+		if strings.Contains(n, "doses for adults") {
+			t.Error("a lethal-dose question got the dose note")
+		}
+	}
+	for _, q := range []string{"my alarm didnt go off and i just dont wake up in time for work", "whats the point of the second button on the generator"} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "suicide") {
+				t.Errorf("%q got the crisis note", q)
+			}
+		}
+	}
+}

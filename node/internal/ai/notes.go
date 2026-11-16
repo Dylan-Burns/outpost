@@ -625,7 +625,7 @@ var supersedes = map[string][]string{
 	"Stroke":                     {"Bone fracture"},
 	"Myocardial infarction":      {"Dehydration"},
 	"Sepsis":                     {"Panic attack"},
-	"Drowning":                   {"Rip current", "Suicide"},
+	"Drowning":                   {"Rip current"},
 	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
 	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
@@ -734,7 +734,7 @@ func plainWords(q string) string {
 // words: these never need a note, even though "bleeding" also sounds urgent.
 var metaphorRE = regexp.MustCompile(`(?i)\b((screen|paint|ink|colou?rs?|dye|portfolio|market|stocks?|budget|cash|money|customers)\s.{0,20}bleed\w*|bleed(ing)? (edge|colou?r|through the (tape|paint))|stroke of (midnight|luck|genius)|drowning (my )?sorrows|under ?water with|choked? (up|laughing|on (my|his|her) words)|choking up|nearly choked laughing|face (dropped|fell) when|fit of (zoomies|giggles|laughter|rage|pique)|(engine|motor|bearing|pump|gearbox)s? seized|seized up|mottled (paint|effect|finish)|for (my |a )?(biology|science|health|first aid) (homework|class|essay|project|exam)|(writing|for) a quiz|what does cpr stand for|what is a heart attack exactly|cheap date|hairball|(phone|laptop|computer|console|tablet|engine|car) (overheated|froze|crashed)|heartburn after|which antacid|plant leaves|leaves are drooping|bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
 
-var urgentRE = regexp.MustCompile(`(?i)\b(help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|bloods?|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
+var urgentRE = regexp.MustCompile(`(?i)\b((didn.?t|didnt|did not) sound like a joke|not (a )?joke|wasn.?t joking|wasnt joking|bridge|help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|bloods?|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
 
 func Notes(q string) []Source {
 	if !UseNotes {
