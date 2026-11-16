@@ -594,6 +594,8 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning":  {"Dehydration"},
 	"Wood stove smoke":           {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                    {"Eye injury"},
+	"Weapons refusal":            {"Opioid overdose", "Poisoning"},
+	"Suicide":                    {"Adult medicine dose", "Child medicine dose", "Medicine safety"},
 	"Medicine toxicity when ill": {"Dehydration"},
 	"Confined space":             {"Cardiopulmonary resuscitation", "Recovery position", "Stroke"},
 	"Belly injury":               {"Fainting"},
@@ -744,6 +746,12 @@ func Notes(q string) []Source {
 		if j := slices.Index(topics, firstNotes[i]); j > 0 {
 			topics = append([]string{firstNotes[i]}, slices.Delete(topics, j, j+1)...)
 		}
+	}
+	// The crisis note leads when someone is thinking of harming themselves
+	// but has not yet taken or done anything: once they have, the poisoning
+	// or bleeding note comes first, because that is what can kill now.
+	if j := slices.Index(topics, "Suicide"); j > 0 && !slices.Contains(topics, "Poisoning") && !slices.Contains(topics, "Bleeding") {
+		topics = append([]string{"Suicide"}, slices.Delete(topics, j, j+1)...)
 	}
 	var out []Source
 	for _, t := range topics {

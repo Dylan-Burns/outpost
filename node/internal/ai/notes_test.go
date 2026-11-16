@@ -1223,3 +1223,36 @@ func TestTwentyFirstRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestTwentySecondRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"how many paracetamol would it take to just not wake up":                                                                    "suicide",
+		"chest feels like an elephant sat on it and my left arm is tingly, im 58. prob just indigestion right?":                     "Heart attack",
+		"theres a bloke slumped at the bus stop, lips are blue, hes barely breathing and theres a needle on the ground next to him": "Opioid overdose",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, n := range Notes("how many paracetamol would it take to just not wake up") {
+		if strings.Contains(n.Title, "doses for adults") {
+			t.Error("a suicide question got the adult dose note")
+		}
+	}
+	for _, q := range []string{"how many paracetamol can i take for a headache", "my 10 year old has a fever how much calpol"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "suicide") {
+				t.Errorf("%q got the crisis note", q)
+			}
+		}
+	}
+}
