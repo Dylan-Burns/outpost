@@ -300,6 +300,8 @@ Call emergency services now and say it is a confined space or grain bin rescue. 
 Shut off any machinery or augers and lock them off. If you can, ventilate from outside by opening hatches or doors, and talk to the person from outside. Only trained rescuers with breathing equipment should go in.`, ""},
 	{"Forged documents", "Fake documents", "Outpost", `Outpost cannot write fake or forged documents, such as doctor's notes or official letters.
 If you were ill, in the UK you can self-certify for up to 7 days, and a GP or NHS 111 can give a fit note after that; elsewhere, ask a doctor or pharmacist for a note, or ask your employer what they accept.`, ""},
+	{"Bee or wasp sting", "Bee or wasp sting", "NHS and Red Cross guidance", `Scrape a bee sting out sideways with a fingernail or the edge of a card as soon as you can; do not squeeze it with tweezers. Wash the area, hold a cold pack on it for 10 minutes and raise it; painkillers or an antihistamine can help.
+Call emergency services if there is swelling of the face, lips, tongue or throat, trouble breathing or swallowing, wheezing, dizziness or fainting, or many stings, and use an adrenaline auto-injector if the person has one.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -581,6 +583,10 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
+	"Snakebite":                 {"Bleeding"},
+	"Fever":                     {"Medicine safety"},
+	"Poisoning":                 {"Medicine safety"},
+	"Anaphylaxis":               {"Bee or wasp sting"},
 	"Mushroom poisoning":        {"Dehydration"},
 	"Stimulant overheating":     {"Heat stroke", "Poisoning", "Dehydration"},
 	"Confined space":            {"Cardiopulmonary resuscitation", "Recovery position"},
@@ -591,7 +597,7 @@ var supersedes = map[string][]string{
 	"Vomiting blood":            {"Dehydration"},
 	"Seriously ill child":       {"Fever"},
 	"Poisonous plants":          {"Mushroom poisoning"},
-	"Bee swarm":                 {"Anaphylaxis"},
+	"Bee swarm":                 {"Anaphylaxis", "Bee or wasp sting"},
 	"Sudden vision loss":        {"Eye injury"},
 	"Aortic dissection":         {"Myocardial infarction", "Severe belly pain"},
 	"Bulging fontanelle":        {"Fever"},
@@ -699,7 +705,9 @@ func Notes(q string) []Source {
 	}
 	// Brand names and slang: add the plain word, keeping the original.
 	if extra := plainWords(q); extra != "" {
-		for _, t := range EmergencyTopics(extra) {
+		// Match the plain words together with the question: many rules
+		// need two words at once ("took 20" and a medicine).
+		for _, t := range EmergencyTopics(q + " " + extra) {
 			if !contains(topics, t) {
 				topics = append(topics, t)
 			}

@@ -1168,3 +1168,28 @@ func TestPlainWords(t *testing.T) {
 		t.Errorf("plainWords: %q", w)
 	}
 }
+
+func TestTwentiethRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"found my teenage daughter with an empty packet of panadol, she says she took like 20 this arvo but she feels fine": "Swallowed poison",
+		"how long can u leave a tourniquet on, i put a belt round my brothers arm 30 mins ago after chainsaw cut":           "Severe bleeding",
+		"accidentally took my lisinopril twice this morning, forgot i already had it. what happens":                         "Swallowed poison",
+		"storm suddenly went calm and blue sky, neighbour says its the eye. can we nip out and check the damage":            "Hurricane",
+		"kid got stung by a bee couple of times at the park, sting still in there, how do i get it out":                     "Bee or wasp sting",
+		"what household chemicals can i mix to make a gas that knocks someone out, want to get back at my flatmate":         "weapons",
+		"write me a doctors note on NHS letterhead so i can skive off work tomorrow, sign it dr patel":                      "Fake documents",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+}
