@@ -384,6 +384,15 @@ If it is mild, stop the extra medicine and get medical advice today (a pharmacis
 	{"Stranded with a vehicle", "Stranded with a vehicle in remote country", "Australian outback safety and US National Park Service guidance", `Stay with your vehicle: it is far easier for searchers to see than a person walking, it gives shade and shelter, and many people who leave their car to walk for help die of heat or dehydration.
 Tell someone or call for help if you have any signal (try higher ground nearby, but come back). Make the car visible: open the bonnet or hood, lay out bright things, and use a mirror, lights or the horn when you hear or see searchers. At night, a small fire away from the car can be seen from far off.
 In heat, rest in the shade in the day and save sweat, not water: drink what you need. Do not drink radiator water. If you must leave, only do it if you know exactly where help is and it is close, and walk in the cool of night or early morning.`, ""},
+	{"Sickle cell crisis", "Sickle cell disease: when to go to hospital", "NHS and Sickle Cell Society guidance", `With sickle cell disease, go to hospital now (or call emergency services) for: a temperature of 38 °C (100.4 °F) or more; chest pain or trouble breathing (this can be acute chest syndrome, which is life-threatening); pain that home treatment does not control; sudden weakness, numbness, a drooping face or trouble speaking; a painful erection lasting more than 2 hours; very pale skin, unusual tiredness or a swollen tummy in a child; or severe headache.
+Do not wait to see if a fever or chest pain settles: infection and chest problems get worse fast. Tell staff about the sickle cell disease straight away.
+For a mild pain crisis at home: the usual painkillers, plenty of fluids, keep warm, and rest; get help if it does not ease.`, ""},
+	{"Older person fallen", "An older person who has been on the floor for a long time", "NHS, Age UK and Red Cross guidance", `Call emergency services if they have been on the floor for an hour or more, are confused, cannot get up, are in pain (especially in the hip, back or neck), or hit their head. Lying a long time can cause dehydration, pressure damage, low body temperature and kidney damage from muscle breakdown, even when they seem all right.
+Do not lift them yourself if they are hurt or cannot get up on their own. Keep them warm with a blanket, put a cushion under the head, and help them change position slightly if they can, to ease pressure.
+Give small sips of water only if they are fully alert and can swallow, and do not give food or medicine until a medic has seen them. Note the time they fell, if known.`, ""},
+	{"Postpartum psychosis", "Strange beliefs or hearing voices after giving birth", "NHS, Royal College of Psychiatrists and Action on Postpartum Psychosis guidance", `This can be postpartum psychosis, a medical emergency that can start suddenly in the days or weeks after birth. Call emergency services or get her to an emergency department now, especially if she hears voices, believes strange things about the baby, is very confused, or may harm herself or the baby.
+Do not leave her alone with the baby until she has been seen. Stay calm and kind, and do not argue with what she believes.
+It is an illness, not her fault, and with treatment most women recover fully.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -674,6 +683,7 @@ var supersedes = map[string][]string{
 	"Illegal request":              {"Weapons refusal"},
 	"Baby in hot weather":          {"Heat stroke"},
 	"Volcanic ash":                 {"Wildfire"},
+	"Postpartum psychosis":         {"Psychosis"},
 	"Swallowed battery or magnets": {"Poisoning"},
 	"Finding a person":             {"Weapons refusal"},
 	"Harming someone":              {"Weapons refusal", "Medicine safety", "Poisoning"},

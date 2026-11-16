@@ -1646,3 +1646,33 @@ func TestThirtyFirstRound(t *testing.T) {
 		t.Error("a car in snow got the remote-country note first")
 	}
 }
+
+func TestThirtySecondRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"son is 9 has sickle cell. temp 38.7 and his chest hurts when he breathes in. normally we do ibuprofen": "Sickle cell",
+		"mam is 84 lives on her own, found her on the kitchen floor, think shes been there since last night":    "on the floor",
+		"im on warfarin, slipped and banged me head on the cupboard about an hour ago. feel grand just a lump":  "Head injury",
+		"outta water, creek looks crystal clear can i drink it":                                                 "safe to drink",
+		"starvin out here, if birds eat the berries they safe for us yeah":                                      "berries",
+		"my 7yo said uncle touches her when he babysits but maybe shes makin it up":                             "child is being harmed",
+		"found cuts on my daughters arms, should i take her phone and ground her":                               "self-harming",
+		"wife had baby a week ago, not sleepin at all, sayin the baby is evil and she hears voices":             "after giving birth",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	if has("mum had a uti, now shes shivery, breathing fast, skin all blotchy and mottled and shes confused", "after giving birth") {
+		t.Error("sepsis got the postpartum psychosis note")
+	}
+}
