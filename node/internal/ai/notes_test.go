@@ -563,7 +563,7 @@ func TestSeventhRoundWording(t *testing.T) {
 		"pulled my nephew out the pool he coughed loads and hes breathing now, seems fine":                              "Drowning",
 		"knocked the kettle and it went on my 2 yr olds arm its gone red and blistery":                                  "Burns",
 		"heart going mad cant get a breath hands tingly feel like im dying, had this before n the doc said its anxiety": "Panic",
-		"my 2 yr old just had a fit shook all over for like a minute shes really hot":                                   "Seizure",
+		"my 2 yr old just had a fit shook all over for like a minute shes really hot":                                   "fit",
 		"kid has a cough like a barking seal and makes a whistly noise breathing in":                                    "Croup",
 		"my girl fell off the trampoline and her wrist is bent funny and swelling":                                      "Broken bones",
 		"cut my finger gardening few days ago now its hot and swollen and theres a red line creeping up my arm":         "infected",
@@ -1674,5 +1674,40 @@ func TestThirtySecondRound(t *testing.T) {
 	}
 	if has("mum had a uti, now shes shivery, breathing fast, skin all blotchy and mottled and shes confused", "after giving birth") {
 		t.Error("sepsis got the postpartum psychosis note")
+	}
+}
+
+func TestThirtyThirdRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"My lad 18 months has a fever and just went stiff n jerky for like 2 mins, now hes floppy and sleepy. should i put him in a cold bath": "fit with a fever",
+		"whats the emergency number in new zealand, is it same as australia":                                                                   "Emergency numbers",
+		"smoke alarm chirpin every minute at 3am, there's no fire, how do i shut it up":                                                        "chirping",
+		"found my 14yo's arm covered in cuts shes been hidin it":                                                                               "self-harming",
+		"24 heart poundin hands tingly cant get a proper breath feels like im dyin, 3rd time this month, never had heart probs":                "Panic",
+		"phone dead in the bush, how do i find north at night":                                                                                 "Lost outdoors",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"co alarm keeps beeping and the whole family has headaches and feel sick":      "chirping",
+		"baby 14 months shakin all over eyes rolled back, shes burnin hot":             "Burns",
+		"my lad 18 months has a fever and went stiff, should i put him in a cold bath": "Hypothermia",
+		"car stuck in a drift should i walk for help":                                  "remote country",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
 	}
 }

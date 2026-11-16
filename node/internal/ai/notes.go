@@ -393,6 +393,15 @@ Give small sips of water only if they are fully alert and can swallow, and do no
 	{"Postpartum psychosis", "Strange beliefs or hearing voices after giving birth", "NHS, Royal College of Psychiatrists and Action on Postpartum Psychosis guidance", `This can be postpartum psychosis, a medical emergency that can start suddenly in the days or weeks after birth. Call emergency services or get her to an emergency department now, especially if she hears voices, believes strange things about the baby, is very confused, or may harm herself or the baby.
 Do not leave her alone with the baby until she has been seen. Stay calm and kind, and do not argue with what she believes.
 It is an illness, not her fault, and with treatment most women recover fully.`, ""},
+	{"Febrile seizure", "A fit with a fever in a young child", "NHS and Red Cross guidance", `Lay the child on their side on the floor, away from anything hard, and stay with them. Do not put anything in their mouth or hold them down. Time the fit.
+Call emergency services if it is their first fit, it lasts more than 5 minutes, they do not wake up properly or have trouble breathing afterwards, or they have another fit. Otherwise get urgent medical advice the same day.
+Do not put them in a cold or cool bath, sponge them, or wrap them up: cooling does not stop fits and can make them shiver. Take off extra clothing and keep the room comfortably cool. Being sleepy and floppy for up to an hour afterwards is common, but get help if they are still drowsy or hard to wake.`, ""},
+	{"Emergency numbers", "Emergency numbers", "Government emergency service guidance", `US and Canada: 911. UK: 999 or 112. Ireland: 112 or 999. Australia: 000 (112 also works from mobiles). New Zealand: 111. South Africa: 10111 for police and 10177 for an ambulance, or 112 from a mobile. India: 112. Across the European Union: 112.
+From a mobile, 112 works in many countries even without credit, and your phone may connect it through another network if yours has no signal.
+In the UK, if you cannot speak, call 999, then press 55 when asked. In many parts of the US you can text 911 if you cannot call.`, ""},
+	{"Alarm chirping", "A smoke or carbon monoxide alarm chirping", "US Fire Administration, NFPA and UK Fire and Rescue guidance", `A short chirp every minute or so usually means the battery is low: replace it straight away (or the whole alarm, if it has a sealed 10-year battery). Do not take the battery out and leave it out: a home without a working alarm is not protected.
+Most alarms also chirp at the end of their life, usually after about 10 years: check the date on the back and replace an old alarm.
+If it sounds a full, loud alarm, treat it as real: get everyone out, and for a carbon monoxide alarm stay out and call emergency services or your gas emergency line.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -672,7 +681,7 @@ var supersedes = map[string][]string{
 	"Shock":                        {"Fainting"},
 	"Toxic gas":                    {"Burn"},
 	"Generator":                    {"Power outage"},
-	"Carbon monoxide poisoning":    {"Dehydration"},
+	"Carbon monoxide poisoning":    {"Dehydration", "Alarm chirping"},
 	"Wood stove smoke":             {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                      {"Eye injury"},
 	"Stroke":                       {"Bone fracture"},
@@ -683,6 +692,7 @@ var supersedes = map[string][]string{
 	"Illegal request":              {"Weapons refusal"},
 	"Baby in hot weather":          {"Heat stroke"},
 	"Volcanic ash":                 {"Wildfire"},
+	"Febrile seizure":              {"Hypothermia", "Seizure", "Burn"},
 	"Postpartum psychosis":         {"Psychosis"},
 	"Swallowed battery or magnets": {"Poisoning"},
 	"Finding a person":             {"Weapons refusal"},
