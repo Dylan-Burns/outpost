@@ -433,6 +433,9 @@ See a dentist as soon as you can. Get urgent help now (an emergency dentist, NHS
 	{"Kidney infection", "Fever with pain in the side or back", "NHS and CDC guidance", `A high temperature, shivering or feeling sick together with pain in the side, lower back or groin can mean a kidney infection, which needs medical treatment (usually antibiotics) the same day: see a doctor or call a nurse line (NHS 111 in the UK) today. Cranberry juice and waiting do not treat it.
 Call emergency services if they are confused or very drowsy, breathing fast, have mottled or very pale skin, have not passed urine all day, or are pregnant and very unwell: the infection may have spread to the blood (sepsis).
 Meanwhile drink plenty of water and take paracetamol for pain and fever, following the packet.`, ""},
+	{"Baby too cold", "Keeping a baby warm when it is cold", "NHS, Lullaby Trust and Red Cross guidance", `Get urgent medical help now if a baby is cold to touch and also floppy, very sleepy, not feeding, breathing oddly, or has pale, blue or blotchy skin: a cold baby can become seriously ill quickly.
+Warm them gently: hold them skin to skin against your chest under your clothes and a blanket, cover the head, and keep the room warm if you can. Do not use a hot water bottle, an electric blanket or a heater close to the baby, and do not put them in a hot bath.
+A baby under 6 months should have only breast milk or formula, not water, juice or sweet drinks. Keep feeding as normal. In a cold house, a baby needs about one more layer than an adult, but for sleep use a baby sleeping bag or firmly tucked blankets, not a duvet, and do not let them overheat.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -723,6 +726,7 @@ var supersedes = map[string][]string{
 	"Illegal request":              {"Weapons refusal"},
 	"Baby in hot weather":          {"Heat stroke"},
 	"Volcanic ash":                 {"Wildfire"},
+	"Baby too cold":                {"Hypothermia"},
 	"Poisoning":                    {"Recovery position", "Medicine safety"},
 	"Pregnancy warning signs":      {"Medicines in pregnancy", "Anaphylaxis", "Meningitis", "Eye injury", "Severe belly pain"},
 	"Febrile seizure":              {"Hypothermia", "Seizure", "Burn"},
@@ -814,9 +818,9 @@ var gDropRE = regexp.MustCompile(`(?i)\b([a-z]{2,}[^aeiou\s'])in'?\b`)
 
 // textSpeakWords are phone shorthand read as the full word, so that every
 // rule need not carry both spellings ("hook went thru my thumb").
-var textSpeakWords = map[string]string{"thru": "through", "tho": "though", "u": "you", "ur": "your", "r": "are", "n": "and", "coz": "because", "cos": "because", "cuz": "because", "bc": "because", "wat": "what", "wot": "what", "wen": "when", "abt": "about", "b4": "before", "tonite": "tonight", "2nite": "tonight", "2day": "today", "pls": "please", "plz": "please", "ppl": "people", "dunno": "don't know", "gonna": "going to", "wanna": "want to", "gotta": "got to", "luv": "love", "bf": "boyfriend", "gf": "girlfriend", "yr": "year", "yrs": "years", "hr": "hour", "hrs": "hours", "min": "minute", "mins": "minutes"}
+var textSpeakWords = map[string]string{"w/o": "without", "w/": "with ", "thru": "through", "tho": "though", "u": "you", "ur": "your", "r": "are", "n": "and", "coz": "because", "cos": "because", "cuz": "because", "bc": "because", "wat": "what", "wot": "what", "wen": "when", "abt": "about", "b4": "before", "tonite": "tonight", "2nite": "tonight", "2day": "today", "pls": "please", "plz": "please", "ppl": "people", "dunno": "don't know", "gonna": "going to", "wanna": "want to", "gotta": "got to", "luv": "love", "bf": "boyfriend", "gf": "girlfriend", "yr": "year", "yrs": "years", "hr": "hour", "hrs": "hours", "min": "minute", "mins": "minutes"}
 
-var textSpeakRE = regexp.MustCompile(`(?i)\b(thru|tho|u|ur|r|n|coz|cos|cuz|bc|wat|wot|wen|abt|b4|tonite|2nite|2day|pls|plz|ppl|dunno|gonna|wanna|gotta|luv|bf|gf|yr|yrs|hr|hrs|mins?)\b`)
+var textSpeakRE = regexp.MustCompile(`(?i)(\bw/o\b|\bw/|\b(?:thru|tho|u|ur|r|n|coz|cos|cuz|bc|wat|wot|wen|abt|b4|tonite|2nite|2day|pls|plz|ppl|dunno|gonna|wanna|gotta|luv|bf|gf|yr|yrs|hr|hrs|mins?)\b)`)
 
 func textSpeak(q string) string {
 	return textSpeakRE.ReplaceAllStringFunc(q, func(w string) string { return textSpeakWords[strings.ToLower(w)] })

@@ -2056,3 +2056,33 @@ func TestFortySecondRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortyThirdRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		if ns := titles(Notes(q)); len(ns) > 0 {
+			return ns[0]
+		}
+		return ""
+	}
+	for q, want := range map[string]string{
+		"my 6 week old feels really cold to touch n the house is freezing, power been out since last nite":                            "baby warm",
+		"accidently gave my 3yo the adult calpol instead of kids one like a full 5ml spoon of the 500mg tabs crushed up":              "Swallowed poison",
+		"my 7 yo was playing in the pool earlier, coughed a lot after but was fine. now hours later hes really tired n breathin fast": "Drowning",
+		"dad got a sore swollen calf on one leg after the long flight home, now hes a bit short of breath":                            "blood clot",
+		"how long can u go w/o food vs water, tryna ration in our cabin":                                                              "drinking water",
+		"my uncle keeps askin my 11yo to come help him in the shed alone n gave her a phone n told her its their secret":              "child is being harmed",
+	} {
+		if f := first(q); !strings.Contains(f, want) {
+			t.Errorf("%q: first %q, notes %v", q, f, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{"my 6 week old has a cold and a snotty nose", "planning a surprise party for my 10 yo, its our secret"} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "baby warm") || strings.Contains(n, "child is being harmed") {
+				t.Errorf("%q got %q", q, n)
+			}
+		}
+	}
+}
