@@ -2022,3 +2022,37 @@ func TestFourthParaphraseRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortySecondRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"fishin trip, hook went right thru my thumb barb an all. should i just yank it back out":            "Fish hook",
+		"water comin up thru the floorboards fast and the roads already a river":                            "Flood",
+		"stranded on the boat engine wont start drifting. no phone signal. got a flare kit and a vhf":       "rescuers",
+		"my uncle keeps comin into my room at night when mum is out at work and says its our secret. im 12": "child is being harmed",
+		"had a few too many and my mate keeps sayin he wants to drive off the bridge, hes got the keys now": "suicide",
+		"gave my daughter (4) one of my ibuprofen 400mg by mistake instead of her childrens one":            "Swallowed poison",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"how much tylenol can i give my 3 yr old she weighs like 30 lbs":                "Swallowed poison",
+		"how long can u last without water vs food, stuck at the cabin road washed out": "Choking",
+		"bungee jumping off the bridge next weekend, is it safe":                        "suicide",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}

@@ -810,7 +810,17 @@ var everydayRE = regexp.MustCompile(`(?i)\b(grow(ing)? mushrooms|mouldy grout|gr
 // must follow at least three letters so "in", "skin" and "pain" stay as
 // they are, and words that really end in -in keep their match on the
 // original text.
-var gDropRE = regexp.MustCompile(`(?i)\b([a-z]{3,}[^aeiou\s'])in'?\b`)
+var gDropRE = regexp.MustCompile(`(?i)\b([a-z]{2,}[^aeiou\s'])in'?\b`)
+
+// textSpeakWords are phone shorthand read as the full word, so that every
+// rule need not carry both spellings ("hook went thru my thumb").
+var textSpeakWords = map[string]string{"thru": "through", "tho": "though", "u": "you", "ur": "your", "r": "are", "n": "and", "coz": "because", "cos": "because", "cuz": "because", "bc": "because", "wat": "what", "wot": "what", "wen": "when", "abt": "about", "b4": "before", "tonite": "tonight", "2nite": "tonight", "2day": "today", "pls": "please", "plz": "please", "ppl": "people", "dunno": "don't know", "gonna": "going to", "wanna": "want to", "gotta": "got to", "luv": "love", "bf": "boyfriend", "gf": "girlfriend", "yr": "year", "yrs": "years", "hr": "hour", "hrs": "hours", "min": "minute", "mins": "minutes"}
+
+var textSpeakRE = regexp.MustCompile(`(?i)\b(thru|tho|u|ur|r|n|coz|cos|cuz|bc|wat|wot|wen|abt|b4|tonite|2nite|2day|pls|plz|ppl|dunno|gonna|wanna|gotta|luv|bf|gf|yr|yrs|hr|hrs|mins?)\b`)
+
+func textSpeak(q string) string {
+	return textSpeakRE.ReplaceAllStringFunc(q, func(w string) string { return textSpeakWords[strings.ToLower(w)] })
+}
 
 // plainWords maps brand names and slang to the words the rules use:
 // "12 panadol" is paracetamol, "chundered" is vomiting, "keeled over" is
@@ -874,7 +884,8 @@ func Notes(q string) []Source {
 	// Also read "shakin", "breathin", "goin blue" as "shaking", "breathing",
 	// "going blue": people type as they speak, and every rule would
 	// otherwise need both spellings.
-	if g := gDropRE.ReplaceAllString(q, "${1}ing"); g != q {
+	// Text-speak too ("thru", "u", "ur", "n"): read alongside the original.
+	if g := textSpeak(gDropRE.ReplaceAllString(q, "${1}ing")); g != q {
 		for _, t := range EmergencyTopics(g) {
 			if !contains(topics, t) {
 				topics = append(topics, t)
