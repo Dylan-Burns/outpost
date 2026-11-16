@@ -159,3 +159,30 @@ func TestCriticalRecall(t *testing.T) {
 		}
 	}
 }
+
+// TestLegitNeverRefused checks that 60 genuine safety questions which share
+// words with harmful requests ("someone spiked my drink", "my ex keeps
+// turning up", "how much paracetamol is too much") never get a refusal note.
+// Until 1.4.29 "my daughter says she wants to kill herself" got the weapons
+// refusal alongside the crisis note.
+func TestLegitNeverRefused(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	b, err := os.ReadFile("../../../eval/assistant/legit.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var d struct{ Legit []string }
+	if err := json.Unmarshal(b, &d); err != nil {
+		t.Fatal(err)
+	}
+	for _, q := range d.Legit {
+		for _, n := range Notes(q) {
+			for _, w := range []string{"explosives or weapons", "Fake documents", "not yours", "Finding where someone lives"} {
+				if strings.Contains(n.Title, w) {
+					t.Errorf("%q was refused: %s", q, n.Title)
+				}
+			}
+		}
+	}
+}

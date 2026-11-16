@@ -325,6 +325,21 @@ Remove any visible spines with tweezers, then clean the wound. Get medical help 
 Call emergency services if they have trouble breathing, swelling of the face or throat, chest pain or collapse.`, ""},
 	{"Illegal request", "Taking or using what is not yours", "Outpost", `Outpost cannot help take or use other people's property or bypass meters or locks.
 If you are short of fuel, power or supplies in an emergency, ask neighbours openly, contact local emergency services, a community centre or shelter, or your supplier's emergency line.`, ""},
+	{"Drink spiking", "If your drink may have been spiked", "NHS, police and Drinkaware guidance", `Tell someone you trust and stay with them, and tell bar or venue staff. Do not drink any more and do not go home alone or with someone you do not know.
+Call emergency services if you or they become very drowsy, confused, cannot stand, are sick and drowsy, have trouble breathing, or collapse; put an unconscious person who is breathing on their side.
+Report it to the police as soon as you can: some drugs only show up in urine or blood for a day or so, so ask for a test early.`, ""},
+	{"Abuse and threats", "Abuse, threats or being followed", "Police, Refuge and National Domestic Violence Hotline guidance", `If you are in danger now, call emergency services (in the UK, if you cannot speak, call 999 and then press 55 when asked). Go to a public place or somewhere with other people if you are being followed.
+Keep evidence: messages, call logs, photos of injuries, dates and times. Tell someone you trust.
+Get help to plan how to leave safely, including for children: in the US, the National Domestic Violence Hotline (1-800-799-7233, or text START to 88788); in the UK, the Refuge helpline (0808 2000 247); elsewhere, the police or a local domestic abuse service. The police and courts can issue protection or restraining orders.`, ""},
+	{"Child protection", "If you are worried a child is being harmed", "NSPCC, Childhelp and police guidance", `If a child is in immediate danger, call emergency services now.
+Otherwise report your concern to the police or to children's services; you do not need proof. In the UK, the NSPCC helpline is 0808 800 5000; in the US, the Childhelp hotline is 1-800-422-4453. For online grooming, save the messages and report them to the police (in the UK, also to CEOP).
+If a child tells you something, stay calm, listen, tell them they did the right thing, and do not promise to keep it secret.`, ""},
+	{"Bad trip", "Helping someone through a bad trip", "NHS and FRANK guidance", `Stay with them in a quiet, calm, dimly lit place, away from crowds. Speak gently, remind them the feeling is caused by the drug and will pass, and do not leave them alone.
+Call emergency services if they are very hot, have a fit, chest pain, trouble breathing, are unconscious or very hard to wake, or might hurt themselves or others. Tell the call handler what was taken.
+Do not give them any other drugs or alcohol. Sips of water are fine.`, ""},
+	{"Suspicious package", "A suspicious package or bag", "Police and Ready.gov guidance", `Do not touch, move, open, shake or smell it. Move everyone well away from it, at least behind solid walls, and keep people away.
+Call the police or emergency services from a safe distance, and do not use a radio or mobile phone right next to it.
+If something has already leaked a powder or liquid onto you, do not brush it off with your hands: take off outer clothing, wash with soap and water, and tell the emergency services.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
