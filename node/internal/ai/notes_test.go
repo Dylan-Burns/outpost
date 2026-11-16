@@ -2086,3 +2086,37 @@ func TestFortyThirdRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortyFourthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"my nan 77 says shes just really tired and out of breath, feels sick and has an ache in her jaw. reckons its indigestion": "Heart attack",
+		"husband is 84 hasnt been able to wee since yesterday morning even tho he needs to, belly is hard and sore":               "pass urine",
+		"power been out a week, living off tins, some are years past the date and one is a bit puffed up":                         "Home canning",
+		"my 14 yo daughter came home with cuts all up her arm, says its nothin and the cat did it":                                "self-harming",
+		"little girl at my daycare told me her uncle plays secret games with her and shes not allowed to tell anyone":             "child is being harmed",
+		"my dad keeps saying the neighbours are plotting against him thru the walls, hasnt slept in days and keeps a knife":       "Hearing voices",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"6yo been throwing up n got the runs since last night, cant keep anything down, hasnt weed since lunch": "pass urine",
+		"grandad is confused and hasnt peed all day, its 40 degrees out and the power's been out":               "pass urine",
+		"toothache in my jaw and feel a bit sick from the antibiotics":                                          "Heart attack",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}

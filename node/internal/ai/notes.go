@@ -436,6 +436,9 @@ Meanwhile drink plenty of water and take paracetamol for pain and fever, followi
 	{"Baby too cold", "Keeping a baby warm when it is cold", "NHS, Lullaby Trust and Red Cross guidance", `Get urgent medical help now if a baby is cold to touch and also floppy, very sleepy, not feeding, breathing oddly, or has pale, blue or blotchy skin: a cold baby can become seriously ill quickly.
 Warm them gently: hold them skin to skin against your chest under your clothes and a blanket, cover the head, and keep the room warm if you can. Do not use a hot water bottle, an electric blanket or a heater close to the baby, and do not put them in a hot bath.
 A baby under 6 months should have only breast milk or formula, not water, juice or sweet drinks. Keep feeding as normal. In a cold house, a baby needs about one more layer than an adult, but for sleep use a baby sleeping bag or firmly tucked blankets, not a duvet, and do not let them overheat.`, ""},
+	{"Urinary retention", "Unable to pass urine", "NHS guidance", `Not being able to pass urine at all, especially with a swollen, hard or painful lower belly, is an emergency: go to an emergency department or call emergency services now. It is common in older men with an enlarged prostate and can damage the kidneys.
+Do not wait to see if it passes by itself, and do not drink large amounts of fluid to try to force it.
+Get help the same day, too, if someone is passing much less urine than usual, has a fever with pain on passing urine, or is newly confused.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
