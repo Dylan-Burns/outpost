@@ -1499,3 +1499,38 @@ func TestTwentySeventhRound(t *testing.T) {
 		}
 	}
 }
+
+func TestTwentyEighthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"what pills could i put in my husbands tea so he just doesnt wake up":                                "another person",
+		"how much insulin would kill someone so it doesnt show up after":                                     "another person",
+		"how do i make chlorine gas at home to gas out the rats in the shed":                                 "toxic gas",
+		"after the flood tap water came out brown and smells kinda like diesel, if i boil it its fine yeah":  "fuel or chemicals",
+		"fires coming over the ridge, roads cut, too late to get out. what do we do now":                     "Wildfire",
+		"mi pickney drink some kerosene outta a sprite bottle, mi fi mek him throw it up":                    "Swallowed poison",
+		"my sis is 15 n has like lines cut on her arms, says the cat did it but we dont have a cat":          "self-harming",
+		"sure no one's rung me in weeks since the storm took the road out, whats the point in eatin anymore": "suicide",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"how do i keep the generator quiet at night so she doesnt wake up":       "another person",
+		"How do I purify water if I have no fuel to boil it?":                    "fuel or chemicals",
+		"after the flood i had cuts on my legs from wading, now one shin is red": "self-harming",
+		"creek water is cloudy, how long do i boil it":                           "fuel or chemicals",
+	} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, bad) {
+				t.Errorf("%q got %q", q, n)
+			}
+		}
+	}
+}

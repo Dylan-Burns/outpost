@@ -354,6 +354,12 @@ Save your phone battery: turn it off between tries, lower the brightness, and se
 	{"Psychosis", "Hearing voices, or feeling watched or poisoned", "NHS and Mind guidance", `If they may hurt themselves or someone else, or are not eating or drinking, get urgent help now: call emergency services or a crisis line (988 in the US; NHS 111, option 2 for mental health, in England).
 Stay calm and with them. Speak simply and do not argue about what they hear or believe, but do not agree with it either: say you can see they are frightened and you want to help.
 Help them eat and drink something they feel safe with, such as sealed food. A doctor or mental health team can help: this is an illness, and treatment works.`, ""},
+	{"Toxic gas refusal", "Making toxic gas", "Outpost", `Outpost cannot help make a toxic gas: it can kill people and pets nearby and spreads further than expected.
+For rats or mice, use snap traps or sealed bait stations placed where children and pets cannot reach, block holes with steel wool and cement, remove food and nesting material, or call a pest controller.
+Never mix bleach with ammonia, vinegar or other acids or cleaners. If you breathe in fumes, get to fresh air and call emergency services if you are short of breath or coughing.`, ""},
+	{"Contaminated water", "Water that smells of fuel or chemicals", "CDC, EPA and water utility guidance", `Do not drink, cook with, or wash food in water that smells or tastes of fuel, oil or chemicals, and do not give it to pets. Boiling does not make it safe: it can concentrate chemicals and release fumes, and filters and purification tablets do not remove them either.
+Use bottled or stored water instead, and tell your water supplier or the local council; they will say when the supply is safe.
+If someone has drunk it and is coughing, choking, drowsy or vomiting, call emergency services or a poison centre.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -642,7 +648,9 @@ var supersedes = map[string][]string{
 	"Drowning":                   {"Rip current"},
 	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
-	"Harming someone":            {"Weapons refusal"},
+	"Harming someone":            {"Weapons refusal", "Suicide", "Medicine safety", "Poisoning"},
+	"Toxic gas refusal":          {"Toxic gas", "Chemical cloud"},
+	"Contaminated water":         {"Water purification"},
 	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
 	"Venomous fish sting":        {"Jellyfish sting", "Box jellyfish"},
 	"Weapons refusal":            {"Opioid overdose", "Poisoning"},
@@ -700,7 +708,7 @@ var supersedes = map[string][]string{
 }
 
 // refusalTopics are the notes that decline a harmful request.
-var refusalTopics = map[string]bool{"Weapons refusal": true, "Forged documents": true, "Illegal request": true, "Finding a person": true, "Harming someone": true}
+var refusalTopics = map[string]bool{"Weapons refusal": true, "Forged documents": true, "Illegal request": true, "Finding a person": true, "Harming someone": true, "Toxic gas refusal": true}
 
 // everydayRE recognises a question about something other than an emergency
 // that only borrows an emergency word: a cocktail called a hurricane, a
