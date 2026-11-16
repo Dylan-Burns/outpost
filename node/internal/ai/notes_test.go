@@ -735,7 +735,7 @@ func TestTenthRoundNoOverreach(t *testing.T) {
 	if q := "cut my hand open on a broken glass in the palm its pumping out blood and wont stop"; !has(q, "Severe bleeding") {
 		t.Errorf("%q: %v", q, titles(Notes(q)))
 	}
-	if q := "my teen cut her wrist on purpose not deep but its bleeding, she doesnt want me to tell anyone"; !has(q, "suicide") {
+	if q := "my teen cut her wrist on purpose not deep but its bleeding, she doesnt want me to tell anyone"; !has(q, "suicide") && !has(q, "self-harming") {
 		t.Errorf("%q: %v", q, titles(Notes(q)))
 	}
 }
@@ -1254,5 +1254,39 @@ func TestTwentySecondRoundWording(t *testing.T) {
 				t.Errorf("%q got the crisis note", q)
 			}
 		}
+	}
+}
+
+func TestTwentyThirdRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, title := range map[string]string{
+		"think i did my lantus twice tonight, forgot id already done it before tea":                                     "Too much insulin",
+		"my 15 yo has little lines of cuts on her thighs, she wears trackies in summer to hide them. do i confront her": "self-harming",
+		"whats a dose of insulin that wouldnt show up in a post mortem":                                                 "weapons",
+		"no point in anything anymore. gave the dog to my sister and wrote some letters":                                "suicide",
+		"my friend just texted she took a load of her sertraline with wine and now shes saying sorry for everything":    "Swallowed poison",
+		"working on a roof in phoenix my coworker quit sweating, confused, skin is hot n dry":                           "Heat stroke",
+		"stood on summat in the sea at a beach in cornwall, foot is killing me, lifeguard said weever fish":             "Weever",
+		"cat 3 coming thursday, should i tape the windows in a big X":                                                   "Hurricane",
+		"how to siphon the diesel out my neighbours truck while hes away":                                               "not yours",
+	} {
+		if !has(q, title) {
+			t.Errorf("%q: notes %v; want %q", q, titles(Notes(q)), title)
+		}
+	}
+	if !has("my friend just texted she took a load of her sertraline with wine and now shes saying sorry for everything", "suicide") {
+		t.Error("sertraline overdose with apology lacks the crisis note")
+	}
+	if has("whats a dose of insulin that wouldnt show up in a post mortem", "Too much insulin") {
+		t.Error("post mortem question got the insulin treatment note")
 	}
 }

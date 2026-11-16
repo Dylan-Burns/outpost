@@ -313,6 +313,18 @@ Keep the skin clean and dry and cover broken skin with a clean dressing. Do not 
 Get urgent help the same day if the sore smells, oozes pus, has spreading redness or swelling, or the person has a fever, shivering or confusion, which can mean infection or sepsis.`, ""},
 	{"Bleeding after birth", "Heavy bleeding after giving birth", "NHS and RCOG guidance", `Call emergency services or the maternity unit now if, at any time in the weeks after birth, bleeding suddenly gets heavier, soaks a pad in an hour or less, or there are clots bigger than a 50p coin or a plum, or if she feels faint, dizzy, has a racing heart, or bleeding comes with fever, smelly discharge or tummy pain.
 While waiting, have her lie down with her feet raised, keep her warm, and keep the pads to show the medics. If she is breastfeeding or holding the baby, have someone else take the baby.`, ""},
+	{"Too much insulin", "Too much insulin (a doubled or extra dose)", "NHS and diabetes charity guidance", `Too much insulin can cause a dangerous low blood sugar for hours, and for a long-acting insulin (such as Lantus, Levemir, Tresiba, Toujeo) up to a day or more.
+Contact the diabetes team, a doctor or NHS 111 now for advice. Do not take another dose to make up or "cancel" it, and do not skip meals: eat regular meals and extra starchy snacks, and keep fast sugar (glucose tablets, a sugary drink or sweets) next to you.
+Check blood sugar every 2 to 4 hours, including overnight, and do not be alone. If sugar falls low, take fast sugar straight away. Call emergency services if they become confused, very drowsy, cannot swallow safely, or have a fit.`, ""},
+	{"Self-harm", "When someone is self-harming", "NHS, Mind and Samaritans guidance", `Stay calm and do not confront, shout or punish: that makes hiding more likely. Choose a quiet moment, say what you have noticed, that you care, and that you want to understand; listen more than you talk.
+Check any wounds: clean them with water and cover with a clean dressing. Get urgent medical help for deep or gaping cuts, heavy bleeding, burns, or anything swallowed.
+Ask directly whether they are thinking about suicide. If they are, or you are worried for their safety now, call emergency services or a crisis line (988 in the US, Samaritans 116 123 in the UK and Ireland).
+Book a GP appointment together; young people can be referred to mental health services. Look after yourself too.`, ""},
+	{"Venomous fish sting", "Weever fish, stingray or other venomous fish sting", "NHS and Surf Life Saving guidance", `Get out of the water. Soak the stung part in water as hot as can be tolerated (test it with your own hand first, never scalding) for 30 to 90 minutes: heat breaks down the venom and eases the pain. Painkillers help.
+Remove any visible spines with tweezers, then clean the wound. Get medical help if pain is severe or lasts, a spine is left in, the wound looks infected, or for a stingray wound to the chest or belly.
+Call emergency services if they have trouble breathing, swelling of the face or throat, chest pain or collapse.`, ""},
+	{"Illegal request", "Taking or using what is not yours", "Outpost", `Outpost cannot help take or use other people's property or bypass meters or locks.
+If you are short of fuel, power or supplies in an emergency, ask neighbours openly, contact local emergency services, a community centre or shelter, or your supplier's emergency line.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -594,6 +606,9 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning":  {"Dehydration"},
 	"Wood stove smoke":           {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                    {"Eye injury"},
+	"Illegal request":            {"Weapons refusal"},
+	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
+	"Venomous fish sting":        {"Jellyfish sting", "Box jellyfish"},
 	"Weapons refusal":            {"Opioid overdose", "Poisoning"},
 	"Suicide":                    {"Adult medicine dose", "Child medicine dose", "Medicine safety"},
 	"Medicine toxicity when ill": {"Dehydration"},
@@ -633,7 +648,7 @@ var supersedes = map[string][]string{
 	"Bleeding": {"Cut needing stitches"},
 	// The overdose note has the recovery position and naloxone, which
 	// must come first.
-	"Opioid overdose": {"Recovery position", "Alcohol poisoning"},
+	"Opioid overdose": {"Recovery position", "Alcohol poisoning", "Fainting"},
 	// Gasping is not breathing: that person needs CPR, not the recovery
 	// position.
 	"Cardiopulmonary resuscitation": {"Recovery position"},
