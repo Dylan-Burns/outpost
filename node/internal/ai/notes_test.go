@@ -1906,3 +1906,41 @@ func TestThirtyEighthRound(t *testing.T) {
 		t.Error("an everyday phone question got the crisis note")
 	}
 }
+
+func TestThirtyNinthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"got off a 20hr bus trip and me left calf is swollen, red and sore, and im bit short of breath going up the stairs":     "blood clot",
+		"pulled me mate outta the lake, he coughed up a heap of water and seems fine now but hes wheezy, wants to just go home": "Drowning",
+		"smoke everywhere from the fires cant even see the hill now, do we wait or bail, got 2 dogs and nan who uses a walker":  "Wildfire",
+		"boss says if i dont do extra shifts with no pay he will report my visa, he holds my passport":                          "passport",
+		"my brother is stooling black like coal tar since morning and he is very weak and giddy when he stands":                 "black poo",
+		"lost the farm contract and the banks on my back, got the guns in the shed, wife reckons im not myself":                 "suicide",
+		"mums new bloke yells heaps and gets rough with me when shes at work, im 14, where can i go stay thats not home":        "child is being harmed",
+		"me nan's gone all muddled since yesterday, doesnt know what day it is, and shes weeing loads n it smells strong":       "confusion",
+		"boat flipped, mates shivering heaps and fumbling his words now we're on shore, what do i do":                           "Hypothermia",
+		"tooth snapped off eating a lolly, dentist hours away and its sunday, how do i deal til monday":                         "broken or chipped tooth",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"my 18 month old just went stiff and jerky and her eyes rolled back, shes got a temp. shoud i put something in her mouth": "Eye injuries",
+		"need to renew my passport before the trip, how long does it take":                                                        "passport",
+		"took iron tablets and now my poo is black, is that normal":                                                               "black poo",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}

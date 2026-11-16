@@ -424,6 +424,12 @@ Do not go on the roof in a storm or in the dark. Cover what you can inside with 
 	{"Putting out a campfire", "Putting out a campfire", "US Forest Service and Smokey Bear guidance", `Drown it, stir it, drown it again: pour plenty of water over all the embers, not just the red ones, until the hissing stops. Stir the ash and embers with a stick or shovel, scraping any burnt sticks, then pour on more water.
 Feel for heat with the back of your hand held close above the ashes (do not touch). If it is too hot to touch, it is too hot to leave: keep adding water and stirring.
 If you have no water, mix in plenty of soil or sand and stir, but do not just bury the fire, which can smoulder for hours and reignite. Never leave a fire unattended, even for a short time.`, ""},
+	{"Exploitation", "If your employer holds your passport or threatens you", "UK Modern Slavery Helpline, US National Human Trafficking Hotline and ILO guidance", `It is against the law almost everywhere for an employer to keep your passport or ID, make you work without pay, or threaten to report you to immigration to make you work. You can get free, confidential help, whatever your visa status.
+If you are in danger now, call emergency services. Otherwise, in the UK call the Modern Slavery and Exploitation Helpline (08000 121 700); in the US, the National Human Trafficking Hotline (1-888-373-7888, or text 233733); in Australia, the Australian Federal Police (131 237) or the Fair Work Ombudsman. Elsewhere, the police or a workers' or migrants' support group.
+If it is safe, keep notes and photos of hours, payments and messages, and keep a copy of your passport and visa somewhere they cannot reach.`, ""},
+	{"Broken tooth", "A broken or chipped tooth", "NHS and American Dental Association guidance", `Rinse your mouth with warm water and keep any piece of tooth in milk or your own saliva to take to the dentist. Use a cold pack on the cheek for swelling.
+Take a usual dose of paracetamol or ibuprofen for pain, following the packet. Cover a sharp edge with dental wax or sugar-free chewing gum, and eat soft food on the other side. Do not try to file or glue it yourself, and never cut into a swelling.
+See a dentist as soon as you can. Get urgent help now (an emergency dentist, NHS 111 or an emergency department) if there is heavy bleeding that will not stop, swelling of the face, eye or neck, a fever, or trouble swallowing or breathing.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -709,7 +715,7 @@ var supersedes = map[string][]string{
 	"Stroke":                       {"Bone fracture"},
 	"Myocardial infarction":        {"Dehydration", "Panic attack"},
 	"Sepsis":                       {"Panic attack"},
-	"Drowning":                     {"Rip current"},
+	"Drowning":                     {"Rip current", "Asthma"},
 	"Severe belly pain":            {"Fainting"},
 	"Illegal request":              {"Weapons refusal"},
 	"Baby in hot weather":          {"Heat stroke"},
