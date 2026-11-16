@@ -1620,3 +1620,29 @@ func TestThirtiethRound(t *testing.T) {
 		}
 	}
 }
+
+func TestThirtyFirstRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		if ns := titles(Notes(q)); len(ns) > 0 {
+			return ns[0]
+		}
+		return ""
+	}
+	for q, want := range map[string]string{
+		"My 14yo son woke up with really bad pain in one ball and hes being sick, cn we just put ice on it and wait": "testicle",
+		"my kid swallowed 2 of those little magnet balls from the fridge toy set about an hour ago, hes fine":        "magnets",
+		"my 3 yr old swallowed one of those little round watch batteries like 10 mins ago":                           "button battery",
+		"took my sertraline this mornin and also a couple of my mates tramadol for my back, now sweatin, twitchy":    "serotonin",
+		"car stuck in the mud and night coming, middle of the outback, should i walk to the last town 40km back":     "Stranded",
+		"out of water on a camping trip, only a creek. is it ok to drink straight if it's running fast and clear":    "safe to drink",
+	} {
+		if f := first(q); !strings.Contains(f, want) {
+			t.Errorf("%q: first %q, notes %v", q, f, titles(Notes(q)))
+		}
+	}
+	if strings.Contains(first("car stuck in the snow on the highway, blizzard, should i walk"), "Stranded") {
+		t.Error("a car in snow got the remote-country note first")
+	}
+}
