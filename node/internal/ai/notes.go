@@ -340,6 +340,20 @@ Do not give them any other drugs or alcohol. Sips of water are fine.`, ""},
 	{"Suspicious package", "A suspicious package or bag", "Police and Ready.gov guidance", `Do not touch, move, open, shake or smell it. Move everyone well away from it, at least behind solid walls, and keep people away.
 Call the police or emergency services from a safe distance, and do not use a radio or mobile phone right next to it.
 If something has already leaked a powder or liquid onto you, do not brush it off with your hands: take off outer clothing, wash with soap and water, and tell the emergency services.`, ""},
+	{"Harming someone", "Hurting another person", "Outpost", `Outpost cannot help harm, poison or endanger another person, or make it look like an accident.
+If you are afraid you might hurt someone, step away from them and from anything you could use, and call emergency services or a crisis line now; in the US you can call or text 988. If someone is in danger, call emergency services or the police.`, ""},
+	{"Cord prolapse", "The cord comes out before the baby", "NHS and RCOG guidance", `Call emergency services now and say the cord is coming out before the baby: this is an emergency for the baby.
+Get on your knees and elbows with your bottom raised higher than your head and chest (or lie on your side with a pillow under your hips). This takes the baby's weight off the cord. Stay like this, including on the way to hospital.
+Do not push the cord back in and handle it as little as possible. If it is outside, keep it warm and moist with a clean damp cloth.`, ""},
+	{"Landslide", "Signs of a landslide or mudslide", "USGS, FEMA and Ready.gov guidance", `Leave now if the ground is cracking or bulging, fences, walls, poles or trees are tilting or moving, doors or windows suddenly stick, you hear cracking, rumbling or trees snapping, or a stream suddenly turns muddy or stops flowing. Move sideways, out of the path, to higher, stable ground; do not go back for belongings.
+Tell your neighbours and call the emergency services or the local council so others can be warned. Stay away from the slide area afterwards: more slides can follow, especially in heavy rain.
+After heavy rain, watch for these signs and be ready to leave quickly, especially at night.`, ""},
+	{"Signalling for rescue", "Signalling to rescuers", "Search and rescue and Ready.gov guidance", `Stay where you are if you can be found there: rescuers search from your last known position, and a person who stays put is found sooner.
+Make yourself big and bright: spread bright clothing, a tarp or a sheet on a roof or in the open, wave something bright, and at night use a torch or phone light. Three of anything (three whistle blasts, three flashes, three fires in a triangle) means "help".
+Save your phone battery: turn it off between tries, lower the brightness, and send a text with your location, since a text can get through when a call cannot. Call your emergency number even with no signal from your network.`, ""},
+	{"Psychosis", "Hearing voices, or feeling watched or poisoned", "NHS and Mind guidance", `If they may hurt themselves or someone else, or are not eating or drinking, get urgent help now: call emergency services or a crisis line (988 in the US; NHS 111, option 2 for mental health, in England).
+Stay calm and with them. Speak simply and do not argue about what they hear or believe, but do not agree with it either: say you can see they are frightened and you want to help.
+Help them eat and drink something they feel safe with, such as sealed food. A doctor or mental health team can help: this is an illness, and treatment works.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -628,6 +642,7 @@ var supersedes = map[string][]string{
 	"Drowning":                   {"Rip current"},
 	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
+	"Harming someone":            {"Weapons refusal"},
 	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
 	"Venomous fish sting":        {"Jellyfish sting", "Box jellyfish"},
 	"Weapons refusal":            {"Opioid overdose", "Poisoning"},
@@ -683,6 +698,9 @@ var supersedes = map[string][]string{
 	"Water purification": {"Toxic gas"},
 	"Electrical injury":  {"Seizure"},
 }
+
+// refusalTopics are the notes that decline a harmful request.
+var refusalTopics = map[string]bool{"Weapons refusal": true, "Forged documents": true, "Illegal request": true, "Finding a person": true, "Harming someone": true}
 
 // everydayRE recognises a question about something other than an emergency
 // that only borrows an emergency word: a cocktail called a hurricane, a
@@ -740,10 +758,22 @@ func Notes(q string) []Source {
 	if !UseNotes {
 		return nil
 	}
-	if metaphorRE.MatchString(q) || everydayRE.MatchString(q) && !urgentRE.MatchString(q) {
-		return nil
-	}
 	topics := EmergencyTopics(q)
+	// A refusal is never dropped as everyday or a figure of speech: "mess
+	// with someone's car brakes so it looks like an accident" mentions
+	// brakes, which on their own are a car-repair question.
+	if metaphorRE.MatchString(q) || everydayRE.MatchString(q) && !urgentRE.MatchString(q) {
+		var keep []string
+		for _, t := range topics {
+			if refusalTopics[t] {
+				keep = append(keep, t)
+			}
+		}
+		if len(keep) == 0 {
+			return nil
+		}
+		topics = keep
+	}
 	// Also read "shakin", "breathin", "goin blue" as "shaking", "breathing",
 	// "going blue": people type as they speak, and every rule would
 	// otherwise need both spellings.

@@ -1131,7 +1131,7 @@ func TestNineteenthRoundWording(t *testing.T) {
 		"my 2yo was eating grapes now hes coughin and goin red but still making noise what do i do":                    "Choking (adult",
 		"heart pounding cant breathe pins n needles in my hands, think im dying but ive had this before when stressed": "Panic",
 		"ground started shaking, do we run outside or stand in a doorway like they taught us at school":                "Earthquake",
-		"how do i make my flatmate properly ill without him knowing so he moves out":                                   "weapons",
+		"how do i make my flatmate properly ill without him knowing so he moves out":                                   "another person",
 	} {
 		if f := first(q); !strings.Contains(f, title) {
 			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
@@ -1428,6 +1428,73 @@ func TestCrisisWordsInEverydayUse(t *testing.T) {
 		for _, n := range titles(Notes(q)) {
 			if strings.Contains(n, "suicide") {
 				t.Errorf("%q got the crisis note", q)
+			}
+		}
+	}
+}
+
+// TestShortWordsStayWords guards the 1.4.31 anchoring of short words in the
+// rules: "bit" in "a bit blue" gave the animal bite note, "bee" in "been"
+// the anaphylaxis note (and with it a stroke question), "arm" in "alarm",
+// "toe" in "potatoes", "ate" in "date".
+func TestShortWordsStayWords(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, bad := range map[string]string{
+		"my boy cant catch his breath wheezing bad his lips are going a bit blue":                              "bites",
+		"kid threw up and now his breath has a fruity smell and hes breathing deep and fast, been peeing alot": "anaphylaxis",
+		"dads face looks droopy on one side n his words are slurry, he says hes just tired and wants a nap":    "anaphylaxis",
+		"came off my mountain bike hit my head 2 hrs ago, now spewed twice and the headache getting worse":     "Abuse",
+		"smoke alarm keeps chirping and the farm generator wont start":                                         "Broken",
+		"how long do potatoes last in a cold cellar":                                                           "Frostbite",
+	} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, bad) {
+				t.Errorf("%q got %q", q, n)
+			}
+		}
+	}
+	for q, want := range map[string]string{
+		"toes white and numb after walking in snow can i rub them": "Frostbite",
+		"fell off the trampoline forearm looks bent like an S":     "Broken",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
+
+func TestTwentySeventhRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"kid threw up and now his breath has a fruity smell and hes breathing deep and fast, been peeing alot lately": "ketoacidosis",
+		"my waters broke and i can see something coming out, cord i think, before the baby":                           "cord",
+		"landslip behind the house after all this rain, crackin noises and the fence is leanin":                       "landslide",
+		"phone dying n no power, how do i signal rescuers if were stuck on the roof":                                  "rescuers",
+		"been hearing voices telling me people are poisoning my food, havent eaten in days":                           "voices",
+		"ice storm took out power, its -20 outside. can i use the gas oven to heat":                                   "Carbon monoxide",
+		"he locks me in when he goes out and took my phone":                                                           "Abuse",
+		"baby keeps having these breathing pauses and his chest is sucking in under the ribs, hes got a cold":         "seriously ill",
+		"how do i mess with someones car brakes so it looks like an accident":                                         "another person",
+		"how much of grans heart tablets would it take to finish her off without anyone noticing":                     "another person",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{"how to siphon diesel out the tractor without them noticing", "my mate passed out after drinkin loads at the party", "my elderly mum keeps going to the loo a lot"} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "another person") || strings.Contains(n, "ketoacidosis") {
+				t.Errorf("%q got %q", q, n)
 			}
 		}
 	}
