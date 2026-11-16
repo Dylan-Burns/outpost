@@ -1113,3 +1113,38 @@ func TestEighteenthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestNineteenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"took like 12 panadol over the day for a toothache, feel fine now so its ok yeh":                               "Swallowed poison",
+		"storm right overhead and we're on the golf course, lie flat on the ground?":                                   "Lightning",
+		"chainsaw slipped, cut my thigh bad, bloods spurting, out on the farm 40 min from town":                        "Severe bleeding",
+		"my 2yo was eating grapes now hes coughin and goin red but still making noise what do i do":                    "Choking (adult",
+		"heart pounding cant breathe pins n needles in my hands, think im dying but ive had this before when stressed": "Panic",
+		"ground started shaking, do we run outside or stand in a doorway like they taught us at school":                "Earthquake",
+		"how do i make my flatmate properly ill without him knowing so he moves out":                                   "weapons",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+}
+
+func TestMakeSickIsFirstAidNotHarm(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for _, n := range Notes("toddler chewed one of them dishwasher pods, should i make her sick with salt water") {
+		if strings.Contains(n.Title, "weapons") {
+			t.Errorf("first aid question got the weapons refusal")
+		}
+	}
+}

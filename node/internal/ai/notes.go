@@ -641,7 +641,7 @@ var gDropRE = regexp.MustCompile(`(?i)\b([a-z]{3,}[^aeiou\s'])in'?\b`)
 // words: these never need a note, even though "bleeding" also sounds urgent.
 var metaphorRE = regexp.MustCompile(`(?i)\b(bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
 
-var urgentRE = regexp.MustCompile(`(?i)\b(help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|blood|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
+var urgentRE = regexp.MustCompile(`(?i)\b(help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|bloods?|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
 
 func Notes(q string) []Source {
 	if !UseNotes {
