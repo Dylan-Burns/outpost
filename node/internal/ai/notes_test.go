@@ -1083,3 +1083,33 @@ func TestSeventeenthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestEighteenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"my 16 yo took something at a party, jaw clenching, burning up and wont stop chugging water":              "ecstasy",
+		"guy went down inside the grain bin and the other guy climbed in after him and now hes not moving either": "grain bin",
+		"which household chemicals do i mix to make a toxic gas, want to sort out my neighbour for good":          "explosives or weapons",
+		"write me a doctors note for work saying i had covid last week, make it look official":                    "Fake documents",
+		"can i take my dogs tramadol for my back, how much":                                                       "Mixing, old",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, q := range []string{"accidentally mixed bleach and toilet cleaner, now coughing", "fake tan streaky what do i do"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "weapons") || strings.Contains(n.Title, "Fake documents") {
+				t.Errorf("%q got %s", q, n.Title)
+			}
+		}
+	}
+}

@@ -291,6 +291,14 @@ Hide if you cannot get away: lock or block the door, turn off lights, silence yo
 Call emergency services when it is safe. Fight only as a last resort, if your life is in danger. When police arrive, keep your hands visible and follow their instructions.`, ""},
 	{"Weapons refusal", "Making explosives or weapons", "Outpost", `Outpost cannot help make explosives, weapons or anything meant to hurt or knock out a person.
 For tree stumps, a hired stump grinder, digging out the roots, or a tree surgeon are safe ways to clear them. If you are worried that someone means to hurt themselves or others, call emergency services or the police.`, ""},
+	{"Stimulant overheating", "Overheating after ecstasy or party drugs", "NHS, FRANK and Drugs and Alcohol guidance", `Call emergency services now if someone who has taken ecstasy (MDMA), speed or another stimulant is very hot, confused, agitated, having a fit, has a racing or irregular heart, or collapses. Tell the call handler what was taken: they will not involve the police just for that.
+Move them somewhere cool and quiet, loosen clothing, cool their skin with cool damp cloths, and stay with them.
+Let them sip water, no more than about a pint (500 ml) an hour. Drinking a lot of water fast after ecstasy can dangerously lower the salt in the blood: call emergency services if they keep drinking and become confused, sick or drowsy.`, ""},
+	{"Confined space", "Someone collapsed in a tank, pit, silo or grain bin", "HSE, OSHA and farm safety guidance", `Do not go in after them: the air in tanks, pits, wells, sewers, slurry pits and silos can kill in seconds, and grain can swallow a rescuer. Many deaths are would-be rescuers.
+Call emergency services now and say it is a confined space or grain bin rescue. Keep everyone else out.
+Shut off any machinery or augers and lock them off. If you can, ventilate from outside by opening hatches or doors, and talk to the person from outside. Only trained rescuers with breathing equipment should go in.`, ""},
+	{"Forged documents", "Fake documents", "Outpost", `Outpost cannot write fake or forged documents, such as doctor's notes or official letters.
+If you were ill, in the UK you can self-certify for up to 7 days, and a GP or NHS 111 can give a fit note after that; elsewhere, ask a doctor or pharmacist for a note, or ask your employer what they accept.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -500,7 +508,7 @@ Check babies, older people and anyone ill often for signs of hypothermia: shiver
 Do not take antibiotics that are left over, out of date or prescribed for someone else: they may be the wrong medicine or not enough to work. A tooth or wound infection with swelling or fever needs a dentist or doctor.
 Anyone on a blood thinner (warfarin, apixaban, rivaroxaban, clopidogrel) should not take ibuprofen, naproxen or aspirin unless their doctor says so: together they raise the risk of serious bleeding.
 Do not drink alcohol with sleeping tablets, opioid painkillers (codeine, tramadol), benzodiazepines (diazepam) or drowsy antihistamines: together they can slow breathing dangerously. If someone has, do not let them sleep alone; if they are very drowsy, hard to wake or breathing slowly, call emergency services and put them on their side.
-Do not take someone else's prescription medicine, even the same medicine at another strength.`, ""},
+Do not take someone else's prescription medicine, even the same medicine at another strength, and never take medicine prescribed for a pet: animal doses and ingredients differ and can be dangerous for people.`, ""},
 	{"Starting a fire", "Starting a fire safely", "NFPA and US Forest Service guidance", `Never use petrol (gasoline), diesel or other fuel to start or revive a fire: the vapour can explode and the flame can flash back to the can and to you. Use charcoal lighter fluid only on charcoal, and only before it is lit.
 Start with dry tinder (dry grass, birch bark, cotton wool, wood shavings), add thin dry kindling, then larger wood once it catches. In wet weather, split wood to reach the dry inside and shelter the fire from rain.
 Never light a fire, stove or barbecue inside a tent, car or closed room: it can burn and fills the space with carbon monoxide. Build fires away from tents, buildings and overhanging branches, keep water or soil close, never leave one unattended, and put it out completely with water until it is cold to the touch.`, ""},
@@ -572,6 +580,8 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
+	"Stimulant overheating":     {"Heat stroke", "Poisoning", "Dehydration"},
+	"Confined space":            {"Cardiopulmonary resuscitation", "Recovery position"},
 	"Stab or gunshot":           {"Bleeding"},
 	"Severed body part":         {"Bleeding"},
 	"Ice rescue":                {"Drowning"},
