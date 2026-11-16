@@ -1,0 +1,2055 @@
+{
+ "comment": "Third paraphrase set (1.4.45): 3 messages for each of 164 notes and 80 decoys, written by an agent that saw only the note titles. The rules caught 281 of 492 before it shaped them.",
+ "positive": [
+  {
+   "title": "A baby arriving before help can get there",
+   "q": "my missus waters just went and shes saying she needs to push, ambulance is 40 mins out, snowed in, what do i do"
+  },
+  {
+   "title": "A baby arriving before help can get there",
+   "q": "sister is on the bathroom floor and i can see the head coming, we never made it to the hospital, help"
+  },
+  {
+   "title": "A baby arriving before help can get there",
+   "q": "contractions like 1 min apart and she says it's coming NOW, taxi hasn't come, should I tell her to cross her legs and hold it in?"
+  },
+  {
+   "title": "A broken or chipped tooth",
+   "q": "bit down on an olive pit and now half my back molar is just gone, sharp edge cutting my tongue"
+  },
+  {
+   "title": "A broken or chipped tooth",
+   "q": "lad took a cricket ball to the mouth, front tooth has a corner snapped off and its a bit pink inside"
+  },
+  {
+   "title": "A broken or chipped tooth",
+   "q": "crunched on a boiled sweet and a bit of me tooth fell off, can i superglue it back on till monday?"
+  },
+  {
+   "title": "A fit with a fever in a young child",
+   "q": "my 18 month old was burning up and then went stiff and jerky for about two minutes, eyes rolled back, now sleepy"
+  },
+  {
+   "title": "A fit with a fever in a young child",
+   "q": "toddler had a temp all day with an ear infection then started shaking all over and wasnt responding to me, terrified"
+  },
+  {
+   "title": "A fit with a fever in a young child",
+   "q": "wee one's roasting hot and just had a funny turn, arms twitching, lips went a bit blue. do i put her in a cold bath?"
+  },
+  {
+   "title": "A smoke or carbon monoxide alarm chirping",
+   "q": "something on the ceiling keeps beeping once every minute and it's driving me nuts at 3am, no smoke anywhere"
+  },
+  {
+   "title": "A smoke or carbon monoxide alarm chirping",
+   "q": "that little round thing in the hallway goes cheep every 30 seconds, i pressed the button and it still does it"
+  },
+  {
+   "title": "A smoke or carbon monoxide alarm chirping",
+   "q": "the detector by the boiler keeps making a short beep, landlord says just yank it off the wall, is that ok?"
+  },
+  {
+   "title": "A suspicious package or bag",
+   "q": "theres a rucksack left under the bench at the bus station for an hour with wires sticking out, nobody near it"
+  },
+  {
+   "title": "A suspicious package or bag",
+   "q": "someone dumped a taped-up box outside our office door with no label and it's kind of humming, should I open it?"
+  },
+  {
+   "title": "A suspicious package or bag",
+   "q": "unattended holdall on the train for ages, owner never came back, smells odd. do i chuck it off at the next stop"
+  },
+  {
+   "title": "A swallowed button battery or magnets",
+   "q": "my 2yo had the remote control apart and one of the little round coin cells is missing, think he ate it"
+  },
+  {
+   "title": "A swallowed button battery or magnets",
+   "q": "kid swallowed two of those tiny ball magnets from his brother's desk toy, he seems fine though, wait for it to come out?"
+  },
+  {
+   "title": "A swallowed button battery or magnets",
+   "q": "daughter popped the battery from a singing birthday card in her mouth and now it's gone, she's drooling a bit"
+  },
+  {
+   "title": "A wound getting infected",
+   "q": "cut my hand on a tin can 3 days ago and now its red, puffy, throbbing and theres yellow gunk coming out"
+  },
+  {
+   "title": "A wound getting infected",
+   "q": "graze on my son's knee has gone hot and swollen with a red line creeping up his leg, is that normal healing?"
+  },
+  {
+   "title": "A wound getting infected",
+   "q": "my tattoo is oozing and feels hot and angry, mate said pack it with toothpaste to dry it out, good idea?"
+  },
+  {
+   "title": "Abuse, threats or being followed",
+   "q": "my ex keeps turning up outside my work and texting that I'll regret leaving him, I'm scared to go home"
+  },
+  {
+   "title": "Abuse, threats or being followed",
+   "q": "there's a bloke been walking behind me for six streets now, sped up when i did, i'm on my own and it's dark"
+  },
+  {
+   "title": "Abuse, threats or being followed",
+   "q": "husband hits me when he drinks and took my phone charger and car keys, i'm hiding in the bathroom typing this"
+  },
+  {
+   "title": "After diving: joint pain, tingling or breathlessness",
+   "q": "did two deep scuba dives today and now my shoulder aches like crazy and my fingers are pins and needles"
+  },
+  {
+   "title": "After diving: joint pain, tingling or breathlessness",
+   "q": "came up a bit fast from 30m, an hour later short of breath and blotchy itchy rash on my chest"
+  },
+  {
+   "title": "After diving: joint pain, tingling or breathlessness",
+   "q": "boyfriend's elbows and knees really hurt after his dive trip this arvo, he wants to fly home tonight, is that ok?"
+  },
+  {
+   "title": "Alcohol poisoning",
+   "q": "my flatmate downed a whole bottle of vodka, now he's passed out, cold and clammy and breathing really slow"
+  },
+  {
+   "title": "Alcohol poisoning",
+   "q": "mate at the party is absolutely blotto, keeps throwing up and we cant wake her properly, just let her sleep it off?"
+  },
+  {
+   "title": "Alcohol poisoning",
+   "q": "16 yo found unconscious after a sesh, lips a bit blue, skin freezing, someone said give him coffee and a cold shower"
+  },
+  {
+   "title": "Altitude sickness",
+   "q": "trekking in nepal at 4000m and my head is pounding, can't eat, feel drunk and dizzy, guide says push on"
+  },
+  {
+   "title": "Altitude sickness",
+   "q": "friend on our kilimanjaro hike is breathless even resting, gurgly cough and stumbling about, we're at camp 3"
+  },
+  {
+   "title": "Altitude sickness",
+   "q": "flew into la paz yesterday and been spewing with a splitting headache, is coca tea enough or should i go down"
+  },
+  {
+   "title": "An older person going downhill",
+   "q": "my nan's just not herself, off her food, sleeping all day, more muddled than usual, doesn't seem urgent but worried"
+  },
+  {
+   "title": "An older person going downhill",
+   "q": "grandad has gone weak over the last couple of days, stopped drinking his tea, barely gets out of his chair"
+  },
+  {
+   "title": "An older person going downhill",
+   "q": "mum is 89 and this week she's suddenly much frailer and wetting herself, probably just old age right?"
+  },
+  {
+   "title": "An older person who has been on the floor for a long time",
+   "q": "found my 82 year old neighbour on her kitchen floor this morning, she says she fell last night and couldn't get up"
+  },
+  {
+   "title": "An older person who has been on the floor for a long time",
+   "q": "dad slipped in the bathroom and was lying there for about 10 hours before carers came, he's cold and his pee is dark"
+  },
+  {
+   "title": "An older person who has been on the floor for a long time",
+   "q": "aunty was stuck on the lounge floor all night, seems okay now, shall we just hoist her into bed and let her rest"
+  },
+  {
+   "title": "Animal bites and rabies",
+   "q": "a stray dog in bali nipped my ankle and drew blood, do I need anything or just a plaster"
+  },
+  {
+   "title": "Animal bites and rabies",
+   "q": "woke up with a bat flapping around the bedroom, no marks that i can see but my kid was asleep in there"
+  },
+  {
+   "title": "Animal bites and rabies",
+   "q": "monkey at the temple grabbed my arm and scratched it, washed it with beer since that's all we had"
+  },
+  {
+   "title": "Animals in a flood, fire or storm",
+   "q": "bushfire coming our way, we've got 3 horses and two dogs and only one float, what do we do with them"
+  },
+  {
+   "title": "Animals in a flood, fire or storm",
+   "q": "water is rising around the farm and the sheep are panicking in the low paddock, should i just open the gates"
+  },
+  {
+   "title": "Animals in a flood, fire or storm",
+   "q": "evacuating for the cyclone, shelter won't take my cat, thinking I'll leave her inside with a bowl of food"
+  },
+  {
+   "title": "Asthma attack",
+   "q": "my son is wheezing, sucking in at the ribs and can hardly get words out, blue puffer isn't helping much"
+  },
+  {
+   "title": "Asthma attack",
+   "q": "cant catch my breath, chest so tight, used my inhaler 4 times in the last hour and i'm panicking"
+  },
+  {
+   "title": "Asthma attack",
+   "q": "daughter's chest is whistling and she's hunched forward, we lost her pump, would a hot shower and some vicks do"
+  },
+  {
+   "title": "Attacked by a swarm of bees or wasps",
+   "q": "hit a nest with the strimmer and hundreds of the buggers are chasing me, i'm stung loads, should i jump in the pond"
+  },
+  {
+   "title": "Attacked by a swarm of bees or wasps",
+   "q": "my dad got swarmed by bees at the hives, dozens of stings on his face and arms, he's dizzy now"
+  },
+  {
+   "title": "Attacked by a swarm of bees or wasps",
+   "q": "kids kicked a ground nest and got covered in yellowjackets, must be 50 stings between them"
+  },
+  {
+   "title": "Batteries, inverters and what they will run",
+   "q": "got a 100Ah leisure battery and a 1000W inverter, can it run the fridge overnight in the blackout?"
+  },
+  {
+   "title": "Batteries, inverters and what they will run",
+   "q": "how long will my car battery keep a CPAP machine going if i hook up one of those cigarette lighter converters"
+  },
+  {
+   "title": "Batteries, inverters and what they will run",
+   "q": "bought a power station thingy, want to run the kettle and freezer off it, which will kill it fastest"
+  },
+  {
+   "title": "Bear encounter",
+   "q": "big brown furry thing standing on its back legs 30 yards from our tent sniffing the air, do we run?"
+  },
+  {
+   "title": "Bear encounter",
+   "q": "grizzly with cubs on the trail ahead of us, she's huffing and slapping the ground, what now"
+  },
+  {
+   "title": "Bear encounter",
+   "q": "black bear is in our campsite going through the cooler, my mate wants to play dead, is that right"
+  },
+  {
+   "title": "Bee or wasp sting",
+   "q": "got got by a wasp on the arm at the picnic, its swollen and red and sore, what helps"
+  },
+  {
+   "title": "Bee or wasp sting",
+   "q": "my lil one was stung on the foot by a bee, the stinger's still in there, do I squeeze it out with tweezers"
+  },
+  {
+   "title": "Bee or wasp sting",
+   "q": "stung on my hand by a yellowjacket, gran says put a slice of onion on it, does that work"
+  },
+  {
+   "title": "Belly injury after a fall or blow",
+   "q": "came off my mountain bike and the handlebar jabbed me in the gut, now my stomach is hard and sore and i feel faint"
+  },
+  {
+   "title": "Belly injury after a fall or blow",
+   "q": "kid got kicked in the tummy by a horse, he says his left shoulder hurts weirdly and he's pale"
+  },
+  {
+   "title": "Belly injury after a fall or blow",
+   "q": "fell off the ladder onto the wheelbarrow, ribs and side bruised, peeing a bit pink, prob just bruised eh"
+  },
+  {
+   "title": "Box jellyfish sting (tropical waters)",
+   "q": "swimming off cairns and something wrapped round my son's leg, he's screaming in agony with whip marks, struggling to breathe"
+  },
+  {
+   "title": "Box jellyfish sting (tropical waters)",
+   "q": "stinger season in darwin and my mate got tangled in long see-through tentacles, he's going floppy"
+  },
+  {
+   "title": "Box jellyfish sting (tropical waters)",
+   "q": "stung in the sea in thailand, angry ladder-like welts, someone wants to pee on it, should we?"
+  },
+  {
+   "title": "Broken bones",
+   "q": "heard a crack when i fell skiing, my wrist is bent at a funny angle and swelling fast"
+  },
+  {
+   "title": "Broken bones",
+   "q": "my daughter fell off the trampoline and her forearm looks wonky and she wont let anyone touch it"
+  },
+  {
+   "title": "Broken bones",
+   "q": "think my mate's shin is snapped, there's a bump under the skin, should i yank it straight before we carry him"
+  },
+  {
+   "title": "Bulging soft spot in a baby",
+   "q": "the squishy bit on top of my 4 month old's head is puffed up and tense and he's crying high pitched"
+  },
+  {
+   "title": "Bulging soft spot in a baby",
+   "q": "newborn's fontanelle looks like it's poking out and she's being sick and super sleepy"
+  },
+  {
+   "title": "Bulging soft spot in a baby",
+   "q": "baby's head soft part is raised up even when she's sat up calm, mil says it's teething"
+  },
+  {
+   "title": "Burns and scalds",
+   "q": "knocked the kettle over and boiling water went all over my toddler's arm, skin's gone red and blistery"
+  },
+  {
+   "title": "Burns and scalds",
+   "q": "grabbed the hot pan handle without a cloth, palm is throbbing and white blisters coming up, should i put butter on"
+  },
+  {
+   "title": "Burns and scalds",
+   "q": "me nan spilt her tea on her thigh, skin peeling off, someone said slap some ice on it for an hour"
+  },
+  {
+   "title": "CPR (adult or child over 1)",
+   "q": "my dad just dropped in the garden, not breathing, no pulse that i can feel, how hard do i push on his chest"
+  },
+  {
+   "title": "CPR (adult or child over 1)",
+   "q": "bloke collapsed at the gym, eyes open, doing weird gasps but not really breathing, ambulance on the way"
+  },
+  {
+   "title": "CPR (adult or child over 1)",
+   "q": "found my 7 year old lifeless in the pool, got him out, he's not breathing, how many pushes and breaths"
+  },
+  {
+   "title": "CPR (baby under 1)",
+   "q": "my 3 month old is floppy and not breathing, she's grey, what do i do with her chest, she's so tiny"
+  },
+  {
+   "title": "CPR (baby under 1)",
+   "q": "infant not breathing in cot, no movement, do i press with two fingers or my whole hand"
+  },
+  {
+   "title": "CPR (baby under 1)",
+   "q": "newborn went limp and blue, no breaths, should i shake him to wake him up"
+  },
+  {
+   "title": "Can't swallow saliva, drooling, or a muffled voice",
+   "q": "sore throat got way worse, can't even swallow my own spit, voice sounds like I've got a hot potato in my mouth"
+  },
+  {
+   "title": "Can't swallow saliva, drooling, or a muffled voice",
+   "q": "son is sitting forward drooling, won't lie down, talking all muffled and has a fever, not like normal tonsillitis"
+  },
+  {
+   "title": "Can't swallow saliva, drooling, or a muffled voice",
+   "q": "my throat's that swollen i'm dribbling into a towel and my jaw's stiff, gargling salt water isn't touching it"
+  },
+  {
+   "title": "Carbon monoxide",
+   "q": "whole family has headaches and feels sick whenever we're home but better when we go out, old gas boiler"
+  },
+  {
+   "title": "Carbon monoxide",
+   "q": "we've had the gas heater going in the caravan all night and everyone woke up dizzy and spewing, even the dog's sluggish"
+  },
+  {
+   "title": "Carbon monoxide",
+   "q": "mum's been running a charcoal BBQ inside the garage to keep warm, now she's confused and has a headache"
+  },
+  {
+   "title": "Caught in a rip current",
+   "q": "being pulled out to sea really fast even though i'm swimming hard for shore, getting knackered"
+  },
+  {
+   "title": "Caught in a rip current",
+   "q": "my kids are getting dragged out past the flags in a channel of calm-looking water, should i swim out after them"
+  },
+  {
+   "title": "Caught in a rip current",
+   "q": "surf's flat in one strip and it's sucking me out, beach is getting further away, help"
+  },
+  {
+   "title": "Chemical leak or toxic cloud",
+   "q": "train derailed near our town and there's a yellowy green cloud drifting over, smells like bleach, eyes burning"
+  },
+  {
+   "title": "Chemical leak or toxic cloud",
+   "q": "factory up the road had an explosion, sirens going, weird smell, do we get in the car and drive through it"
+  },
+  {
+   "title": "Chemical leak or toxic cloud",
+   "q": "tanker overturned on the motorway, they're saying stay indoors, what about the windows and the aircon"
+  },
+  {
+   "title": "Chimney fire",
+   "q": "loud roaring noise from the fireplace like a jet engine and sparks shooting out the top of the chimney"
+  },
+  {
+   "title": "Chimney fire",
+   "q": "flue is glowing red hot and there's thick black smoke pouring from the stack, wood burner on full"
+  },
+  {
+   "title": "Chimney fire",
+   "q": "crackling and popping up inside the chimney breast, hubby wants to pour a bucket of water down it"
+  },
+  {
+   "title": "Choking (adult or child over 1)",
+   "q": "my husband is clutching his throat at dinner, can't talk or cough, face going red, steak"
+  },
+  {
+   "title": "Choking (adult or child over 1)",
+   "q": "5yo swallowed a grape and is gagging silently and going purple, what do i do"
+  },
+  {
+   "title": "Choking (adult or child over 1)",
+   "q": "mate inhaled a peanut, can't breathe in, someone said give him water to wash it down"
+  },
+  {
+   "title": "Choking (baby under 1)",
+   "q": "my 8 month old put something in her mouth and now she's not making any noise and turning blue"
+  },
+  {
+   "title": "Choking (baby under 1)",
+   "q": "baby is gagging on a bit of banana, can't cry, mouth open and nothing, help"
+  },
+  {
+   "title": "Choking (baby under 1)",
+   "q": "infant choking on a pea, my mum says hold him upside down by the ankles and shake him, is that right"
+  },
+  {
+   "title": "Cooking when the power is off",
+   "q": "electric's been out two days, how do we make hot food without the hob, we've got a camping stove"
+  },
+  {
+   "title": "Cooking when the power is off",
+   "q": "no power after the storm, can i use the barbecue in the kitchen with the back door open to cook for the kids"
+  },
+  {
+   "title": "Cooking when the power is off",
+   "q": "kitchen is all induction and the grid's down, what can i eat that's safe and warm"
+  },
+  {
+   "title": "Croup (barking cough in a child)",
+   "q": "my toddler woke up with a cough that sounds like a seal and a squeaky noise when he breathes in"
+  },
+  {
+   "title": "Croup (barking cough in a child)",
+   "q": "son has a horrible honking cough at night and his voice is hoarse, sucking in at the throat"
+  },
+  {
+   "title": "Croup (barking cough in a child)",
+   "q": "kid's barky coughing, my aunty says rub vicks under his nose and give him honey, he's only 9 months"
+  },
+  {
+   "title": "Deep or dirty wounds and tetanus",
+   "q": "stood on a rusty nail in the barn, went right through my boot into the foot, can't remember my last jab"
+  },
+  {
+   "title": "Deep or dirty wounds and tetanus",
+   "q": "gardening and got a deep gash from the rake covered in manure, do I need a shot"
+  },
+  {
+   "title": "Deep or dirty wounds and tetanus",
+   "q": "lad cut his leg open on barbed wire, full of mud, we rinsed it with whisky is that enough"
+  },
+  {
+   "title": "Diarrhoea, vomiting and dehydration",
+   "q": "been on the toilet all night and throwing up, now dizzy, mouth like sandpaper, haven't peed since morning"
+  },
+  {
+   "title": "Diarrhoea, vomiting and dehydration",
+   "q": "my toddler's had the runs and been sick all day, no wet nappies for 8 hours and no tears when crying"
+  },
+  {
+   "title": "Diarrhoea, vomiting and dehydration",
+   "q": "gastro going round the family, i'm giving the kids flat coke and lucozade to keep them up, right?"
+  },
+  {
+   "title": "Does a cut need stitches?",
+   "q": "sliced my finger cutting an avocado, gaping open and won't stay shut, do i need to get it sewn"
+  },
+  {
+   "title": "Does a cut need stitches?",
+   "q": "kid split her chin on the coffee table, about 2cm long, edges pull apart when she talks"
+  },
+  {
+   "title": "Does a cut need stitches?",
+   "q": "gashed my palm on broken glass, can i just superglue it shut or does a doctor need to do it"
+  },
+  {
+   "title": "Drowning",
+   "q": "pulled my brother out of the lake, he's not breathing properly and coughing up water, lips blue"
+  },
+  {
+   "title": "Drowning",
+   "q": "toddler found face down in the paddling pool, picked her up, she's limp"
+  },
+  {
+   "title": "Drowning",
+   "q": "mate went under at the quarry and we dragged him out, he's breathing now but coughing loads, he says he's fine, home?"
+  },
+  {
+   "title": "Earthquake",
+   "q": "the whole building is shaking and stuff is falling off the shelves, do i run outside or what"
+  },
+  {
+   "title": "Earthquake",
+   "q": "ground just rolled for like 30 seconds, my apartment's cracked, should i stand in the doorway like in films"
+  },
+  {
+   "title": "Earthquake",
+   "q": "big quake earlier and aftershocks keep coming, smell of gas in the street, where do we go"
+  },
+  {
+   "title": "Electric shock",
+   "q": "my son stuck a fork in the socket and got thrown back, he's crying but has a little black mark on his finger"
+  },
+  {
+   "title": "Electric shock",
+   "q": "husband got zapped rewiring a light, he's still holding the wire and twitching, do i pull him off"
+  },
+  {
+   "title": "Electric shock",
+   "q": "workmate touched a live cable, collapsed, now awake and says he feels alright, just send him home?"
+  },
+  {
+   "title": "Emergency numbers",
+   "q": "what number do i ring for an ambulance here, we're on holiday in spain and my phone has no credit"
+  },
+  {
+   "title": "Emergency numbers",
+   "q": "which number for the cops in australia, i only know 911 from the telly"
+  },
+  {
+   "title": "Emergency numbers",
+   "q": "is there a number you can text if you cant talk, i'm deaf and need help"
+  },
+  {
+   "title": "Eye injuries",
+   "q": "got a splash of oven cleaner in my eye, it's stinging like hell and i can't open it"
+  },
+  {
+   "title": "Eye injuries",
+   "q": "bit of metal flew into my eye when i was grinding, feels like something's in there, watering loads"
+  },
+  {
+   "title": "Eye injuries",
+   "q": "son got poked in the eye with a stick, blood in the coloured bit, can i rub it to clean it"
+  },
+  {
+   "title": "Fainting",
+   "q": "girl in the queue went white and dropped to the floor, she's coming round now, what do we do"
+  },
+  {
+   "title": "Fainting",
+   "q": "keep going lightheaded and blacking out for a few seconds when i stand up, happened twice today"
+  },
+  {
+   "title": "Fainting",
+   "q": "my wife passed out in the hot church, we're trying to sit her up straight and give her a brandy"
+  },
+  {
+   "title": "Fallen power line",
+   "q": "storm brought a big cable down across our driveway, it's sparking and buzzing on the wet grass"
+  },
+  {
+   "title": "Fallen power line",
+   "q": "a wire from the pole is lying in the road and my dog is sniffing near it, can i grab her"
+  },
+  {
+   "title": "Fallen power line",
+   "q": "line came down in the garden, looks dead, not sparking, can i move it with a broom handle"
+  },
+  {
+   "title": "Feeding a baby in an emergency",
+   "q": "we've been evacuated and i've run out of formula for my 4 month old, what can i give him"
+  },
+  {
+   "title": "Feeding a baby in an emergency",
+   "q": "no clean water to mix bubs bottles since the flood, how do i make formula safe"
+  },
+  {
+   "title": "Feeding a baby in an emergency",
+   "q": "stressed and my breastmilk is drying up after the quake, can i give her cow's milk or watered down juice"
+  },
+  {
+   "title": "Fever in a young baby",
+   "q": "my 6 week old feels hot and the thermometer says 38.2, she's feeding a bit less"
+  },
+  {
+   "title": "Fever in a young baby",
+   "q": "newborn is burning up, only 2 months, can i give her some calpol and see how she goes"
+  },
+  {
+   "title": "Fever in a young baby",
+   "q": "baby under 3 months has a high temp and is floppy, should I put him in a cold bath to cool him"
+  },
+  {
+   "title": "Finding family after a disaster",
+   "q": "lost contact with my parents since the hurricane hit their town, phones all down, how do i find them"
+  },
+  {
+   "title": "Finding family after a disaster",
+   "q": "we got separated in the evacuation and my teenage son isn't answering, where do people register as safe"
+  },
+  {
+   "title": "Finding family after a disaster",
+   "q": "my sister lives where the tsunami hit, how do I check she's alive, red cross or something?"
+  },
+  {
+   "title": "Finger or body part cut off",
+   "q": "husband took the tip of his finger off with the table saw, it's in the sawdust, what do i do with it"
+  },
+  {
+   "title": "Finger or body part cut off",
+   "q": "my mate's toe got chopped by the lawnmower, we've got the toe, should i put it in a bag of ice directly"
+  },
+  {
+   "title": "Finger or body part cut off",
+   "q": "guy at work caught his hand in the press, two fingers came clean off, blood everywhere"
+  },
+  {
+   "title": "Fire alarm in a block of flats",
+   "q": "alarm going off in our tower block again, everyone usually ignores it, should i just stay in"
+  },
+  {
+   "title": "Fire alarm in a block of flats",
+   "q": "there's smoke in the stairwell of my building and the bells are ringing, i'm on the 12th floor"
+  },
+  {
+   "title": "Fire alarm in a block of flats",
+   "q": "fire bell going in the apartments, i want to take the lift down since i have a bad knee"
+  },
+  {
+   "title": "Fire at home",
+   "q": "the kitchen's on fire, flames up the wall from the chip pan, kids are upstairs"
+  },
+  {
+   "title": "Fire at home",
+   "q": "smoke pouring under the bedroom door and the handle is hot, what do i do"
+  },
+  {
+   "title": "Fire at home",
+   "q": "telly caught fire in the lounge, i'm going back in for the dog and my passport"
+  },
+  {
+   "title": "Fish hook stuck in the skin",
+   "q": "got a treble hook through my thumb while fishing, the barb is right under the skin"
+  },
+  {
+   "title": "Fish hook stuck in the skin",
+   "q": "brother cast and caught me in the ear lobe, the hook's barbed, do i just yank it out backwards"
+  },
+  {
+   "title": "Fish hook stuck in the skin",
+   "q": "lure stuck in my calf, mate says push it through and snip the barb with pliers, is that legit"
+  },
+  {
+   "title": "Flood",
+   "q": "water's coming up the street and into the garage, it's ankle deep, do we stay or leave"
+  },
+  {
+   "title": "Flood",
+   "q": "river burst its banks and the road out is under water, can i drive my 4x4 through it"
+  },
+  {
+   "title": "Flood",
+   "q": "house filling up with brown water, power still on, should I go downstairs and unplug the fridge"
+  },
+  {
+   "title": "Food after a power cut",
+   "q": "fridge has been off 12 hours, is the chicken and milk still alright to eat"
+  },
+  {
+   "title": "Food after a power cut",
+   "q": "freezer died in the outage, the meat is half thawed with ice crystals, can i refreeze it"
+  },
+  {
+   "title": "Food after a power cut",
+   "q": "power was out all weekend, mum says if it smells ok it's fine, is that true for the leftovers"
+  },
+  {
+   "title": "Frostbite",
+   "q": "been out in the snow all day and my toes are white and waxy and I can't feel them"
+  },
+  {
+   "title": "Frostbite",
+   "q": "mate's fingers have gone hard and grey after the hike, should we rub them with snow"
+  },
+  {
+   "title": "Frostbite",
+   "q": "cheeks and nose went numb and pale skiing, now they're blistering, can i warm them by the fire"
+  },
+  {
+   "title": "Frozen pipes",
+   "q": "turned on the tap this morning and nothing comes out, minus 15 outside"
+  },
+  {
+   "title": "Frozen pipes",
+   "q": "the pipe under the sink is iced up, can i use a blowtorch to thaw it"
+  },
+  {
+   "title": "Frozen pipes",
+   "q": "no water in the kitchen and a bulge in the pipe in the crawlspace, worried it'll burst"
+  },
+  {
+   "title": "Fumes from mixed cleaners",
+   "q": "mixed bleach and toilet cleaner to get the grout clean and now my chest burns and i'm coughing"
+  },
+  {
+   "title": "Fumes from mixed cleaners",
+   "q": "cleaning the shower with bleach and something with ammonia, now eyes streaming and feel wheezy"
+  },
+  {
+   "title": "Fumes from mixed cleaners",
+   "q": "wife combined two bottles cleaning the bathroom, horrible smell, she's coughing, should she drink milk"
+  },
+  {
+   "title": "Generator safety",
+   "q": "can i run the petrol genny in the garage with the door half open during the outage, it's raining"
+  },
+  {
+   "title": "Generator safety",
+   "q": "how do i hook the generator up to the house, someone said just plug it into a socket with a male to male lead"
+  },
+  {
+   "title": "Generator safety",
+   "q": "neighbours got their gennie right under our bedroom window, fumes coming in, is that a problem"
+  },
+  {
+   "title": "Getting news when power and phone are down",
+   "q": "no signal, no internet, no electric, how do we find out what's happening with the storm"
+  },
+  {
+   "title": "Getting news when power and phone are down",
+   "q": "all the mobile towers are out after the fire, how do i hear evacuation orders"
+  },
+  {
+   "title": "Getting news when power and phone are down",
+   "q": "phone dead and wifi gone, what radio station do emergency updates come on"
+  },
+  {
+   "title": "Head injury",
+   "q": "my son fell off the swing and smacked his head, he's vomited twice and seems drowsy"
+  },
+  {
+   "title": "Head injury",
+   "q": "bumped my noggin on a cupboard, now headache getting worse and my vision is a bit double"
+  },
+  {
+   "title": "Head injury",
+   "q": "rugby player got knocked out cold for a few seconds, he wants to go back on, should we let him"
+  },
+  {
+   "title": "Hearing voices, or feeling watched or poisoned",
+   "q": "my brother's convinced the neighbours are putting stuff in his food and that the telly is talking to him"
+  },
+  {
+   "title": "Hearing voices, or feeling watched or poisoned",
+   "q": "i keep hearing people whispering my name when nobody's there and i think the govt is tracking me"
+  },
+  {
+   "title": "Hearing voices, or feeling watched or poisoned",
+   "q": "my mum won't eat anything, says we're poisoning her and there are cameras in the walls, she's not slept in days"
+  },
+  {
+   "title": "Heart attack",
+   "q": "crushing feeling in my chest like an elephant sitting on it, spreading to my left arm and jaw, sweating"
+  },
+  {
+   "title": "Heart attack",
+   "q": "dad's grey and clammy, says he's got bad indigestion and his arm aches, been 20 minutes"
+  },
+  {
+   "title": "Heart attack",
+   "q": "wife has had a tight chest and feels sick and breathless, she says it's just stress, should i give her a rennie"
+  },
+  {
+   "title": "Heart failure getting worse",
+   "q": "my grandad's ankles are swollen like balloons and he can't lie flat at night without gasping"
+  },
+  {
+   "title": "Heart failure getting worse",
+   "q": "put on 3 kilos in 3 days and getting puffed walking to the loo, i have a weak heart"
+  },
+  {
+   "title": "Heart failure getting worse",
+   "q": "dad with a bad heart is waking up coughing frothy stuff, needs four pillows now, should he drink more water"
+  },
+  {
+   "title": "Heat stroke and heat exhaustion",
+   "q": "my mate collapsed at the festival in the heat, he's red hot, confused and stopped sweating"
+  },
+  {
+   "title": "Heat stroke and heat exhaustion",
+   "q": "working on the roof all day, now dizzy, crampy, sweating buckets and want to spew"
+  },
+  {
+   "title": "Heat stroke and heat exhaustion",
+   "q": "runner fell over at the marathon, skin is burning and she's talking nonsense, give her paracetamol?"
+  },
+  {
+   "title": "Heavy bleeding after giving birth",
+   "q": "had my baby at home 2 hours ago and i'm soaking through a pad every 10 mins, feeling faint"
+  },
+  {
+   "title": "Heavy bleeding after giving birth",
+   "q": "my wife gave birth this morning and there's big clots and blood pouring, she's pale and shaky"
+  },
+  {
+   "title": "Heavy bleeding after giving birth",
+   "q": "a week after delivery suddenly gushing blood and big clots, is that just a heavy period coming back?"
+  },
+  {
+   "title": "Helping someone through a bad trip",
+   "q": "my mate took acid and is freaking out, thinks he's dying and the walls are melting"
+  },
+  {
+   "title": "Helping someone through a bad trip",
+   "q": "girlfriend ate too many shroom gummies and is crying in the corner saying she's stuck forever"
+  },
+  {
+   "title": "Helping someone through a bad trip",
+   "q": "friend is tripping balls and paranoid, should we give him a cold shower and slap him out of it"
+  },
+  {
+   "title": "High blood sugar and diabetic ketoacidosis",
+   "q": "my type 1 son is super thirsty, peeing nonstop, vomiting and his breath smells like nail polish remover"
+  },
+  {
+   "title": "High blood sugar and diabetic ketoacidosis",
+   "q": "meter says HI and i feel awful, breathing fast and deep, tummy pains, ran out of insulin"
+  },
+  {
+   "title": "High blood sugar and diabetic ketoacidosis",
+   "q": "teenage daughter's diabetic and been sick all day so she skipped her insulin because she's not eating"
+  },
+  {
+   "title": "Home canning",
+   "q": "how long do i process jars of green beans, i don't have a pressure canner, just a big pot"
+  },
+  {
+   "title": "Home canning",
+   "q": "the lid on my homemade chutney jar is bulging and it fizzed when i opened it, still ok?"
+  },
+  {
+   "title": "Home canning",
+   "q": "want to bottle my tomatoes and pumpkin soup for winter, nan did it in the oven, is that safe"
+  },
+  {
+   "title": "Hot weather and heat waves",
+   "q": "it's going to be 44 degrees all week and our aircon is broken, how do we keep cool"
+  },
+  {
+   "title": "Hot weather and heat waves",
+   "q": "heatwave coming and my old mum lives alone in a top floor flat with no fan, what should she do"
+  },
+  {
+   "title": "Hot weather and heat waves",
+   "q": "scorcher outside, thinking of closing all the curtains and sitting in a cold bath, other tips?"
+  },
+  {
+   "title": "Hurricane",
+   "q": "storm is a cat 4 and heading straight for us, do we board up or evacuate"
+  },
+  {
+   "title": "Hurricane",
+   "q": "the eye just passed over and it's gone calm, is it safe to go out and check the damage"
+  },
+  {
+   "title": "Hurricane",
+   "q": "hurricane landfall tonight, should we tape X's on the windows and fill the bathtub"
+  },
+  {
+   "title": "Hypothermia",
+   "q": "pulled my friend out of the cold lake, he's shivering violently and his speech is slurred"
+  },
+  {
+   "title": "Hypothermia",
+   "q": "old man found outside in the snow, he's stopped shivering, very sleepy and confused"
+  },
+  {
+   "title": "Hypothermia",
+   "q": "hiker is frozen and mumbling, should we rub his arms and legs hard and give him a whisky"
+  },
+  {
+   "title": "If you are worried a child is being harmed",
+   "q": "my niece has bruises on her arms again and flinches when her stepdad walks in, not sure what to do"
+  },
+  {
+   "title": "If you are worried a child is being harmed",
+   "q": "a kid in my class says her uncle touches her and told her not to tell, i'm her teacher"
+  },
+  {
+   "title": "If you are worried a child is being harmed",
+   "q": "neighbour's children are always hungry and dirty and left alone at night, who do i tell"
+  },
+  {
+   "title": "If you are worried an older person is being abused",
+   "q": "my gran's carer keeps taking her bank card and gran has unexplained bruises, she's scared to say anything"
+  },
+  {
+   "title": "If you are worried an older person is being abused",
+   "q": "uncle has moved in with my grandad and is spending all his pension and shouting at him"
+  },
+  {
+   "title": "If you are worried an older person is being abused",
+   "q": "visited my dad at the care home and he has marks on his wrists and is terrified of one nurse"
+  },
+  {
+   "title": "If your drink may have been spiked",
+   "q": "only had two drinks at the club but i feel way more wasted than i should, dizzy and my legs aren't working"
+  },
+  {
+   "title": "If your drink may have been spiked",
+   "q": "my friend went from fine to totally out of it in 20 mins after a stranger bought her a drink"
+  },
+  {
+   "title": "If your drink may have been spiked",
+   "q": "woke up in a strange place with no memory of last night, think someone put something in my bevvy"
+  },
+  {
+   "title": "If your employer holds your passport or threatens you",
+   "q": "my boss took my passport when i arrived and says i owe him money for the flight, won't let me leave"
+  },
+  {
+   "title": "If your employer holds your passport or threatens you",
+   "q": "the agency has my documents and says they'll call immigration if i complain about not being paid"
+  },
+  {
+   "title": "If your employer holds your passport or threatens you",
+   "q": "working on a farm abroad, they keep our IDs and lock us in at night, i want to go home"
+  },
+  {
+   "title": "Is my child seriously ill?",
+   "q": "my 3yo is just not right, really pale and floppy and not interested in anything, hard to say why"
+  },
+  {
+   "title": "Is my child seriously ill?",
+   "q": "toddler's breathing fast, hands and feet are freezing but body hot, she's whimpering not crying properly"
+  },
+  {
+   "title": "Is my child seriously ill?",
+   "q": "kid has been off colour all day, how do i know when to take him in vs just give him rest"
+  },
+  {
+   "title": "Jellyfish stings",
+   "q": "got stung by a jellyfish at the beach in cornwall, red stripes on my leg and it's burning"
+  },
+  {
+   "title": "Jellyfish stings",
+   "q": "son brushed against a purple blob in the shallows, little welts on his arm, stinging bad"
+  },
+  {
+   "title": "Jellyfish stings",
+   "q": "bluebottle got me at bondi, mate says rub sand on it, does that help"
+  },
+  {
+   "title": "Jump-starting a car",
+   "q": "car won't start, just clicks, my neighbour has leads, which clamp goes where"
+  },
+  {
+   "title": "Jump-starting a car",
+   "q": "flat battery in the supermarket car park, got jumper cables, do i connect red to red first"
+  },
+  {
+   "title": "Jump-starting a car",
+   "q": "battery dead since the cold snap, can i jump it off my mate's car or will it fry the electrics"
+  },
+  {
+   "title": "Keeping a baby cool in hot weather",
+   "q": "heatwave and my 6 month old is sweaty and grizzly, how do i keep her cool at night"
+  },
+  {
+   "title": "Keeping a baby cool in hot weather",
+   "q": "should i cover the pram with a blanket to keep the sun off baby, it's 35 out"
+  },
+  {
+   "title": "Keeping a baby cool in hot weather",
+   "q": "baby's room is 30 degrees, can i put a fan straight on him and give him water"
+  },
+  {
+   "title": "Knocked-out tooth",
+   "q": "my son's front adult tooth got knocked clean out at football, it's lying on the grass"
+  },
+  {
+   "title": "Knocked-out tooth",
+   "q": "teenager took an elbow to the mouth, whole tooth with the root came out, do i scrub it clean"
+  },
+  {
+   "title": "Knocked-out tooth",
+   "q": "tooth came out in a bike crash, mate says put it in a glass of tap water, right"
+  },
+  {
+   "title": "Lightning",
+   "q": "thunder is right on top of us, we're in the middle of a golf course, where do we go"
+  },
+  {
+   "title": "Lightning",
+   "q": "hiking on a ridge and my hair's standing on end, storm rolling in"
+  },
+  {
+   "title": "Lightning",
+   "q": "person got struck by lightning on the beach, is it safe to touch them, they're not breathing"
+  },
+  {
+   "title": "Lithium and other medicines during sickness",
+   "q": "i'm on lithium and have had a bad stomach bug for two days, now my hands are shaky and i feel off"
+  },
+  {
+   "title": "Lithium and other medicines during sickness",
+   "q": "take metformin and ramipril, been vomiting all day and can't keep fluids down, do i keep taking them"
+  },
+  {
+   "title": "Lithium and other medicines during sickness",
+   "q": "on water tablets for my blood pressure and got the norovirus, should i double up later to catch up"
+  },
+  {
+   "title": "Lost outdoors",
+   "q": "we took a wrong turn on the trail and it's getting dark, no signal, no idea where the car is"
+  },
+  {
+   "title": "Lost outdoors",
+   "q": "my dad went mushroom picking in the forest this morning and hasn't come back, phone off"
+  },
+  {
+   "title": "Lost outdoors",
+   "q": "turned around in the bush, every gully looks the same, should i keep walking downhill"
+  },
+  {
+   "title": "Low blood sugar",
+   "q": "diabetic hubby is sweaty, shaky and acting drunk but hasn't had a drink"
+  },
+  {
+   "title": "Low blood sugar",
+   "q": "my sugar is 2.8 and i'm trembling and can't think straight, what do i eat"
+  },
+  {
+   "title": "Low blood sugar",
+   "q": "type 1 kid is pale and grumpy and confused, should i give her insulin to fix it"
+  },
+  {
+   "title": "Making water safe to drink",
+   "q": "the tap water's brown since the flood, how long do i boil it before we can drink it"
+  },
+  {
+   "title": "Making water safe to drink",
+   "q": "stuck at the cabin with only creek water, how much bleach do i put in a bucket"
+  },
+  {
+   "title": "Making water safe to drink",
+   "q": "is filtering river water through a t-shirt enough to make it drinkable"
+  },
+  {
+   "title": "Medicine doses for adults",
+   "q": "how many paracetamol can i take in a day, got a raging toothache and already had 6"
+  },
+  {
+   "title": "Medicine doses for adults",
+   "q": "can i take ibuprofen and paracetamol together for my back, and how often"
+  },
+  {
+   "title": "Medicine doses for adults",
+   "q": "mum's 70 and weighs 45kg, is the normal adult dose of painkillers ok for her"
+  },
+  {
+   "title": "Medicine doses for children",
+   "q": "how much calpol for a 2 year old, the box got thrown out"
+  },
+  {
+   "title": "Medicine doses for children",
+   "q": "my 6yo weighs 20kg, how many ml of nurofen can i give and how often"
+  },
+  {
+   "title": "Medicine doses for children",
+   "q": "can i give my kid half an adult tablet of paracetamol since we're out of the kids syrup"
+  },
+  {
+   "title": "Medicines in pregnancy",
+   "q": "i'm 12 weeks pregnant with a stinking headache, can i take ibuprofen"
+  },
+  {
+   "title": "Medicines in pregnancy",
+   "q": "pregnant and got a bad cold, which hay fever or cough meds are safe"
+  },
+  {
+   "title": "Medicines in pregnancy",
+   "q": "expecting and the doctor's shut, can i keep taking my acne pills and my antidepressants"
+  },
+  {
+   "title": "Missed dialysis",
+   "q": "my dad's on kidney machine three times a week but the clinic's flooded and he's missed two sessions"
+  },
+  {
+   "title": "Missed dialysis",
+   "q": "can't get to my haemo session because of the snow, feeling breathless and swollen, what should i eat"
+  },
+  {
+   "title": "Missed dialysis",
+   "q": "missed dialysis since tuesday, legs heavy and heart feels funny, should i drink loads of water to flush out"
+  },
+  {
+   "title": "Mixing, old and someone else's medicines",
+   "q": "found some antibiotics left over from last year, can i take them for this chest infection"
+  },
+  {
+   "title": "Mixing, old and someone else's medicines",
+   "q": "run out of my blood pressure pills, can i borrow my husband's, they're a different name"
+  },
+  {
+   "title": "Mixing, old and someone else's medicines",
+   "q": "is it ok to take cold and flu tablets with my sleeping pills and a couple of beers"
+  },
+  {
+   "title": "No heating in winter",
+   "q": "boiler's packed in and it's minus 10 outside, house is freezing, got a newborn"
+  },
+  {
+   "title": "No heating in winter",
+   "q": "power out in the snowstorm so no heat, how do we keep warm overnight"
+  },
+  {
+   "title": "No heating in winter",
+   "q": "thinking of leaving the gas oven on with the door open to heat the flat, any problem"
+  },
+  {
+   "title": "Nosebleed",
+   "q": "my kid's nose has been pouring blood for 15 minutes, won't stop"
+  },
+  {
+   "title": "Nosebleed",
+   "q": "bloody nose after blowing it, should I tilt my head back and stuff tissue up there"
+  },
+  {
+   "title": "Nosebleed",
+   "q": "grandad's nose bleeding for half an hour, he's on blood thinners, it's dripping"
+  },
+  {
+   "title": "Opioid overdose",
+   "q": "found my brother on the floor with tiny pinpoint pupils, barely breathing, lips blue, needle next to him"
+  },
+  {
+   "title": "Opioid overdose",
+   "q": "friend took some oxy and fentanyl, now snoring weird and we can't wake her"
+  },
+  {
+   "title": "Opioid overdose",
+   "q": "housemate nodded off after using and won't respond, someone said put ice down his pants"
+  },
+  {
+   "title": "Overheating after ecstasy or party drugs",
+   "q": "mate took a pill at the rave and is now burning up, jaw clenching, confused and won't stop shaking"
+  },
+  {
+   "title": "Overheating after ecstasy or party drugs",
+   "q": "friend dropped molly, sweating like mad, says she feels like she's cooking from inside"
+  },
+  {
+   "title": "Overheating after ecstasy or party drugs",
+   "q": "took some mdma, been dancing for hours, drank 5 litres of water and now head pounding and vomiting"
+  },
+  {
+   "title": "Panic attack",
+   "q": "heart's racing, can't breathe, hands tingling, feel like I'm about to die but doc says my heart's fine"
+  },
+  {
+   "title": "Panic attack",
+   "q": "my girlfriend is hyperventilating and shaking and crying, says the room is closing in"
+  },
+  {
+   "title": "Panic attack",
+   "q": "suddenly shaking and dizzy and terrified on the train for no reason, should i breathe into a paper bag"
+  },
+  {
+   "title": "Possible blood clot (leg or lung)",
+   "q": "after a long flight my calf is swollen, red and sore, and now i'm a bit short of breath"
+  },
+  {
+   "title": "Possible blood clot (leg or lung)",
+   "q": "one leg is fatter and warmer than the other since my knee op, should i massage it out"
+  },
+  {
+   "title": "Possible blood clot (leg or lung)",
+   "q": "sharp pain when i breathe in and coughed up a bit of blood, i'm on the pill and been laid up"
+  },
+  {
+   "title": "Possible spinal injury",
+   "q": "guy dived into the shallow end and now he can't feel his legs, he's in the water"
+  },
+  {
+   "title": "Possible spinal injury",
+   "q": "my mate fell off the roof onto his back, says his neck hurts and his hands are tingling"
+  },
+  {
+   "title": "Possible spinal injury",
+   "q": "motorbike crash, rider lying still, should we take his helmet off and sit him up"
+  },
+  {
+   "title": "Power cut",
+   "q": "all the lights went off and the whole street is dark, what should i do first"
+  },
+  {
+   "title": "Power cut",
+   "q": "electricity's been off since the storm, no idea when it's back, what do we need to think about"
+  },
+  {
+   "title": "Power cut",
+   "q": "blackout, can i light some candles everywhere and leave them overnight"
+  },
+  {
+   "title": "Power line on a car",
+   "q": "crashed into a pole and the cables are lying across my bonnet, i'm still inside"
+  },
+  {
+   "title": "Power line on a car",
+   "q": "car hit a pole and wires are on top of it, there's a woman inside, should i open her door"
+  },
+  {
+   "title": "Power line on a car",
+   "q": "cable draped over my ute after the storm, sparking, should i jump out and run"
+  },
+  {
+   "title": "Pressure sore that will not heal",
+   "q": "mum's bedbound and there's a raw open patch on her tailbone that's getting deeper and smells"
+  },
+  {
+   "title": "Pressure sore that will not heal",
+   "q": "dad's in a wheelchair and the red spot on his heel has turned black and won't close up"
+  },
+  {
+   "title": "Pressure sore that will not heal",
+   "q": "grandma has a weeping hole on her hip from lying in bed, we've been rubbing it with surgical spirit"
+  },
+  {
+   "title": "Putting out a campfire",
+   "q": "we're leaving the campsite in the morning, how do i make sure the fire is properly out"
+  },
+  {
+   "title": "Putting out a campfire",
+   "q": "can i just kick dirt over the embers and go, it's mostly ash now"
+  },
+  {
+   "title": "Putting out a campfire",
+   "q": "fire pit still smoking after we packed up, is pouring my beer on it enough"
+  },
+  {
+   "title": "Radiation or nuclear emergency",
+   "q": "they're saying there's been an accident at the power station 20km away, what do we do"
+  },
+  {
+   "title": "Radiation or nuclear emergency",
+   "q": "siren went off and radio says radioactive leak, should we get in the car and drive away"
+  },
+  {
+   "title": "Radiation or nuclear emergency",
+   "q": "heard about the reactor, should i give the kids iodine from the first aid kit"
+  },
+  {
+   "title": "Rash that does not fade",
+   "q": "my son has little purple spots on his legs that don't go away when i press a glass on them, and a fever"
+  },
+  {
+   "title": "Rash that does not fade",
+   "q": "weird pinprick red dots all over her tummy, she's floppy and hot, not like a normal rash"
+  },
+  {
+   "title": "Rash that does not fade",
+   "q": "blotchy dark rash on toddler that stays when i squish it, nana says it's just measles"
+  },
+  {
+   "title": "Removing a tick",
+   "q": "found a little black bug burrowed into my kid's scalp after the hike, how do i get it out"
+  },
+  {
+   "title": "Removing a tick",
+   "q": "tick on the dog and one on my leg, mate says burn it with a match first"
+  },
+  {
+   "title": "Removing a tick",
+   "q": "theres a bloodsucker stuck in my armpit, should i smother it with vaseline so it lets go"
+  },
+  {
+   "title": "Running out of a vital medicine",
+   "q": "pharmacy's closed after the flood and I've got two days of my epilepsy tablets left"
+  },
+  {
+   "title": "Running out of a vital medicine",
+   "q": "ran out of thyroxine and seizure meds, roads are cut off, what do i do"
+  },
+  {
+   "title": "Running out of a vital medicine",
+   "q": "my insulin's nearly finished and no delivery's coming, can i stretch it by taking half"
+  },
+  {
+   "title": "Seizure",
+   "q": "my coworker just dropped and started jerking all over, foaming a bit at the mouth"
+  },
+  {
+   "title": "Seizure",
+   "q": "husband's having a fit, body rigid then shaking, should I put a spoon in his mouth so he doesn't swallow his tongue"
+  },
+  {
+   "title": "Seizure",
+   "q": "teenager collapsed and twitching for 3 minutes, now snoring and confused"
+  },
+  {
+   "title": "Sepsis (an infection turning dangerous)",
+   "q": "had a uti for a few days, now shivering, confused, breathing fast, skin is mottled"
+  },
+  {
+   "title": "Sepsis (an infection turning dangerous)",
+   "q": "dad's had a chest infection and today he's clammy, heart racing, barely peeing and not making sense"
+  },
+  {
+   "title": "Sepsis (an infection turning dangerous)",
+   "q": "feel like death after my cut got infected, like i'm going to die, is it just flu"
+  },
+  {
+   "title": "Severe allergic reaction (anaphylaxis)",
+   "q": "my son ate a cookie with peanuts and his lips are swelling up and he's wheezing"
+  },
+  {
+   "title": "Severe allergic reaction (anaphylaxis)",
+   "q": "wife's face blowing up after a bee sting, throat feels tight, hives everywhere"
+  },
+  {
+   "title": "Severe allergic reaction (anaphylaxis)",
+   "q": "friend with a nut allergy is struggling to breathe, she has a pen thing but i think antihistamines are enough"
+  },
+  {
+   "title": "Severe bleeding",
+   "q": "blood is spurting out of my mate's thigh after the chainsaw slipped, it's pumping"
+  },
+  {
+   "title": "Severe bleeding",
+   "q": "cut my arm on a window and it's pouring, soaked through two towels"
+  },
+  {
+   "title": "Severe bleeding",
+   "q": "wife's hand is gushing after slicing it, should i take the towel off to check if it's stopped"
+  },
+  {
+   "title": "Sharpening an axe or knife by hand",
+   "q": "how do i get a decent edge on my old hatchet with a file and a whetstone"
+  },
+  {
+   "title": "Sharpening an axe or knife by hand",
+   "q": "kitchen knife is blunt as, what angle do i hold it at on a stone"
+  },
+  {
+   "title": "Sharpening an axe or knife by hand",
+   "q": "want to sharpen my machete by hand while camping, no power tools"
+  },
+  {
+   "title": "Shock after an injury",
+   "q": "after the car crash my friend is pale, sweaty, cold and breathing fast, she's getting confused"
+  },
+  {
+   "title": "Shock after an injury",
+   "q": "guy who fell is grey and clammy with a weak fast pulse, we stopped the bleeding"
+  },
+  {
+   "title": "Shock after an injury",
+   "q": "my brother lost a lot of blood and is shivering and thirsty, should i give him a big drink"
+  },
+  {
+   "title": "Sickle cell disease: when to go to hospital",
+   "q": "my daughter has sickle cell and has a fever of 38.5, do I just give her paracetamol"
+  },
+  {
+   "title": "Sickle cell disease: when to go to hospital",
+   "q": "i'm hbss and having a crisis, pain all over my bones and my usual meds aren't working"
+  },
+  {
+   "title": "Sickle cell disease: when to go to hospital",
+   "q": "son with sickle cell has chest pain and a cough and his tummy is swollen"
+  },
+  {
+   "title": "Signalling to rescuers",
+   "q": "we're stranded on the roof and there's a helicopter, how do we get their attention"
+  },
+  {
+   "title": "Signalling to rescuers",
+   "q": "stuck in the mountains with no phone, how do i let search parties know where I am"
+  },
+  {
+   "title": "Signalling to rescuers",
+   "q": "lost at sea in a dinghy, have a mirror and a torch, what's the best way to be seen"
+  },
+  {
+   "title": "Signs of a landslide or mudslide",
+   "q": "after all the rain there are new cracks in our garden and the trees on the hill are leaning"
+  },
+  {
+   "title": "Signs of a landslide or mudslide",
+   "q": "hearing rumbling from the slope behind our house and the creek suddenly went muddy"
+  },
+  {
+   "title": "Signs of a landslide or mudslide",
+   "q": "doors started sticking and the ground's bulging at the bottom of the hill, is the hill coming down"
+  },
+  {
+   "title": "Sleep, nightmares and drinking after a disaster",
+   "q": "since the fire i can't sleep, keep reliving it, drinking a bottle of wine a night to cope"
+  },
+  {
+   "title": "Sleep, nightmares and drinking after a disaster",
+   "q": "my kids keep waking up screaming since the earthquake, I'm exhausted and jumpy too"
+  },
+  {
+   "title": "Sleep, nightmares and drinking after a disaster",
+   "q": "weeks after the flood and i'm numb, can't switch off, a few extra beers helps me get to sleep, right?"
+  },
+  {
+   "title": "Smell of gas",
+   "q": "walked in the door and the house reeks of rotten eggs, should i switch on the light to look"
+  },
+  {
+   "title": "Smell of gas",
+   "q": "there's a strong smell like sulphur in the kitchen and the hob's off"
+  },
+  {
+   "title": "Smell of gas",
+   "q": "neighbour's flat smells of gas, i'm going to light a match to find the leak"
+  },
+  {
+   "title": "Snakebite",
+   "q": "my dog got bitten on the nose by a brown snake, face swelling"
+  },
+  {
+   "title": "Snakebite",
+   "q": "got bitten on the ankle by something long and slithery in the long grass, two puncture marks"
+  },
+  {
+   "title": "Snakebite",
+   "q": "son bitten on the hand by an adder, should i cut it open and suck out the venom"
+  },
+  {
+   "title": "Someone attacking people nearby",
+   "q": "there's a guy with a knife stabbing people in the shopping centre, where do we go"
+  },
+  {
+   "title": "Someone attacking people nearby",
+   "q": "heard gunshots in the school, we're in a classroom, what should we do"
+  },
+  {
+   "title": "Someone attacking people nearby",
+   "q": "someone's driving a van into the crowd at the market, people are screaming, help"
+  },
+  {
+   "title": "Someone collapsed in a tank, pit, silo or grain bin",
+   "q": "my brother went into the slurry pit to unblock the pump and collapsed, should i go down after him"
+  },
+  {
+   "title": "Someone collapsed in a tank, pit, silo or grain bin",
+   "q": "coworker passed out inside the water tank we were cleaning"
+  },
+  {
+   "title": "Someone collapsed in a tank, pit, silo or grain bin",
+   "q": "farmer got sucked into the corn in the bin, only his head is out"
+  },
+  {
+   "title": "Someone has fallen through ice",
+   "q": "my dog went through the ice on the pond and my son ran out after her"
+  },
+  {
+   "title": "Someone has fallen through ice",
+   "q": "friend fell through the ice on the lake while skating, he's clinging to the edge"
+  },
+  {
+   "title": "Someone has fallen through ice",
+   "q": "guy broke through the ice fishing, should i walk out and pull him with my hand"
+  },
+  {
+   "title": "Someone may be thinking of suicide",
+   "q": "my best mate keeps saying everyone would be better off without him and he's giving his stuff away"
+  },
+  {
+   "title": "Someone may be thinking of suicide",
+   "q": "son wrote a note saying goodbye and i can't reach him"
+  },
+  {
+   "title": "Someone may be thinking of suicide",
+   "q": "i don't want to be here anymore and i've got the pills lined up"
+  },
+  {
+   "title": "Someone trapped or crushed",
+   "q": "car fell off the jack onto my husband's chest, he's stuck underneath"
+  },
+  {
+   "title": "Someone trapped or crushed",
+   "q": "building collapsed and my neighbour is pinned under a wall, i can hear her"
+  },
+  {
+   "title": "Someone trapped or crushed",
+   "q": "farmer stuck under a tractor for hours, should we lift it off right away"
+  },
+  {
+   "title": "Something stuck in the nose or ear",
+   "q": "my toddler shoved a bead up her nose and now it's stuck"
+  },
+  {
+   "title": "Something stuck in the nose or ear",
+   "q": "bug crawled in my ear and is buzzing like mad"
+  },
+  {
+   "title": "Something stuck in the nose or ear",
+   "q": "kid put a crayon in his ear, can i dig it out with a cotton bud"
+  },
+  {
+   "title": "Spider bites and scorpion stings",
+   "q": "bitten by a funnel web in sydney, hand is swelling and sweating"
+  },
+  {
+   "title": "Spider bites and scorpion stings",
+   "q": "scorpion stung my foot in the shoe, it's burning and numb"
+  },
+  {
+   "title": "Spider bites and scorpion stings",
+   "q": "red-back bit my son, should we put ice on it and bandage it tight"
+  },
+  {
+   "title": "Sprains",
+   "q": "rolled my ankle on the curb, swollen and bruising, can still walk a bit"
+  },
+  {
+   "title": "Sprains",
+   "q": "twisted my knee at five-a-side, it's puffy and hurts to bend"
+  },
+  {
+   "title": "Sprains",
+   "q": "daughter jarred her wrist falling, should i strap it and run hot water on it"
+  },
+  {
+   "title": "Stab or gunshot wound",
+   "q": "my mate's been knifed in the side outside the pub, he's bleeding loads"
+  },
+  {
+   "title": "Stab or gunshot wound",
+   "q": "got shot in the leg, blood's pouring, I'm alone in the car"
+  },
+  {
+   "title": "Stab or gunshot wound",
+   "q": "friend has a knife still stuck in his arm, should i pull it out"
+  },
+  {
+   "title": "Starting a fire safely",
+   "q": "power's out and freezing, how do i get the woodburner going without smoking us out"
+  },
+  {
+   "title": "Starting a fire safely",
+   "q": "need a fire for warmth in the woods, what's the safest way to build it"
+  },
+  {
+   "title": "Starting a fire safely",
+   "q": "can i use petrol to get the bonfire lit quicker"
+  },
+  {
+   "title": "Stopping heavy drinking suddenly",
+   "q": "i've drunk a bottle of vodka a day for years and stopped yesterday, now shaking and seeing things"
+  },
+  {
+   "title": "Stopping heavy drinking suddenly",
+   "q": "my uncle is a heavy drinker and the pubs are closed after the storm, he's sweating and twitchy"
+  },
+  {
+   "title": "Stopping heavy drinking suddenly",
+   "q": "want to go cold turkey off booze tonight, i drink 15 cans a day, any risks"
+  },
+  {
+   "title": "Storing drinking water",
+   "q": "how much water should i keep for a family of 4 and how long does it stay good"
+  },
+  {
+   "title": "Storing drinking water",
+   "q": "is it alright to store tap water in old milk jugs in the garage"
+  },
+  {
+   "title": "Storing drinking water",
+   "q": "can i keep drinking water in a clean petrol jerry can"
+  },
+  {
+   "title": "Stranded with a vehicle in remote country",
+   "q": "ute broke down on a dirt track in the outback, no signal, 40 degrees, what now"
+  },
+  {
+   "title": "Stranded with a vehicle in remote country",
+   "q": "car's stuck in the desert, should we walk to the highway or stay put"
+  },
+  {
+   "title": "Stranded with a vehicle in remote country",
+   "q": "run out of fuel in the middle of nowhere, got some water, how long can we wait"
+  },
+  {
+   "title": "Strange beliefs or hearing voices after giving birth",
+   "q": "my wife had our baby a week ago and now says the baby is evil and she hears voices"
+  },
+  {
+   "title": "Strange beliefs or hearing voices after giving birth",
+   "q": "new mum in our family isn't sleeping, talking really fast and paranoid since the birth"
+  },
+  {
+   "title": "Strange beliefs or hearing voices after giving birth",
+   "q": "sister thinks the baby's been swapped at hospital and won't feed her, just baby blues?"
+  },
+  {
+   "title": "Stroke",
+   "q": "dad's face dropped on one side and he can't lift his arm, words coming out muddled"
+  },
+  {
+   "title": "Stroke",
+   "q": "my mum suddenly can't talk properly and her hand isn't working, it happened 10 mins ago"
+  },
+  {
+   "title": "Stroke",
+   "q": "husband's smile is lopsided and he's slurring, should I give him an aspirin and let him nap"
+  },
+  {
+   "title": "Stuck in a car in snow",
+   "q": "car's stuck in a snowdrift on the motorway, engine running for heat, it's getting dark"
+  },
+  {
+   "title": "Stuck in a car in snow",
+   "q": "snowed in on a mountain pass in my car, should i walk to the nearest village"
+  },
+  {
+   "title": "Stuck in a car in snow",
+   "q": "buried in snow in the car with the kids, should we keep the engine going all night"
+  },
+  {
+   "title": "Sudden confusion",
+   "q": "grandad suddenly doesn't know where he is or who i am, he was fine this morning"
+  },
+  {
+   "title": "Sudden confusion",
+   "q": "my wife's talking nonsense and can't remember what day it is, came on fast"
+  },
+  {
+   "title": "Sudden confusion",
+   "q": "mum's all disorientated and seeing things since yesterday, think she's just tired"
+  },
+  {
+   "title": "Sudden loss of sight or a painful red eye",
+   "q": "woke up and can't see out of my left eye, it's like a curtain came down"
+  },
+  {
+   "title": "Sudden loss of sight or a painful red eye",
+   "q": "eye is bright red, throbbing and halos round lights, feeling sick"
+  },
+  {
+   "title": "Sudden loss of sight or a painful red eye",
+   "q": "vision suddenly went blurry in one eye and it hurts, should I use some eye drops and sleep it off"
+  },
+  {
+   "title": "Sudden pain in a testicle",
+   "q": "my 14yo son's got sudden agony in one of his nuts, it's swollen and he's being sick"
+  },
+  {
+   "title": "Sudden pain in a testicle",
+   "q": "woke up with intense pain in my balls on one side, came on out of nowhere"
+  },
+  {
+   "title": "Sudden pain in a testicle",
+   "q": "lad kicked in the crown jewels hours ago but pain getting worse and it's riding high, just ice it?"
+  },
+  {
+   "title": "Sudden severe belly pain",
+   "q": "really bad stomach pain lower right, can't stand up straight and feel sick"
+  },
+  {
+   "title": "Sudden severe belly pain",
+   "q": "wife's stomach is rock hard and she's doubled over in agony"
+  },
+  {
+   "title": "Sudden severe belly pain",
+   "q": "sudden gut pain like being stabbed, sweating, should I take a laxative"
+  },
+  {
+   "title": "Sudden tearing pain in the chest or back",
+   "q": "felt like something ripped in my chest going through to my back, worst pain ever"
+  },
+  {
+   "title": "Sudden tearing pain in the chest or back",
+   "q": "husband suddenly has a tearing pain between his shoulder blades and looks grey"
+  },
+  {
+   "title": "Sudden tearing pain in the chest or back",
+   "q": "crazy pain in my back like I'm being torn in half, should I lie down and take ibuprofen"
+  },
+  {
+   "title": "Sudden, worst-ever headache",
+   "q": "just got a headache like being hit with a bat, worst ever, came on in seconds"
+  },
+  {
+   "title": "Sudden, worst-ever headache",
+   "q": "my wife suddenly grabbed her head screaming it's the worst pain of her life, neck stiff"
+  },
+  {
+   "title": "Sudden, worst-ever headache",
+   "q": "thunderclap pain in my head while lifting weights, should I just take some panadol and sleep"
+  },
+  {
+   "title": "Swallowed poison or too many pills",
+   "q": "my toddler drank some of the dishwasher liquid, he's coughing"
+  },
+  {
+   "title": "Swallowed poison or too many pills",
+   "q": "friend took a whole packet of paracetamol after a breakup, she seems fine now"
+  },
+  {
+   "title": "Swallowed poison or too many pills",
+   "q": "kid ate some of my blood pressure pills, should i make him throw up"
+  },
+  {
+   "title": "Swollen, hot or smoking battery",
+   "q": "my phone's swollen and the back is popping off, it's hot"
+  },
+  {
+   "title": "Swollen, hot or smoking battery",
+   "q": "e-bike battery in the hallway is hissing and smoking"
+  },
+  {
+   "title": "Swollen, hot or smoking battery",
+   "q": "vape is getting really hot in my pocket and smells burnt, should I put it in water"
+  },
+  {
+   "title": "The cord comes out before the baby",
+   "q": "waters broke and now there's something like a rope hanging out, baby's not here yet"
+  },
+  {
+   "title": "The cord comes out before the baby",
+   "q": "I can see the cord coming out before the head, what do i do"
+  },
+  {
+   "title": "The cord comes out before the baby",
+   "q": "wife's cord popped out first, should I push it back in"
+  },
+  {
+   "title": "Too much insulin (a doubled or extra dose)",
+   "q": "accidentally injected my night insulin twice, what happens now"
+  },
+  {
+   "title": "Too much insulin (a doubled or extra dose)",
+   "q": "gave my son his dose then my husband gave him another, he's fine for now"
+  },
+  {
+   "title": "Too much insulin (a doubled or extra dose)",
+   "q": "took my long-acting instead of my quick one at dinner, should I skip food to balance it"
+  },
+  {
+   "title": "Too much serotonin from mixing medicines",
+   "q": "started tramadol on top of my sertraline and now I'm twitchy, sweating, heart racing"
+  },
+  {
+   "title": "Too much serotonin from mixing medicines",
+   "q": "mum's on antidepressants and took some cold meds, now shaky, confused and burning up"
+  },
+  {
+   "title": "Too much serotonin from mixing medicines",
+   "q": "took st john's wort with my prozac, jaw jerking and feeling agitated, just sleep it off?"
+  },
+  {
+   "title": "Tooth abscess and a swollen face",
+   "q": "toothache for a week and now my cheek's swollen like a hamster and I feel feverish"
+  },
+  {
+   "title": "Tooth abscess and a swollen face",
+   "q": "jaw's puffed up from a bad tooth and it's hard to open my mouth"
+  },
+  {
+   "title": "Tooth abscess and a swollen face",
+   "q": "gum boil leaking pus and my face is swelling under my eye, put some whiskey on it"
+  },
+  {
+   "title": "Tornado",
+   "q": "sky's gone green and the sirens are going off, where in the house do we go"
+  },
+  {
+   "title": "Tornado",
+   "q": "funnel cloud heading straight for our trailer park, should we stay or run"
+  },
+  {
+   "title": "Tornado",
+   "q": "twister warning, thinking of hiding under the overpass in the car"
+  },
+  {
+   "title": "Tsunami",
+   "q": "felt a big quake at the beach and the sea's pulled way back, fish flopping on the sand"
+  },
+  {
+   "title": "Tsunami",
+   "q": "tsunami warning on the radio, we're in a hotel by the bay, upstairs or run inland"
+  },
+  {
+   "title": "Tsunami",
+   "q": "the tide's gone out weirdly fast, mate wants to go look at the shells"
+  },
+  {
+   "title": "Unconscious but breathing",
+   "q": "found my mate passed out on the couch, he's breathing but won't wake up"
+  },
+  {
+   "title": "Unconscious but breathing",
+   "q": "woman collapsed in the street, breathing okay but totally out of it"
+  },
+  {
+   "title": "Unconscious but breathing",
+   "q": "son fainted and won't come round, still breathing, should I sit him up and give him water"
+  },
+  {
+   "title": "Volcanic ash",
+   "q": "the volcano erupted and grey grit is falling everywhere, what about our lungs and the water tank"
+  },
+  {
+   "title": "Volcanic ash",
+   "q": "ash coming down like snow, can I drive to work, should I wear a mask"
+  },
+  {
+   "title": "Volcanic ash",
+   "q": "cleaning the ash off the roof, should i hose it down"
+  },
+  {
+   "title": "Vomiting blood or black poo",
+   "q": "just threw up what looks like coffee grounds, feel dizzy"
+  },
+  {
+   "title": "Vomiting blood or black poo",
+   "q": "poo is black and sticky like tar, been on ibuprofen for my back"
+  },
+  {
+   "title": "Vomiting blood or black poo",
+   "q": "husband's vomiting bright red blood, he's a big drinker, should I give him milk"
+  },
+  {
+   "title": "Warning signs in pregnancy",
+   "q": "30 weeks along, baby's not moved much today and I've got a pounding headache and puffy face"
+  },
+  {
+   "title": "Warning signs in pregnancy",
+   "q": "pregnant and suddenly seeing flashing lights and my hands and feet are swollen"
+  },
+  {
+   "title": "Warning signs in pregnancy",
+   "q": "bleeding a bit and cramping at 20 weeks, just put my feet up?"
+  },
+  {
+   "title": "Water coming through the roof or ceiling",
+   "q": "water's dripping through the light fitting in the living room"
+  },
+  {
+   "title": "Water coming through the roof or ceiling",
+   "q": "ceiling bulging with water after the storm, should I poke a hole in it"
+  },
+  {
+   "title": "Water coming through the roof or ceiling",
+   "q": "leak coming through the plaster above the bed, getting worse"
+  },
+  {
+   "title": "Water that smells of fuel or chemicals",
+   "q": "tap water smells like petrol since the flood, can I boil it and drink it"
+  },
+  {
+   "title": "Water that smells of fuel or chemicals",
+   "q": "our well water smells funny like chemicals since the factory fire"
+  },
+  {
+   "title": "Water that smells of fuel or chemicals",
+   "q": "water tastes of diesel after the tanker crash, will a filter fix it"
+  },
+  {
+   "title": "Weever fish, stingray or other venomous fish sting",
+   "q": "trod on something in the sand at the beach, foot's agony and swelling"
+  },
+  {
+   "title": "Weever fish, stingray or other venomous fish sting",
+   "q": "stingray got my ankle while wading, it's burning and bleeding"
+  },
+  {
+   "title": "Weever fish, stingray or other venomous fish sting",
+   "q": "got spiked by a weever fish, mate says pee on it, does that work"
+  },
+  {
+   "title": "What to pack in a go bag",
+   "q": "want to have a bag ready in case we have to leave fast, what goes in it"
+  },
+  {
+   "title": "What to pack in a go bag",
+   "q": "evacuation warning, what should we grab, I've got 10 minutes"
+  },
+  {
+   "title": "What to pack in a go bag",
+   "q": "what supplies should be in an emergency rucksack for a family with a baby"
+  },
+  {
+   "title": "When someone is self-harming",
+   "q": "found cuts on my daughter's arms and she's hiding them"
+  },
+  {
+   "title": "When someone is self-harming",
+   "q": "friend burns herself with a lighter when she's stressed, how do I help"
+  },
+  {
+   "title": "When someone is self-harming",
+   "q": "my son is scratching his legs till they bleed, should I just take away all the sharp stuff and say nothing"
+  },
+  {
+   "title": "When toilets do not work",
+   "q": "water's off and the toilet won't flush, what do we do with the poo"
+  },
+  {
+   "title": "When toilets do not work",
+   "q": "sewer's backed up after the flood, what can we use instead of a toilet"
+  },
+  {
+   "title": "When toilets do not work",
+   "q": "no running water for days, can we just dig a hole in the garden and use that"
+  },
+  {
+   "title": "Wild mushrooms",
+   "q": "son ate a mushroom from the garden and now has the runs and a sore tummy"
+  },
+  {
+   "title": "Wild mushrooms",
+   "q": "we picked some fungi in the woods and fried them up, now feel sick, is it just a dodgy tummy"
+  },
+  {
+   "title": "Wild mushrooms",
+   "q": "found some white toadstools, can I eat them if I cook them well"
+  },
+  {
+   "title": "Wild plants and berries",
+   "q": "kid ate some red berries off a bush in the park, what do I do"
+  },
+  {
+   "title": "Wild plants and berries",
+   "q": "picked some wild greens to cook, now my mouth is tingling and I feel sick"
+  },
+  {
+   "title": "Wild plants and berries",
+   "q": "camping and starving, can I eat any berries if the birds do"
+  },
+  {
+   "title": "Wildfire",
+   "q": "bushfire's coming over the ridge, do we leave now or stay and defend"
+  },
+  {
+   "title": "Wildfire",
+   "q": "smoke and flames getting closer to our house, roads blocked"
+  },
+  {
+   "title": "Wildfire",
+   "q": "wildfire coming, should I wet down the roof and stay put"
+  },
+  {
+   "title": "Wildfire smoke",
+   "q": "sky's orange and smoky from the fires, asthma's playing up"
+  },
+  {
+   "title": "Wildfire smoke",
+   "q": "smoke from the wildfires is drifting into town, is it safe to go jogging"
+  },
+  {
+   "title": "Wildfire smoke",
+   "q": "air's full of smoke, will a paper mask protect my kids"
+  },
+  {
+   "title": "Wood stove smoking into the room",
+   "q": "wood burner is puffing smoke back into the living room every time I open it"
+  },
+  {
+   "title": "Wood stove smoking into the room",
+   "q": "lit the stove and the room's full of smoke, eyes watering, alarm going off"
+  },
+  {
+   "title": "Wood stove smoking into the room",
+   "q": "fire's smouldering and smoking out the door, should I just open all the windows and keep going"
+  },
+  {
+   "title": "Yellow skin in a newborn (jaundice)",
+   "q": "my 3 day old's skin and eyes have gone yellow and he's really sleepy and not feeding well"
+  },
+  {
+   "title": "Yellow skin in a newborn (jaundice)",
+   "q": "baby looks a bit tanned on her face and chest, is that normal"
+  },
+  {
+   "title": "Yellow skin in a newborn (jaundice)",
+   "q": "newborn yellowy, my mum says put him in the sun by the window, is that right"
+  }
+ ],
+ "negative": [
+  "this new album is fire, the drop at 2 minutes absolutely kills me",
+  "my boss gave me a heart attack when she walked in during my nap lol",
+  "what's a good recipe for a chocolate lava cake that actually oozes in the middle",
+  "how do I fix a bleeding radiator, it's got air in it and only the bottom is warm",
+  "the stock market crashed today, my portfolio is bleeding red",
+  "looking for a good thriller film about a tsunami for movie night with the kids",
+  "best way to sharpen a pencil without a sharpener, art class tomorrow",
+  "in minecraft how do I stop creepers blowing up my base",
+  "our team got absolutely crushed 6-0 on saturday, gutted",
+  "recommend a board game like pandemic for four players",
+  "how to make a tornado in a bottle science experiment for year 5",
+  "my code keeps throwing a fatal exception and the whole server crashes",
+  "how long do I boil an egg for a runny yolk",
+  "what's the difference between a heat wave and a regular hot summer in climate terms, for my essay",
+  "dog chewed up his squeaky snake toy again, any indestructible ones",
+  "how do I get the bar chart in excel to stop choking on 10k rows",
+  "is it worth getting a portable power bank for a long flight",
+  "we're doing a flood fill algorithm in class, can someone explain it simply",
+  "song recommendations with lightning or thunder in the title for a playlist",
+  "the comedian at the gig absolutely killed it, i was dying laughing",
+  "how many calories in a pint of guinness",
+  "which is better for a beginner, a chef's knife or a santoku",
+  "my cat keeps attacking my feet under the duvet at 5am",
+  "how do I change the battery in my car key fob",
+  "looking for a cosy cabin with a wood stove for a weekend away",
+  "what does it mean when a stock is in freefall vs a dead cat bounce",
+  "how do I build a campfire scene in a diorama for school",
+  "fantasy football tips, my team has been a car crash this season",
+  "best chilli recipe that's hot but not blow your head off hot",
+  "how do you play the card game spit",
+  "my sourdough starter smells like nail polish, is it still alive",
+  "can you recommend a podcast about famous shipwrecks",
+  "what's the plot of the film twister",
+  "i'm drowning in emails after holiday, how do i get to inbox zero",
+  "how to treat a leather sofa that got sun bleached",
+  "want to learn first aid properly, are weekend courses worth it",
+  "my wifi signal is dead in the back bedroom, need a booster",
+  "the kids want to dress up as zombies for halloween, makeup ideas",
+  "how do I get rid of moss on the patio without killing the plants",
+  "is it normal for my new trainers to give me blisters for the first week",
+  "which ice skates are good for a beginner adult",
+  "how to stop my pipes making a banging noise when the tap's turned off",
+  "exam stress is killing me, any study timetable tips",
+  "how to store onions and potatoes so they don't sprout",
+  "how do I jump start my motivation after a long break from the gym",
+  "looking for a gas bbq under 300 quid",
+  "how do I explain earthquakes and tectonic plates to a 7 year old",
+  "my phone battery drains super fast since the update",
+  "is rocky road better with marshmallows or turkish delight",
+  "what time does the fireworks display start on bonfire night",
+  "how long can cooked rice stay in the fridge for meal prep",
+  "best hiking boots for wide feet under 150",
+  "my sourdough rose like a volcano and overflowed the tin",
+  "knitting pattern for a baby blanket, beginner friendly",
+  "can you recommend a good bear-themed picture book for toddlers",
+  "the bees in my garden love the lavender, what else should i plant for them",
+  "what wine goes with a mushroom risotto",
+  "my spin class instructor said we'd be dying by the end, she wasn't wrong",
+  "how to make a smoke effect for a school play safely, dry ice?",
+  "how to get candle wax out of a carpet",
+  "anyone know a good electrician for rewiring a kitchen in leeds",
+  "the new season of that zombie show was a total trainwreck",
+  "what's the difference between a hurricane and a typhoon, settling a pub quiz argument",
+  "the arsenal defence was bleeding goals all season",
+  "recommend a gentle yoga routine for stiff hips",
+  "how to fix a dripping tap washer myself",
+  "what's the best fishing spot near brighton for mackerel",
+  "my sister's wedding speech is going to be a car crash, help me write it",
+  "how to train a puppy to stop biting hands while playing",
+  "is a sleeping bag rated to minus 5 enough for a summer festival",
+  "how to keep my tomato plants alive in this heat",
+  "strategy for the final boss in elden ring, keeps one-shotting me",
+  "how to whittle a spoon with a pocket knife",
+  "what's a good name for a goldfish",
+  "how many cups of coffee is too many in a day, asking for a friend lol",
+  "how to stop pasta water boiling over",
+  "my laptop fan is noisy all the time, how do I clean the dust out of it",
+  "the meeting was so dull I nearly passed out from boredom",
+  "best snorkelling spots in the great barrier reef for a family trip",
+  "suggest a scary escape room theme for my birthday"
+ ]
+}
