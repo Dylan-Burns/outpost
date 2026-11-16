@@ -1318,3 +1318,39 @@ func TestTwentyFourthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+// TestExclusionsStayInsideWords guards against a rule's exclusion matching
+// inside an ordinary word: until 1.4.28 the seizure rule's "app" (for "my
+// app had a seizure") cancelled it for any question saying "happened", and
+// "ice", "cat" and "fit" did the same inside "advice", "category" and
+// "benefit".
+func TestExclusionsStayInsideWords(t *testing.T) {
+	trap := strings.Fields("happened happen apple approach advice notice police office price device voice choice category catch communicate complicated benefit outfit profit fitness fitted dogged handy dedicated medicated hospital capital artery")
+	for _, e := range emergencies {
+		for _, x := range e.none {
+			for _, w := range trap {
+				if x.MatchString(w) {
+					t.Errorf("exclusion %q of %v matches inside %q", x.FindString(w), e.topics, w)
+				}
+			}
+		}
+	}
+}
+
+func TestTwentyFifthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"dad cut his hand with the chainsaw blood is literally spurting out it wont stop":                  "Severe bleeding",
+		"child is having a fit on the floor jerking all over, been about 2 minutes, never happened before": "Seizure",
+		"guy just got hit by a car, hes awake, says his neck really hurts and keeps trying to stand up":    "spinal",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
