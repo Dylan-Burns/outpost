@@ -1290,3 +1290,31 @@ func TestTwentyThirdRoundWording(t *testing.T) {
 		t.Error("post mortem question got the insulin treatment note")
 	}
 }
+
+func TestTwentyFourthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"my teenage girl just told me shes been thinking about ending it and has a plan. i dont know what to say to her":    "suicide",
+		"girlfriend has the worst pain of her life low down on one side, her periods late, now shes saying she feels faint": "belly pain",
+		"fastest way to defrost chicken? dinner emergency lol":                                                              "Food after",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, q := range []string{"thinking about ending it with my boyfriend, relationship is going nowhere", "we have a plan for the weekend camping trip"} {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "suicide") {
+				t.Errorf("%q got the crisis note", q)
+			}
+		}
+	}
+}

@@ -359,7 +359,8 @@ Call emergency services if they do not get better, are getting worse, are too br
 A closed fridge keeps food cold for about 4 hours. A full freezer keeps its temperature for about 48 hours, a half-full one about 24 hours.
 Throw away meat, fish, dairy, eggs and leftovers that have been above 4 °C (40 °F) for more than 2 hours.
 Frozen food that still has ice crystals, or is at 4 °C (40 °F) or below, can be refrozen.
-When in doubt, throw it out. Never taste food to decide whether it is safe.`, ""},
+When in doubt, throw it out. Never taste food to decide whether it is safe.
+To thaw meat safely: in the fridge, in cold water changed every 30 minutes, or in the microwave and then cook it straight away. Never thaw it on the counter or in hot water, which lets bacteria grow.`, ""},
 	{"Home canning", "Home canning", "USDA guidance", `Low-acid foods, which include most vegetables such as green beans, corn and potatoes, and all meat, poultry and fish, must be processed in a pressure canner. A boiling water bath does not get hot enough to kill botulism spores in them.
 A boiling water bath is only for acidic foods: most fruits, jams, and pickles made with a tested recipe.
 Tomatoes need added acid (bottled lemon juice or citric acid) before canning.
@@ -606,6 +607,7 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning":  {"Dehydration"},
 	"Wood stove smoke":           {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                    {"Eye injury"},
+	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
 	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
 	"Venomous fish sting":        {"Jellyfish sting", "Box jellyfish"},
