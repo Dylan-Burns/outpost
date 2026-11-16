@@ -97,3 +97,65 @@ func TestCrisisRecall(t *testing.T) {
 		}
 	}
 }
+
+// criticalWant names the notes that answer each life-threatening situation
+// in eval/assistant/critical.json.
+var criticalWant = map[string][]string{
+	"cardiac_arrest":    {"CPR"},
+	"choking_adult":     {"Choking (adult"},
+	"choking_baby":      {"Choking (baby"},
+	"stroke":            {"Stroke"},
+	"heart_attack":      {"Heart attack"},
+	"anaphylaxis":       {"anaphylaxis"},
+	"severe_bleeding":   {"Severe bleeding", "Stab or gunshot"},
+	"meningitis_sepsis": {"Rash that does not fade", "Sepsis", "seriously ill", "Fever in a young baby"},
+	"overdose":          {"Swallowed poison", "Opioid overdose", "Alcohol poisoning"},
+	"carbon_monoxide":   {"Carbon monoxide"},
+	"drowning":          {"Drowning"},
+	"seizure":           {"Seizure"},
+}
+
+// TestCriticalRecall guards the notes for 12 life-threatening situations
+// (12 phrasings each, written by someone who saw only the situation names)
+// and 60 decoys such as "stroke of luck" and "drowning my sorrows". Before
+// this set the rules caught 108 of 144 and gave a note to 24 decoys.
+func TestCriticalRecall(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	b, err := os.ReadFile("../../../eval/assistant/critical.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var d struct {
+		Positive map[string][]string
+		Negative []string
+	}
+	if err := json.Unmarshal(b, &d); err != nil {
+		t.Fatal(err)
+	}
+	hit, total := 0, 0
+	for k, qs := range d.Positive {
+		for _, q := range qs {
+			total++
+			ok := false
+			for _, n := range Notes(q) {
+				for _, w := range criticalWant[k] {
+					ok = ok || strings.Contains(n.Title, w)
+				}
+			}
+			if ok {
+				hit++
+			} else {
+				t.Logf("%s missed: %s", k, q)
+			}
+		}
+	}
+	if hit < 140 {
+		t.Errorf("critical recall %d of %d, below 140", hit, total)
+	}
+	for _, q := range d.Negative {
+		if n := Notes(q); len(n) > 0 {
+			t.Errorf("decoy %q got %v", q, titles(n))
+		}
+	}
+}

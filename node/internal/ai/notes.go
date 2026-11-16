@@ -36,7 +36,7 @@ type note struct {
 // copy a note whole: given one note with steps for adults and for babies,
 // Qwen3 1.7B and Llama 3.2 3B both told the reader to give a choking baby
 // abdominal thrusts. A note for one situation only holds that situation.
-var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|bub|bubs|bubba|pickney|wee one|in the cot|in her cot|in his cot|\d+[- ]?(day|week|month)s?[- ]old|(one|two|three|four|five|six|seven|eight|nine|ten|eleven)[- ](day|week|month)s?[- ]old|(\d|1[01]|one|two|three|four|five|six|seven|eight|nine|ten|eleven) ?(months?|mths?|mos?)\b)\b`)
+var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|bub|bubs|bubba|pickney|pikin|picken|few months|wee one|in the cot|in her cot|in his cot|\d+[- ]?(day|week|month)s?[- ]old|(one|two|three|four|five|six|seven|eight|nine|ten|eleven)[- ](day|week|month)s?[- ]old|(\d|1[01]|one|two|three|four|five|six|seven|eight|nine|ten|eleven) ?(months?|mths?|mos?)\b)\b`)
 
 // notBabyRE undoes a "months" that is not a baby's age.
 var notBabyRE = regexp.MustCompile(`(?i)\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven) ?(months?|mths?) (ago|pregnant|along|since|later|back|of (the|this)|supply|worth)|months? (pregnant|along)`)
@@ -607,6 +607,10 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning":  {"Dehydration"},
 	"Wood stove smoke":           {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                    {"Eye injury"},
+	"Stroke":                     {"Bone fracture"},
+	"Myocardial infarction":      {"Dehydration"},
+	"Sepsis":                     {"Panic attack"},
+	"Drowning":                   {"Rip current", "Suicide"},
 	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
 	"Too much insulin":           {"Hypoglycemia", "Poisoning"},
@@ -622,7 +626,7 @@ var supersedes = map[string][]string{
 	"Poisoning":                  {"Medicine safety"},
 	"Anaphylaxis":                {"Bee or wasp sting"},
 	"Mushroom poisoning":         {"Dehydration"},
-	"Stimulant overheating":      {"Heat stroke", "Poisoning", "Dehydration"},
+	"Stimulant overheating":      {"Heat stroke", "Dehydration"},
 	"Stab or gunshot":            {"Bleeding"},
 	"Severed body part":          {"Bleeding"},
 	"Ice rescue":                 {"Drowning"},
@@ -713,7 +717,7 @@ func plainWords(q string) string {
 
 // metaphorRE recognises figures of speech and machinery that use injury
 // words: these never need a note, even though "bleeding" also sounds urgent.
-var metaphorRE = regexp.MustCompile(`(?i)\b(bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
+var metaphorRE = regexp.MustCompile(`(?i)\b((screen|paint|ink|colou?rs?|dye|portfolio|market|stocks?|budget|cash|money|customers)\s.{0,20}bleed\w*|bleed(ing)? (edge|colou?r|through the (tape|paint))|stroke of (midnight|luck|genius)|drowning (my )?sorrows|under ?water with|choked? (up|laughing|on (my|his|her) words)|choking up|nearly choked laughing|face (dropped|fell) when|fit of (zoomies|giggles|laughter|rage|pique)|(engine|motor|bearing|pump|gearbox)s? seized|seized up|mottled (paint|effect|finish)|for (my |a )?(biology|science|health|first aid) (homework|class|essay|project|exam)|(writing|for) a quiz|what does cpr stand for|what is a heart attack exactly|cheap date|hairball|(phone|laptop|computer|console|tablet|engine|car) (overheated|froze|crashed)|heartburn after|which antacid|plant leaves|leaves are drooping|bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
 
 var urgentRE = regexp.MustCompile(`(?i)\b(help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|bloods?|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
 
