@@ -782,6 +782,11 @@ var supersedes = map[string][]string{
 // note, which would tell the reader to stay with him.
 var coercionRE = regexp.MustCompile(`(?i)\bif (i|we) (leave|go|break up|end it)\b|\b(he|she|they).?(ll|will|would|.?s gonna|is going to) (hurt|kill|harm) (himself|herself|themselves)\b.{0,40}\b(if|unless|or me|and me)\b|threatens? to (kill|hurt|harm) (himself|herself|themselves)`)
 
+// neverEverydayTopics are kept even when the question also sounds
+// everyday or uses a figure of speech: "everyone would be better off
+// without me ... im drowning in debt" is a crisis whatever else it says.
+var neverEverydayTopics = map[string]bool{"Suicide": true, "Self-harm": true, "Abuse and threats": true, "Child protection": true, "Older person at risk": true}
+
 // refusalTopics are the notes that decline a harmful request.
 var refusalTopics = map[string]bool{"Weapons refusal": true, "Forged documents": true, "Illegal request": true, "Finding a person": true, "Harming someone": true, "Toxic gas refusal": true}
 
@@ -848,7 +853,7 @@ func Notes(q string) []Source {
 	if metaphorRE.MatchString(q) || everydayRE.MatchString(q) && !urgentRE.MatchString(q) {
 		var keep []string
 		for _, t := range topics {
-			if refusalTopics[t] {
+			if refusalTopics[t] || neverEverydayTopics[t] {
 				keep = append(keep, t)
 			}
 		}

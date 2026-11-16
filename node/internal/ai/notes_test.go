@@ -1845,3 +1845,64 @@ func TestThirtySeventhRound(t *testing.T) {
 		}
 	}
 }
+
+// TestMoreShortWords guards the second anchoring pass (1.4.42): "pill" in
+// "spilled", "sick" in "sickle", "bite" in "frostbite", "die" in "diesel",
+// "cry" in "crystal", "gas" in "gash", "head" in "ahead".
+func TestMoreShortWords(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, bad := range map[string]string{
+		"spilled diesel on the garage floor, how do i clean it up":            "Swallowed poison",
+		"my son has sickle cell, how do we pack for the hurricane evacuation": "mushrooms",
+		"toes have frostbite after the hike, black at the tips":               "bites",
+		"generator runs on diesel, how long will a tank last":                 "Panic",
+		"the creek water is crystal clear, can my baby drink it":              "Croup",
+		"big gash on my shin from the fence, bleeding a fair bit":             "Starting a fire",
+	} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, bad) {
+				t.Errorf("%q got %q", q, n)
+			}
+		}
+	}
+	for q, want := range map[string]string{
+		"she fell down the stairs and hit her head": "Head injury",
+		"toddler swallowed some of my pills":        "Swallowed poison",
+		"dog bit my hand and it wont stop bleeding": "bites",
+		"baby crying non stop with a barking cough": "Croup",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
+
+func TestThirtyEighthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"honestly everyone would be better off without me. the business went under, im drowning in debt, gave my tools away": "suicide",
+		"me nan's talking a bit funny and her tea keeps dribbling out one side of her mouth, she says shes just knackered":   "Stroke",
+		"found cuts on my 15 yr olds thighs, she says shes just stressed about exams and to leave it":                        "self-harming",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	if has("dropped me phone in the sink, everyone says chuck it in rice, its dead and im drowning in work", "suicide") {
+		t.Error("an everyday phone question got the crisis note")
+	}
+}
