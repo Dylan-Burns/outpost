@@ -1944,3 +1944,34 @@ func TestThirtyNinthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortiethRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"gave my daughter (4) one of my ibuprofen 400mg by mistake instead of her childrens one, she weighs bout 16kg": "Swallowed poison",
+		"fire coming over the ridge road's blocked both ways we're stuck in the car what do we do":                     "Wildfire",
+		"caught on the hill with the storm right on top, my hairs standin up, no shelter anywhere":                     "Lightning",
+		"how do i put the fire pit out properly after we done toasting marshmallows with the kids tonight":             "campfire",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"grease fire in the pan, how do i put the fire out": "campfire",
+		"my hair stands up when i rub a balloon on it":      "Lightning",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
