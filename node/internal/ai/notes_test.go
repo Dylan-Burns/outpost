@@ -1750,3 +1750,40 @@ func TestThirtyFourthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestThirtyFifthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"took a few extra of my pills to get some sleep, maybe like 20 paracetamol, feel fine tho dont want a fuss": "Swallowed poison",
+		"my old man gets real angry when he drinks and mum hides in the bathroom. im 12 and im scared tonight":      "child is being harmed",
+		"my 14yo mate keeps getting messages from an older guy who sends her gifts n says keep it secret":           "child is being harmed",
+		"6 month old fell off the bed onto the floor, cried straight away now settled":                              "Head injury",
+		"water coming up through the floorboards and the road outside is a river now, kids n dog with me":           "Flood",
+		"cyclone coming tonight, got chooks and 2 cats and a goat. no time to evacuate pets?":                       "Animals",
+		"tree branch smashed thru roof, rain pouring in on the ceiling n its bulging":                               "roof or ceiling",
+		"no signal at all after the storm how can I let family know im ok or get help":                              "Getting news",
+		"how long can we survive on what water?? 3 of us plus dog, tap dry since tues":                              "drinking water",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"cat 4 hurricane forecast for thursday, we're 30 miles inland, what do i need ready": "Animals",
+		"tornado warning mod for minecraft":                                                  "Tornado",
+		"took my 2 paracetamol as prescribed for my back":                                    "Swallowed poison",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
