@@ -62,9 +62,11 @@ func paraphraseRecall(t *testing.T, file string, floor int) {
 // ("this traffic is killing me", "ending my lease"). Before this set the
 // rules caught 14 of the 60.
 func TestCrisisRecall(t *testing.T) {
-	// crisis2.json was written after the rules were tuned on crisis.json,
-	// with hedged, indirect phrasings; on it they first caught 22 of 60.
-	for _, f := range []string{"crisis.json", "crisis2.json"} {
+	// Each set was written after the rules were tuned on the ones before
+	// it, and on first sight the rules caught 22, 26 and 36 of its 60
+	// (crisis2-4.json): wording finds about half of fresh crisis messages,
+	// so the assistant page also always shows a crisis line.
+	for _, f := range []string{"crisis.json", "crisis2.json", "crisis3.json", "crisis4.json"} {
 		t.Run(f, func(t *testing.T) { crisisRecall(t, f) })
 	}
 }

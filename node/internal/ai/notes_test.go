@@ -1384,3 +1384,51 @@ func TestTwentySixthRoundCrisis(t *testing.T) {
 		}
 	}
 }
+
+func TestEndItIsNotEverything(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for _, q := range []string{"can i send it by post if the roads are flooded", "how do i mend it, the tent pole snapped", "should i spend it on a generator or solar", "thinking of ending it with my landlord early, can i break the lease", "i burnt myself on the oven by accident"} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "suicide") {
+				t.Errorf("%q got the crisis note", q)
+			}
+		}
+	}
+	for _, q := range []string{"been thinkin bout endin it mate, cant pay the rent", "i want to end it all"} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, "suicide")
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
+
+// TestCrisisWordsInEverydayUse keeps the warning-sign rules (1.4.30) off
+// everyday sentences that share their words.
+func TestCrisisWordsInEverydayUse(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for _, q := range []string{
+		"we're going on a long trip next month, what should go in the car kit",
+		"how do i finish the job on the fence before the storm",
+		"we got engaged, time to make it official",
+		"talk me out of buying another generator",
+		"is it my turn to go to the shop or yours",
+		"the old dog had a good innings, how deep do i bury her",
+		"ive been planning it for months, a veggie garden for the summer",
+		"see you on the other side of the storm, stay safe",
+		"im not ok with how much the fuel costs",
+		"arms all cut up from brambles clearing the path, do i need a tetanus jab",
+		"leaving a note for the neighbours about the water shutoff",
+		"my phone battery is dead already, how do i charge it with no power",
+	} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "suicide") {
+				t.Errorf("%q got the crisis note", q)
+			}
+		}
+	}
+}

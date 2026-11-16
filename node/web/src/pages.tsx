@@ -253,6 +253,14 @@ export function Assistant({ status }: { status: Status }) {
         <div>
           <h1>Assistant</h1>
           <p class="muted small" style={{ margin: 0 }}>It runs on this computer and it can be wrong. Check the sources it lists, above all on medical or safety questions.</p>
+          {/* Always shown. Outpost's rules catch most ways people say they
+              may harm themselves, but on fresh, indirect wording they caught
+              26 of 60, and asking the local models instead swung between
+              missing most and flagging most emergencies as crises. A line that
+              is always here cannot miss. */}
+          <p class="small" style={{ margin: "0.4rem 0 0" }}>
+            If you or someone with you may be thinking of suicide or of hurting themselves, stay with them, and call emergency services or a crisis line: 988 in the US and Canada, Samaritans on 116 123 in the UK and Ireland, Lifeline on 13 11 14 in Australia.
+          </p>
           {status.signedIn && !info.models.some((m) => m.rank && m.rank < 4) && (
             <p class="muted small" style={{ margin: "0.4rem 0 0" }}>
               Tip: in Outpost&apos;s tests on emergency questions, Llama 3.2 3B and Phi-4 mini answered more accurately than the smallest model. If
