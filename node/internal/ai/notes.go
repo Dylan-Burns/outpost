@@ -360,6 +360,21 @@ Never mix bleach with ammonia, vinegar or other acids or cleaners. If you breath
 	{"Contaminated water", "Water that smells of fuel or chemicals", "CDC, EPA and water utility guidance", `Do not drink, cook with, or wash food in water that smells or tastes of fuel, oil or chemicals, and do not give it to pets. Boiling does not make it safe: it can concentrate chemicals and release fumes, and filters and purification tablets do not remove them either.
 Use bottled or stored water instead, and tell your water supplier or the local council; they will say when the supply is safe.
 If someone has drunk it and is coughing, choking, drowsy or vomiting, call emergency services or a poison centre.`, ""},
+	{"Missed dialysis", "Missed dialysis", "National Kidney Foundation, NHS and FEMA guidance", `Call emergency services now if they are short of breath (especially lying flat), have chest pain, an irregular or very slow heartbeat, muscle weakness, or confusion: fluid and potassium are building up and this can stop the heart.
+Get to any dialysis unit or hospital as soon as you can: tell them you have missed treatment. Your unit or the emergency number can tell you which units are open.
+Until then, on an emergency kidney diet: drink as little as you can, eat no salt or salty, processed or tinned food, and avoid high-potassium foods (bananas, oranges, potatoes, tomatoes, dried fruit, chocolate, nuts).`, ""},
+	{"Volcanic ash", "Volcanic ash", "USGS, IVHHN and Red Cross guidance", `Stay indoors with windows, doors and vents closed. Outside, wear a well-fitting N95 or FFP2 mask (or a damp cloth if you have none) and goggles, and cover your skin. People with asthma or lung or heart disease should stay inside.
+Do not drive if you can avoid it: ash is slippery and blocks visibility and engines. Keep ash out of water tanks: disconnect the downpipes, and do not drink water that looks or tastes of ash.
+Clear ash from roofs early, because wet ash is heavy enough to collapse a roof, but only if it is safe: work with someone else, wear a mask, and never climb on a steep or fragile roof. Dampen ash lightly before sweeping it.`, ""},
+	{"Baby in hot weather", "Keeping a baby cool in hot weather", "NHS and Red Cross guidance", `A baby under 6 months should have more breastfeeds or formula feeds, not water. Babies over 6 months can also have small sips of cooled boiled water.
+Keep them out of the sun and in the coolest room; dress them in a nappy and a light vest, use a cool damp cloth on the skin, and never cover a pram with a blanket, which traps heat. Do not use ice or cold baths.
+Get urgent medical help if a baby is floppy, very sleepy, has a temperature of 38 °C (100.4 °F) or more (under 3 months), has fewer wet nappies, a sunken soft spot, or is not feeding.`, ""},
+	{"Older person at risk", "If you are worried an older person is being abused", "Age UK, Hourglass and US Adult Protective Services guidance", `If they are in danger now, call emergency services.
+Signs include unexplained bruises, weight loss or hunger, being afraid of a carer, a carer keeping their money or bank card, or being kept from seeing others. They may ask you not to make a fuss: you can still get help.
+Report it to the local council's adult social care (safeguarding) team or the police; in the US, Adult Protective Services or the Eldercare Locator (1-800-677-1116); in the UK, the Hourglass helpline (0808 808 8141). If a care agency employs the carer, tell the agency too.`, ""},
+	{"After a disaster", "Sleep, nightmares and drinking after a disaster", "NHS, SAMHSA and Red Cross guidance", `Trouble sleeping, nightmares, flashbacks, feeling on edge or numb, and drinking more are common after a disaster. They often ease over weeks; if they are not easing after about a month, or are getting worse, help works.
+Things that help: talking with people you trust, keeping some routine, sleep and meals at regular times, and cutting back on alcohol, which makes sleep and low mood worse.
+Talk to a doctor or a disaster mental health service: in the US the Disaster Distress Helpline (call or text 1-800-985-5990); in the UK, your GP or NHS talking therapies. If you have thoughts of harming yourself, call emergency services or a crisis line.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -643,11 +658,13 @@ var supersedes = map[string][]string{
 	"Wood stove smoke":           {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                    {"Eye injury"},
 	"Stroke":                     {"Bone fracture"},
-	"Myocardial infarction":      {"Dehydration"},
+	"Myocardial infarction":      {"Dehydration", "Panic attack"},
 	"Sepsis":                     {"Panic attack"},
 	"Drowning":                   {"Rip current"},
 	"Severe belly pain":          {"Fainting"},
 	"Illegal request":            {"Weapons refusal"},
+	"Baby in hot weather":        {"Heat stroke"},
+	"Volcanic ash":               {"Wildfire"},
 	"Finding a person":           {"Weapons refusal"},
 	"Harming someone":            {"Weapons refusal", "Medicine safety", "Poisoning"},
 	"Toxic gas refusal":          {"Toxic gas", "Chemical cloud"},

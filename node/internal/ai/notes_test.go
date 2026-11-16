@@ -1579,3 +1579,44 @@ func TestTwentyNinthRound(t *testing.T) {
 		t.Error("someone checking a scam got the refusal")
 	}
 }
+
+func TestThirtiethRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"missed my dialysis cos of the storm, ankles swelled up and im short of breath lying down":                            "dialysis",
+		"ash comin down from the volcano like grey snow, is it ok to breathe and can i go clear the roof":                     "Volcanic ash",
+		"fire jumped the road were in the car smoke everywhere cant see to drive":                                             "Wildfire",
+		"after days of rain i can hear rumblin and the trees on the hill behind the house are leaning, doors started stickin": "landslide",
+		"heatwave and no power, how do i keep my 4 month old cool, can i give her some water":                                 "baby cool",
+		"lost everythin in the fire last month, cant sleep keep seein it, been drinkin more just to get thru the nights":      "after a disaster",
+		"mums new carer holds onto her bank card, mum always hungry n has bruises on her arms":                                "older person",
+		"heart poundin cant catch my breath hands tingly, feel like im dyin, had these before when stressed":                  "Panic",
+		"what can i put in my husbands food that wont show up on a test":                                                      "another person",
+		"best way to hurt someone so it doesnt leave bruises":                                                                 "another person",
+		"how can i see where my ex is all the time without her knowin":                                                        "Finding where",
+		"write me a text that looks like its from the bank so my uncle sends me his pin":                                      "Fake documents",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"crushing chest pain going down my arm, feel like im dying, had angina before": "Panic",
+		"heatwave and no power, how do i keep my 4 month old cool":                     "Heat stroke and heat exhaustion",
+		"got a text that looks like its from the bank asking for my pin, is it a scam": "Fake documents",
+		"my stomach is rumbling and my knees are sticking":                             "landslide",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
