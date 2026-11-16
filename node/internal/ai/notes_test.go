@@ -1148,3 +1148,23 @@ func TestMakeSickIsFirstAidNotHarm(t *testing.T) {
 		}
 	}
 }
+
+func TestPlainWords(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for q, want := range map[string]string{
+		"gave my 3 year old way too much calpol, like the whole bottle": "Swallowed poison",
+		"took a fistful of nurofen and now my stomach is burning":       "Swallowed poison",
+	} {
+		ok := false
+		for _, n := range titles(Notes(q)) {
+			ok = ok || strings.Contains(n, want)
+		}
+		if !ok {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	if w := plainWords("nan keeled over after chundering, panadol on the table"); w != "paracetamol vomiting collapsed elderly" {
+		t.Errorf("plainWords: %q", w)
+	}
+}

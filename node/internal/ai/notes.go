@@ -3,6 +3,7 @@ package ai
 import (
 	"regexp"
 	"slices"
+	"strings"
 )
 
 // Notes are short first-aid and safety notes that Outpost ships itself, for
@@ -580,6 +581,7 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
+	"Mushroom poisoning":        {"Dehydration"},
 	"Stimulant overheating":     {"Heat stroke", "Poisoning", "Dehydration"},
 	"Confined space":            {"Cardiopulmonary resuscitation", "Recovery position"},
 	"Stab or gunshot":           {"Bleeding"},
@@ -637,6 +639,39 @@ var everydayRE = regexp.MustCompile(`(?i)\b(sales|revenue|startup|quarter|burn r
 // original text.
 var gDropRE = regexp.MustCompile(`(?i)\b([a-z]{3,}[^aeiou\s'])in'?\b`)
 
+// plainWords maps brand names and slang to the words the rules use:
+// "12 panadol" is paracetamol, "chundered" is vomiting, "keeled over" is
+// collapsed. Each blind review round found a harmful answer behind a word
+// like these.
+var plainWordList = []struct {
+	re   *regexp.Regexp
+	word string
+}{
+	{regexp.MustCompile(`(?i)\b(panadol|calpol|crocin|dolo|panamax|tempra|disprol|mapap|tylenol)\b`), "paracetamol"},
+	{regexp.MustCompile(`(?i)\b(nurofen|advil|motrin|brufen|calprofen)\b`), "ibuprofen"},
+	{regexp.MustCompile(`(?i)\b(aleve|naprosyn)\b`), "naproxen"},
+	{regexp.MustCompile(`(?i)\b(disprin|bayer|ecotrin)\b`), "aspirin"},
+	{regexp.MustCompile(`(?i)\b(piriton|zyrtec|claritin|clarityn|allegra|telfast)\b`), "antihistamine"},
+	{regexp.MustCompile(`(?i)\b(chunder(ed|ing)?|spew(ed|ing)?|puk(ed|ing)|hurl(ed|ing)|barf(ed|ing)?|upchuck(ed|ing)?|heav(ed|ing) up|technicolou?r yawn)\b`), "vomiting"},
+	{regexp.MustCompile(`(?i)\b(keel(ed)? over|conk(ed)? out|dropped like a stone|hit the deck|went down like a sack|flaked out)\b`), "collapsed"},
+	{regexp.MustCompile(`(?i)\b(bloods|claret)\b`), "blood"},
+	{regexp.MustCompile(`(?i)\b(gasping|can.?t catch (my|his|her|their) breath|puffed out|winded and can.?t)\b`), "breathless"},
+	{regexp.MustCompile(`(?i)\b(bub|bubba|bairn|wean|pickney|wee one|lil one|little one)\b`), "baby"},
+	{regexp.MustCompile(`(?i)\b(nan|nana|nanna|gran|granny|grandad|grandpa|pop|poppa|oma|opa)\b`), "elderly"},
+	{regexp.MustCompile(`(?i)\b(genny|genset)\b`), "generator"},
+	{regexp.MustCompile(`(?i)\b(ute|bakkie|lorry|motor)\b`), "car"},
+}
+
+func plainWords(q string) string {
+	var out []string
+	for _, w := range plainWordList {
+		if w.re.MatchString(q) {
+			out = append(out, w.word)
+		}
+	}
+	return strings.Join(out, " ")
+}
+
 // metaphorRE recognises figures of speech and machinery that use injury
 // words: these never need a note, even though "bleeding" also sounds urgent.
 var metaphorRE = regexp.MustCompile(`(?i)\b(bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
@@ -661,6 +696,15 @@ func Notes(q string) []Source {
 			}
 		}
 		q = q + " " + g
+	}
+	// Brand names and slang: add the plain word, keeping the original.
+	if extra := plainWords(q); extra != "" {
+		for _, t := range EmergencyTopics(extra) {
+			if !contains(topics, t) {
+				topics = append(topics, t)
+			}
+		}
+		q = q + " " + extra
 	}
 	for _, t := range noteTopics {
 		if t.re.MatchString(q) && !contains(topics, t.topic) {
