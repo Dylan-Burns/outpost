@@ -1711,3 +1711,42 @@ func TestThirtyThirdRound(t *testing.T) {
 		}
 	}
 }
+
+func TestThirtyFourthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"car batterys dead, how do i jump it off my mates car":                                                     "Jump-starting",
+		"fire alarm goin in our block n my neighbour in a wheelchair lives alone on 4th floor, lifts off":          "block of flats",
+		"massive storm, water risin in the paddock, got chooks n 3 goats in the shed, leave em or what":            "Animals",
+		"how do i cook in the flat when the power is off for days":                                                 "Cooking when the power",
+		"my teen had a sore throat now she cant swallow her own spit, shes droolin n her voice is all muffled":     "swallow saliva",
+		"he only shoves me when hes stressed n now powers out n were stuck inside together":                        "Abuse",
+		"my daughters boyfriend checks her phone, wont let her see us, shes got bruises she says are from netball": "Abuse",
+		"kid fell off the trampoline n his wrist looks all bendy n wrong, should i pull it straight":               "Broken bones",
+		"taps dry, got a creek out back, how do i make it safe to drink no tablets":                                "safe to drink",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"bushfire coming fast roads blocked smoke everywhere, can we just hide in the pool": "block of flats",
+		"theres smoke coming under my bedroom door house is on fire im on the 2nd floor":    "block of flats",
+		"flood water gone down, carpets soaked, the fuse box got wet":                       "Animals",
+		"boil water notice after the floods but no power for the kettle":                    "Cooking when the power",
+		"flood fill tool in photoshop not working":                                          "Flood",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
