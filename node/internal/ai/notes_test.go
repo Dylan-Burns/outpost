@@ -1812,3 +1812,36 @@ func TestThirtySixthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestThirtySeventhRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"bloke here, 45. havent slept properly in weeks since the business went under. sitting in the shed with the shotgun thinking a lot":  "suicide",
+		"grandpa had a fall last week, seemed ok, but this past few days hes more confused and sleepy and got a headache. he takes warfarin": "Head injury",
+		"my mum is 79, her new 'friend' who helps her keeps taking her bank card and she's scared to say no, he shouts at her":               "older person",
+		"my brother has been shot in the leg, bleeding a lot":                                                                                "gunshot",
+		"he walked into the sea and we pulled him out, hes not breathing":                                                                    "Drowning",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"bloke here, 45. havent slept properly in weeks since the business went under. sitting in the shed with the shotgun thinking a lot": "Drowning",
+		"neighbours dog bit my daughter on the hand, no idea if its had its shots":                                                          "gunshot",
+		"cleaning my shotgun before the hunting trip, best oil to use":                                                                      "suicide",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
