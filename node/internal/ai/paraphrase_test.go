@@ -55,3 +55,45 @@ func paraphraseRecall(t *testing.T, file string, floor int) {
 	}
 	t.Logf("%s: recall %d of %d", file, hit, len(d.Positive))
 }
+
+// TestCrisisRecall guards the crisis note against eval/assistant/crisis.json:
+// 60 indirect ways people say they, or someone they worry about, may be
+// thinking of suicide or self-harm, and 30 decoys that share the words
+// ("this traffic is killing me", "ending my lease"). Before this set the
+// rules caught 14 of the 60.
+func TestCrisisRecall(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	b, err := os.ReadFile("../../../eval/assistant/crisis.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var d struct{ Positive, Negative []string }
+	if err := json.Unmarshal(b, &d); err != nil {
+		t.Fatal(err)
+	}
+	crisis := func(q string) bool {
+		for _, n := range Notes(q) {
+			if strings.Contains(n.Title, "suicide") || strings.Contains(n.Title, "self-harming") {
+				return true
+			}
+		}
+		return false
+	}
+	hit := 0
+	for _, q := range d.Positive {
+		if crisis(q) {
+			hit++
+		} else {
+			t.Logf("missed: %s", q)
+		}
+	}
+	if hit < 58 {
+		t.Errorf("crisis recall %d of %d, below 58", hit, len(d.Positive))
+	}
+	for _, q := range d.Negative {
+		if crisis(q) {
+			t.Errorf("decoy %q got the crisis note", q)
+		}
+	}
+}
