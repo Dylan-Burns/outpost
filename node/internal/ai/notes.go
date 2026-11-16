@@ -223,6 +223,72 @@ A sunken soft spot can mean dehydration: get urgent medical advice the same day.
 Keep them lying still and calm. Do not give aspirin, food or drink. If they become unresponsive and stop breathing normally, start CPR.`, ""},
 	{"Belly injury", "Belly injury after a fall or blow", "NHS and American College of Surgeons guidance", `After a fall, crash or blow to the belly (bike handlebars, a trampoline frame, a seatbelt), bleeding inside can start slowly and show up hours later. Call emergency services or go to the emergency department now if the belly is swollen, tight or very tender, if they are pale, sweaty, faint or unusually sleepy, if they vomit, if there is blood in their urine, or if pain spreads to the shoulder.
 Keep them lying still and warm and give them nothing to eat or drink until they have been checked.`, ""},
+	{"Vital medicine running out", "Running out of a vital medicine", "NHS, CDC and pharmacist guidance", `Do not stop these suddenly or ration them without advice: insulin (type 1 diabetes always needs some insulin), steroid tablets such as prednisolone or hydrocortisone, epilepsy medicines, heart and blood thinning medicines, and many antidepressants. Stopping can be dangerous within a day or two.
+Ask any pharmacist, shelter or evacuation centre medical staff, or emergency doctor for an emergency supply: take the packets or a list of names and doses. Do not take someone else's prescription unless a professional tells you to.
+Call emergency services if someone who has missed steroids is vomiting, very weak, confused or collapses; someone has a seizure; a person with type 1 diabetes without insulin is vomiting, breathing fast or drowsy; or there is chest pain or severe breathlessness.`, ""},
+	{"High blood sugar", "High blood sugar and diabetic ketoacidosis", "NHS and American Diabetes Association guidance", `Signs of high blood sugar: very thirsty, peeing a lot, tired, blurred vision. Keep drinking water or sugar-free drinks, keep taking diabetes medicine and insulin (even when ill or not eating), and check sugar and ketones if you can.
+Call emergency services now if someone with diabetes, especially type 1, is vomiting, has tummy pain, is breathing fast and deep, has breath that smells fruity or like pear drops, is very drowsy or confused, or has high ketones. This can be diabetic ketoacidosis, which can kill within hours.
+Insulin keeps at room temperature (below about 30 °C) for about 4 weeks once out of the fridge. Keep it out of the sun and never let it freeze.`, ""},
+	{"Seriously ill child", "Is my child seriously ill?", "NHS and NICE traffic-light guidance", `Call emergency services now if a child: has blue, grey, very pale or blotchy skin or lips; is struggling to breathe, grunting, breathing very fast, or the skin pulls in between the ribs; is floppy, unresponsive, or cannot stay awake; has a weak, high-pitched or nonstop cry; has a fit; or has a rash that does not fade under a glass.
+Get urgent medical advice the same day if they are not drinking, have had no wee or wet nappy for 12 hours, have a temperature of 39 °C (102.2 °F) or more and are under 6 months, or you are worried they are getting worse.
+Otherwise: give plenty of fluids, keep them comfortable (not wrapped up), check on them during the night, and trust your instinct if something feels wrong.`, ""},
+	{"Severe belly pain", "Sudden severe belly pain", "NHS guidance", `Call emergency services now for sudden, severe belly pain, especially if the belly is hard or rigid, the person faints or looks pale and sweaty, vomits blood or green bile, or has pain with vomiting and no poo or wind.
+In anyone who could be pregnant, belly pain on one side with bleeding, fainting or pain at the tip of the shoulder can be an ectopic pregnancy: call emergency services.
+Pain that starts around the belly button and moves to the lower right, worse when moving or coughing, may be appendicitis: get seen urgently the same day. Do not take laxatives, and do not eat until a doctor has seen them.`, ""},
+	{"Blood clot", "Possible blood clot (leg or lung)", "NHS and American Heart Association guidance", `Call emergency services now for sudden breathlessness, sharp chest pain that is worse when breathing in, coughing up blood, or collapse: a blood clot in the lung can kill quickly.
+A swollen, painful, warm or red calf or thigh, usually in one leg, can be a clot in the leg (DVT): get seen the same day. Do not massage the leg.
+Clots are more likely after surgery, a long journey or time in bed, in pregnancy or after birth, on the contraceptive pill, or with cancer.`, ""},
+	{"Thunderclap headache", "Sudden, worst-ever headache", "NHS guidance", `Call emergency services now for a sudden, severe headache that peaks within about a minute (often called the worst headache ever), especially with a stiff neck, vomiting, confusion, fainting, a fit, weakness, or trouble speaking. It can be bleeding in the brain.
+Also call for a headache after a head injury with vomiting or drowsiness, or with fever and a rash that does not fade or a stiff neck.`, ""},
+	{"Alcohol withdrawal", "Stopping heavy drinking suddenly", "NHS and NIAAA guidance", `Someone who drinks heavily every day can become dangerously ill within 6 to 72 hours of stopping suddenly: shaking, sweating, anxiety, then sometimes fits, seeing or hearing things, confusion and fever (delirium tremens).
+Call emergency services if they have a fit, become confused, see or hear things that are not there, or have a fever.
+If you drink heavily, do not stop suddenly on your own: cut down gradually or get medical help to stop. The same applies to sleeping pills and benzodiazepines such as diazepam: do not stop them suddenly.`, ""},
+	{"Ice rescue", "Someone has fallen through ice", "RNLI, Red Cross and Royal Life Saving guidance", `Call emergency services. Do not go onto the ice: many rescuers die this way.
+Shout to them to stay calm, keep their head up, kick their legs and pull themselves forward flat onto the ice the way they came, then roll or crawl away rather than standing.
+From the bank, reach with a long branch, pole, rope or scarf, or throw something that floats; lie down so you are not pulled in.
+Once out, get them somewhere warm, remove wet clothes and warm them gently; they need checking for hypothermia and water in the lungs.`, ""},
+	{"Trapped person", "Someone trapped or crushed", "FEMA, Red Cross and St John guidance", `Call emergency services and tell them how long the person has been trapped.
+Do not try to lift heavy rubble or a vehicle if it could collapse further or crush you. If someone has been crushed under a heavy weight for more than about 15 minutes, releasing them can be dangerous: wait for emergency services unless their life is in immediate danger.
+Reassure them, keep them warm, press on any wound that is bleeding, and do not move them if their neck or back may be hurt.
+If you are trapped: cover your mouth with cloth, move as little as possible, tap on a pipe or wall or use a whistle so rescuers can find you, and shout only as a last resort.`, ""},
+	{"Stab or gunshot", "Stab or gunshot wound", "NHS, Red Cross and St John guidance", `Call emergency services. Press hard on the wound with a clean cloth and keep pressing.
+If a knife or object is still in the wound, do not pull it out: press around it.
+For a wound to the chest, if it bubbles or sucks air, leave it open or cover it loosely without sealing it, and help them sit in the position that makes breathing easiest.
+Lie them down if they feel faint, keep them warm, and give nothing to eat or drink. If they stop breathing normally, start CPR.`, ""},
+	{"Vomiting blood", "Vomiting blood or black poo", "NHS guidance", `Call emergency services now if someone vomits a lot of blood, or vomit that looks like coffee grounds, or has black, tarry or very bloody poo, especially if they feel dizzy, faint, pale or sweaty, or take blood thinners. This can be bleeding inside.
+Give them nothing to eat or drink. Lay them on their side if they are drowsy, and keep a sample or describe it to the medics.`, ""},
+	{"Radiation emergency", "Radiation or nuclear emergency", "Ready.gov, CDC and UK Government guidance", `Get inside a solid building straight away (brick or concrete), go to the middle or the basement, close windows and doors, and turn off fans and air conditioning. Stay inside for at least 24 hours unless officials tell you otherwise: going outside is the most dangerous thing you can do.
+If you were outside, take off your outer clothing, put it in a bag, and wash with soap and water (no conditioner).
+Listen to the radio for instructions. Take potassium iodide tablets only if officials tell you to. Never drink iodine antiseptic or bleach.`, ""},
+	{"Chemical cloud", "Chemical leak or toxic cloud", "Ready.gov and CDC guidance", `Go inside straight away, close all windows and doors, and turn off fans, air conditioning and heating that draw in outside air. Go to an upper inside room with few windows (many chemicals are heavier than air) and seal gaps with wet towels or tape.
+If you are outside and cannot get in, move away upwind and uphill. If a chemical got on you, take off your clothes and wash with soap and water.
+Listen to the radio and follow official instructions. Call emergency services if anyone has trouble breathing, burning eyes or throat, or collapses.`, ""},
+	{"Infant feeding", "Feeding a baby in an emergency", "CDC, WHO and UNICEF guidance", `Breastfeeding is safest in an emergency: keep going, as often as the baby wants.
+For formula, ready-to-feed formula is best when tap water may be unsafe. Otherwise make powdered formula only with water that has been boiled, or with bottled water. Never use flood water, and never add extra water to make formula last longer.
+Throw away any feed the baby has not finished within about an hour, and clean bottles and teats with boiled water.
+Get urgent help if the baby is floppy, unusually sleepy, has very few wet nappies, or has a sunken soft spot.`, ""},
+	{"Altitude sickness", "Altitude sickness", "NHS and Wilderness Medical Society guidance", `Headache, nausea, dizziness or tiredness above about 2,500 metres (8,000 feet) is altitude sickness until proven otherwise: stop climbing and rest; do not go higher until it is better.
+Go down straight away, at least 300 to 1,000 metres, and get help if they become confused, clumsy or unsteady, are breathless at rest, or cough up frothy spit. These can kill within hours. Never leave them alone.`, ""},
+	{"Dental abscess", "Tooth abscess and a swollen face", "NHS guidance", `Call emergency services or go to the emergency department if facial swelling spreads to the eye or neck, or there is trouble breathing, swallowing or opening the mouth, or a high fever.
+Otherwise see an urgent dentist as soon as possible. Painkillers from the packet can help. Rinse with warm salty water. Do not put aspirin on the gum (it burns) and do not try to drain it yourself.`, ""},
+	{"Poisonous plants", "Wild plants and berries", "Poison centre and US Forest Service guidance", `Do not eat wild plants, berries or roots unless you are completely sure what they are: some common ones, such as water hemlock, foxglove, yew and deadly nightshade, can kill. Taste tests are not safe.
+If someone has eaten one, call a poison centre or emergency services. Keep a sample of the plant. Do not make them sick.
+Call emergency services now for a fit, drooling, vomiting, confusion, a slow or irregular pulse, or collapse.`, ""},
+	{"Spider or scorpion", "Spider bites and scorpion stings", "Poison centre, CDC and ANZCOR guidance", `Most bites and stings only need washing and a cold pack. Call a poison centre for advice.
+Call emergency services if a child is stung by a scorpion and has twitching, roving eyes, drooling or trouble breathing, or if anyone has severe spreading pain, cramps, sweating, vomiting or trouble breathing after a bite.
+In Australia, treat a funnel-web spider bite like a snakebite: a firm pressure bandage over the bite and up the limb, keep still, call emergency services. For a redback bite, do not bandage: use a cold pack and seek medical help.`, ""},
+	{"Rip current", "Caught in a rip current", "NOAA, RNLI and Surf Life Saving guidance", `If you are caught: do not swim against it. Float on your back, raise a hand and shout for help. When you can, swim parallel to the beach until you are out of the current, then swim back in.
+If you see someone caught: do not go in after them. Call a lifeguard or emergency services, and throw them something that floats.`, ""},
+	{"Severed body part", "Finger or body part cut off", "NHS and St John guidance", `Call emergency services. Press firmly on the wound with a clean cloth and raise it.
+Wrap the cut-off part in cling film or a clean plastic bag, then put it in a bag or box with ice, so the part does not touch the ice directly. Do not soak it in water or clean it. Take it with the person.`, ""},
+	{"Sudden vision loss", "Sudden loss of sight or a painful red eye", "NHS guidance", `Go to the emergency department or eye casualty now for sudden loss of sight, a curtain or shadow across the vision, new flashes with lots of new floaters, or a painful red eye with headache, blurred vision and vomiting. Call emergency services if sight loss comes with weakness, a drooping face or slurred speech.
+Do not wait to see if it gets better.`, ""},
+	{"Bee swarm", "Attacked by a swarm of bees or wasps", "CDC NIOSH and Poison Control guidance", `Run straight away to a car or building, covering your face. Do not swat, and do not jump into water: they wait for you to come up.
+Scrape stings out with a fingernail or card, then wash and use a cold pack.
+Call emergency services if there are many stings (especially in a child or older person), swelling of the face, lips or throat, trouble breathing, dizziness or vomiting.`, ""},
+	{"Active attacker", "Someone attacking people nearby", "Ready.gov and UK Counter Terrorism Policing guidance", `Run if there is a safe way out: leave your belongings and help others to leave if you can.
+Hide if you cannot get away: lock or block the door, turn off lights, silence your phone and stay out of sight.
+Call emergency services when it is safe. Fight only as a last resort, if your life is in danger. When police arrive, keep your hands visible and follow their instructions.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -499,10 +565,19 @@ var supersedes = map[string][]string{
 	"Carbon monoxide poisoning": {"Dehydration"},
 	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
 	"Seizure":                   {"Eye injury"},
-	"Aortic dissection":         {"Myocardial infarction"},
+	"Stab or gunshot":           {"Bleeding"},
+	"Severed body part":         {"Bleeding"},
+	"Ice rescue":                {"Drowning"},
+	"Thunderclap headache":      {"Head injury"},
+	"Vomiting blood":            {"Dehydration"},
+	"Seriously ill child":       {"Fever"},
+	"Poisonous plants":          {"Mushroom poisoning"},
+	"Bee swarm":                 {"Anaphylaxis"},
+	"Sudden vision loss":        {"Eye injury"},
+	"Aortic dissection":         {"Myocardial infarction", "Severe belly pain"},
 	"Bulging fontanelle":        {"Fever"},
 	"Panic attack":              {"Anaphylaxis"},
-	"Pregnancy warning signs":   {"Anaphylaxis", "Meningitis", "Eye injury"},
+	"Pregnancy warning signs":   {"Anaphylaxis", "Meningitis", "Eye injury", "Severe belly pain"},
 	"Food safety":               {"Power outage"},
 	"Hypoglycemia":              {"Sudden confusion"},
 	"Winter car":                {"Winter heating"},
