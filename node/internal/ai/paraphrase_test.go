@@ -17,7 +17,7 @@ import (
 func TestParaphraseRecall(t *testing.T) {
 	// The second set (450, regional voices, symptoms described but never
 	// named) was written after the rules were tuned on the first.
-	for file, floor := range map[string]int{"paraphrases.json": 410, "paraphrases2.json": 300} {
+	for file, floor := range map[string]int{"paraphrases.json": 413, "paraphrases2.json": 312} {
 		t.Run(file, func(t *testing.T) { paraphraseRecall(t, file, floor) })
 	}
 }

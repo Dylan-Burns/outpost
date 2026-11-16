@@ -289,6 +289,8 @@ Call emergency services if there are many stings (especially in a child or older
 	{"Active attacker", "Someone attacking people nearby", "Ready.gov and UK Counter Terrorism Policing guidance", `Run if there is a safe way out: leave your belongings and help others to leave if you can.
 Hide if you cannot get away: lock or block the door, turn off lights, silence your phone and stay out of sight.
 Call emergency services when it is safe. Fight only as a last resort, if your life is in danger. When police arrive, keep your hands visible and follow their instructions.`, ""},
+	{"Weapons refusal", "Making explosives or weapons", "Outpost", `Outpost cannot help make explosives, weapons or anything meant to hurt or knock out a person.
+For tree stumps, a hired stump grinder, digging out the roots, or a tree surgeon are safe ways to clear them. If you are worried that someone means to hurt themselves or others, call emergency services or the police.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -550,6 +552,11 @@ var noteTopics = []struct {
 // without labels. It returns nothing unless UseNotes is set.
 // supersedes lists notes whose topic, when it matches, removes a more general
 // note that would contradict it, since every model copies a note whole.
+// firstNotes lead the answer whenever they match, in this order. CPR is not
+// here: a choking baby who is still conscious needs back blows first, and the
+// choking and drowning notes already say when to start CPR.
+var firstNotes = []string{"Opioid overdose"}
+
 var supersedes = map[string][]string{
 	// The shock note says to push the source away with something dry and
 	// wooden; with a line on a car, everyone must stay clear and inside.
@@ -600,7 +607,7 @@ var supersedes = map[string][]string{
 	// a tick someone wants to "burn off", bleach for drinking water, a
 	// person jerking on a live cable.
 	"Jellyfish sting":    {"Burn"},
-	"Box jellyfish":      {"Jellyfish sting"},
+	"Box jellyfish":      {"Jellyfish sting", "Burn"},
 	"Chimney fire":       {"Starting a fire"},
 	"Tick":               {"Burn"},
 	"Water purification": {"Toxic gas"},
@@ -653,6 +660,13 @@ func Notes(q string) []Source {
 	for specific, general := range supersedes {
 		if contains(topics, specific) {
 			topics = slices.DeleteFunc(topics, func(t string) bool { return slices.Contains(general, t) })
+		}
+	}
+	// Notes whose first step cannot wait come first whatever matched
+	// first: naloxone for an opioid overdose.
+	for i := len(firstNotes) - 1; i >= 0; i-- {
+		if j := slices.Index(topics, firstNotes[i]); j > 0 {
+			topics = append([]string{firstNotes[i]}, slices.Delete(topics, j, j+1)...)
 		}
 	}
 	var out []Source

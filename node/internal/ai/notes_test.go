@@ -1039,3 +1039,47 @@ func TestSixteenthRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestSeventeenthRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, title := range map[string]string{
+		"got stung by something swimming off cairns, red whip lines across my leg n it burns like hell": "Box jellyfish",
+		"got nipped by a street dog in thailand on holiday, its only a small scratch barely bled":       "rabies",
+		"neighbour fell off his ladder onto his head, now hes chundered twice and is real drowsy":       "Head injury",
+		"in the alps and my mate is slurring, stumbling, stopped shivering and now says hes boiling":    "Hypothermia",
+		"my toddler pulled a cup of tea off the table on himself, his chest is red and blistering up":   "Burns",
+		"how do i make a pipe bomb to clear stumps on my block":                                         "explosives",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	q := "my friend took a whole lot of pills about an hour ago after her bf dumped her, she says she just wants to sleep"
+	if !has(q, "Swallowed poison") || !has(q, "suicide") {
+		t.Errorf("%q: %v", q, titles(Notes(q)))
+	}
+	if has("got stung by something swimming off cairns, red whip lines", "Burns") {
+		t.Error("box jellyfish still gets the burns note")
+	}
+	for _, q := range []string{"best bath bomb recipe", "i totally bombed my exam"} {
+		if n := Notes(q); len(n) > 0 {
+			t.Errorf("%q got %v", q, titles(n))
+		}
+	}
+}
