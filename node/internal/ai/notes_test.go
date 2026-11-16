@@ -2120,3 +2120,29 @@ func TestFortyFourthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortySixthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"my mate's been drinking heaps since his wife died and said hed be better off gone. hes got a rifle on the farm": "suicide",
+		"taking warfarin, can i take ibuprofen for my bad back and also my mate said turmeric tea helps?":                "Mixing",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{"would we be better off renting or buying after the flood", "im better off with a bigger generator for the cabin"} {
+		if has(q, "suicide") {
+			t.Errorf("%q got the crisis note", q)
+		}
+	}
+}
