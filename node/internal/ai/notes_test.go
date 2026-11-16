@@ -1975,3 +1975,50 @@ func TestFortiethRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFourthParaphraseRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		if ns := titles(Notes(q)); len(ns) > 0 {
+			return ns[0]
+		}
+		return ""
+	}
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"found my dad in the garage with the car running, hes breathing but wont wake up":                                           "suicide",
+		"my wee is like cola colour and my back on one side kills and i got shivers, been 2 days. just drink cranberry juice yeah?": "side or back",
+		"lost on the hills, fog came down, cant see the path, its getting cold. wanna keep walking to find the road":                "Lost outdoors",
+		"grabbed cast iron handle out of the oven, palm is bright red, butter or ice??":                                             "Burns",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, want := range map[string]string{
+		"grandad been on antibiotics for water infection, now he's shivering, skin all blotchy bluey":        "Sepsis",
+		"34 weeks pregnant, bangin headache paracetamol not touchin it, seein flashin lights and face puffy": "Warning signs in pregnancy",
+		"stuck in my car on the interstate in a whiteout blizzard, should i walk for help":                   "Stuck in a car in snow",
+	} {
+		if f := first(q); !strings.Contains(f, want) {
+			t.Errorf("%q: first %q, notes %v", q, f, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"fingers gone white and waxy and numb after ice fishing all day, rub snow on em?": "cut off",
+		"the ground just shook like crazy, im in my apartment 6th floor":                  "block of flats",
+		"how to clean a cast iron pan that went rusty in the shed":                        "tetanus",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}

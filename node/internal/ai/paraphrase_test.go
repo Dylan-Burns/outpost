@@ -18,8 +18,10 @@ func TestParaphraseRecall(t *testing.T) {
 	// The second set (450, regional voices, symptoms described but never
 	// named) was written after the rules were tuned on the first.
 	// The third (1.4.45; 492, three per note for all 164 notes) was written
-	// after the first two had shaped the rules: they caught 281 of it.
-	for file, floor := range map[string]int{"paraphrases.json": 420, "paraphrases2.json": 326, "paraphrases3.json": 420} {
+	// after the first two had shaped the rules: they caught 281 of it. The
+	// fourth (1.4.46; 328, written hard throughout) measured how far that
+	// generalised: 165 of 328 before 1.4.45, 183 after.
+	for file, floor := range map[string]int{"paraphrases.json": 420, "paraphrases2.json": 328, "paraphrases3.json": 435, "paraphrases4.json": 300} {
 		t.Run(file, func(t *testing.T) { paraphraseRecall(t, file, floor) })
 	}
 }

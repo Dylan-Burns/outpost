@@ -430,6 +430,9 @@ If it is safe, keep notes and photos of hours, payments and messages, and keep a
 	{"Broken tooth", "A broken or chipped tooth", "NHS and American Dental Association guidance", `Rinse your mouth with warm water and keep any piece of tooth in milk or your own saliva to take to the dentist. Use a cold pack on the cheek for swelling.
 Take a usual dose of paracetamol or ibuprofen for pain, following the packet. Cover a sharp edge with dental wax or sugar-free chewing gum, and eat soft food on the other side. Do not try to file or glue it yourself, and never cut into a swelling.
 See a dentist as soon as you can. Get urgent help now (an emergency dentist, NHS 111 or an emergency department) if there is heavy bleeding that will not stop, swelling of the face, eye or neck, a fever, or trouble swallowing or breathing.`, ""},
+	{"Kidney infection", "Fever with pain in the side or back", "NHS and CDC guidance", `A high temperature, shivering or feeling sick together with pain in the side, lower back or groin can mean a kidney infection, which needs medical treatment (usually antibiotics) the same day: see a doctor or call a nurse line (NHS 111 in the UK) today. Cranberry juice and waiting do not treat it.
+Call emergency services if they are confused or very drowsy, breathing fast, have mottled or very pale skin, have not passed urine all day, or are pregnant and very unwell: the infection may have spread to the blood (sepsis).
+Meanwhile drink plenty of water and take paracetamol for pain and fever, following the packet.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -714,12 +717,14 @@ var supersedes = map[string][]string{
 	"Seizure":                      {"Eye injury"},
 	"Stroke":                       {"Bone fracture"},
 	"Myocardial infarction":        {"Dehydration", "Panic attack"},
-	"Sepsis":                       {"Panic attack"},
+	"Sepsis":                       {"Panic attack", "Kidney infection"},
 	"Drowning":                     {"Rip current", "Asthma"},
 	"Severe belly pain":            {"Fainting"},
 	"Illegal request":              {"Weapons refusal"},
 	"Baby in hot weather":          {"Heat stroke"},
 	"Volcanic ash":                 {"Wildfire"},
+	"Poisoning":                    {"Recovery position", "Medicine safety"},
+	"Pregnancy warning signs":      {"Medicines in pregnancy", "Anaphylaxis", "Meningitis", "Eye injury", "Severe belly pain"},
 	"Febrile seizure":              {"Hypothermia", "Seizure", "Burn"},
 	"Postpartum psychosis":         {"Psychosis"},
 	"Swallowed battery or magnets": {"Poisoning"},
@@ -737,7 +742,6 @@ var supersedes = map[string][]string{
 	"Bleeding after birth":         {"Bleeding"},
 	"Snakebite":                    {"Bleeding"},
 	"Fever":                        {"Medicine safety"},
-	"Poisoning":                    {"Medicine safety"},
 	"Anaphylaxis":                  {"Bee or wasp sting"},
 	"Mushroom poisoning":           {"Dehydration"},
 	"Stimulant overheating":        {"Heat stroke", "Dehydration"},
@@ -753,7 +757,6 @@ var supersedes = map[string][]string{
 	"Aortic dissection":            {"Myocardial infarction", "Severe belly pain"},
 	"Bulging fontanelle":           {"Fever"},
 	"Panic attack":                 {"Anaphylaxis"},
-	"Pregnancy warning signs":      {"Anaphylaxis", "Meningitis", "Eye injury", "Severe belly pain"},
 	"Food safety":                  {"Power outage"},
 	"Hypoglycemia":                 {"Sudden confusion"},
 	"Winter car":                   {"Winter heating"},
@@ -801,7 +804,7 @@ var refusalTopics = map[string]bool{"Weapons refusal": true, "Forged documents":
 // Minecraft tornado mod, a laptop "having a seizure", bleeding a radiator.
 // urgentRE keeps the notes when the question also sounds like a real
 // emergency ("my kid ate a mushroom from the garden, help").
-var everydayRE = regexp.MustCompile(`(?i)\b(essay|homework|assignment|pub quiz|quiz|trivia|science (experiment|project|fair)|for (school|class|uni|my class|a lesson)|explain\w* .{0,40}to (a|my|the) (\d+ ?(year|yr).?old|kids?|child|class|students?|year \d)|algorithm|motivation|excel|meal prep|pasta|snorkel\w*|sales|revenue|startup|quarter|burn rate|bleeding (cash|money)|drowning in (emails?|work|debt|paperwork|admin)|emails?|productivity|choked in the|(team|we|they) choked|coach(es)?|hydraulic|wordpress|plugin|blender|effects|emoji|poker|slang|sourdough|starter|chilli|chili|strobe|nosebleed seats?|stadium|posters?|school project|freestyle|backstroke|breaststroke|100m|swim(ming)? (lesson|technique)|cake|cocktail|risotto|movie|film|album|song|band|spotify|netflix|quotes?|game|gaming|minecraft|fortnite|roblox|mod|toys?|lego|theme park|ride at|rollercoaster|(cpr|first aid|online|training|refresher) course|certification|class(es)? near|price|best deals|cheapest|where to buy|shopping|photoshop|excel|chrome|browser|software|goats?|radiators?|brakes|chainsaw|mower|traffic noise|noise at night|seat hinge|soft close|tattoo|costume|meme|joke|lyrics)\b`)
+var everydayRE = regexp.MustCompile(`(?i)\b(grow(ing)? mushrooms|mouldy grout|grout|before lunch|firelighters|bonfire night|essay|homework|assignment|pub quiz|quiz|trivia|science (experiment|project|fair)|for (school|class|uni|my class|a lesson)|explain\w* .{0,40}to (a|my|the) (\d+ ?(year|yr).?old|kids?|child|class|students?|year \d)|algorithm|motivation|excel|meal prep|pasta|snorkel\w*|sales|revenue|startup|quarter|burn rate|bleeding (cash|money)|drowning in (emails?|work|debt|paperwork|admin)|emails?|productivity|choked in the|(team|we|they) choked|coach(es)?|hydraulic|wordpress|plugin|blender|effects|emoji|poker|slang|sourdough|starter|chilli|chili|strobe|nosebleed seats?|stadium|posters?|school project|freestyle|backstroke|breaststroke|100m|swim(ming)? (lesson|technique)|cake|cocktail|risotto|movie|film|album|song|band|spotify|netflix|quotes?|game|gaming|minecraft|fortnite|roblox|mod|toys?|lego|theme park|ride at|rollercoaster|(cpr|first aid|online|training|refresher) course|certification|class(es)? near|price|best deals|cheapest|where to buy|shopping|photoshop|excel|chrome|browser|software|goats?|radiators?|brakes|chainsaw|mower|traffic noise|noise at night|seat hinge|soft close|tattoo|costume|meme|joke|lyrics)\b`)
 
 // gDropRE finds a dropped final g ("shakin'", "breathin"); the "in"
 // must follow at least three letters so "in", "skin" and "pain" stay as
@@ -844,7 +847,7 @@ func plainWords(q string) string {
 
 // metaphorRE recognises figures of speech and machinery that use injury
 // words: these never need a note, even though "bleeding" also sounds urgent.
-var metaphorRE = regexp.MustCompile(`(?i)\b(bleed\w* (a |the |my |our )?radiators?|radiators? .{0,15}bleed\w*|(excel|spreadsheet|chart|laptop|computer|pc|code|server|browser|app)\b.{0,30}chok\w*|gave me (a|an absolute|a mini) heart attack|bleeding (goals|points|runs|money|subscribers)|(nearly|almost) (passed out|died|fainted) (from|of|with) (boredom|laughing|embarrassment)|jump.?start (my|your|our|the) (motivation|career|day|morning|week|business|fitness)|choking on \d+|(screen|paint|ink|colou?rs?|dye|portfolio|market|stocks?|budget|cash|money|customers)\s.{0,20}bleed\w*|bleed(ing)? (edge|colou?r|through the (tape|paint))|stroke of (midnight|luck|genius)|drowning (my )?sorrows|under ?water with|choked? (up|laughing|on (my|his|her) words)|choking up|nearly choked laughing|face (dropped|fell) when|fit of (zoomies|giggles|laughter|rage|pique)|(engine|motor|bearing|pump|gearbox)s? seized|seized up|mottled (paint|effect|finish)|for (my |a )?(biology|science|health|first aid) (homework|class|essay|project|exam)|(writing|for) a quiz|what does cpr stand for|what is a heart attack exactly|cheap date|hairball|(phone|laptop|computer|console|tablet|engine|car) (overheated|froze|crashed)|heartburn after|which antacid|plant leaves|leaves are drooping|bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
+var metaphorRE = regexp.MustCompile(`(?i)\b(cast iron (pan|skillet|pot|griddle)|which aftersun|best aftersun|after.?sun (lotion|cream|gel)|chok\w* with laughter|(got|were|we got) (absolutely )?smoked\b|house of cards|d&d|dnd|dungeons|casts? (a )?(lightning|fireball)|stabbed by the spines|cactus|rawhide|dog chew|bleed\w* (a |the |my |our )?radiators?|radiators? .{0,15}bleed\w*|(excel|spreadsheet|chart|laptop|computer|pc|code|server|browser|app)\b.{0,30}chok\w*|gave me (a|an absolute|a mini) heart attack|bleeding (goals|points|runs|money|subscribers)|(nearly|almost) (passed out|died|fainted) (from|of|with) (boredom|laughing|embarrassment)|jump.?start (my|your|our|the) (motivation|career|day|morning|week|business|fitness)|choking on \d+|(screen|paint|ink|colou?rs?|dye|portfolio|market|stocks?|budget|cash|money|customers)\s.{0,20}bleed\w*|bleed(ing)? (edge|colou?r|through the (tape|paint))|stroke of (midnight|luck|genius)|drowning (my )?sorrows|under ?water with|choked? (up|laughing|on (my|his|her) words)|choking up|nearly choked laughing|face (dropped|fell) when|fit of (zoomies|giggles|laughter|rage|pique)|(engine|motor|bearing|pump|gearbox)s? seized|seized up|mottled (paint|effect|finish)|for (my |a )?(biology|science|health|first aid) (homework|class|essay|project|exam)|(writing|for) a quiz|what does cpr stand for|what is a heart attack exactly|cheap date|hairball|(phone|laptop|computer|console|tablet|engine|car) (overheated|froze|crashed)|heartburn after|which antacid|plant leaves|leaves are drooping|bleed(ing)? (cash|money|users|customers|subscribers)|burn rate|bleed (a|the|my) (hydraulic|jack|radiators?|brakes?|lines?|system|pump|forks?))\b`)
 
 var urgentRE = regexp.MustCompile(`(?i)\b(water ris\w*|rising water|floodwater|flood water|(cyclone|hurricane|typhoon|tornado|storm) (is )?(coming|tonight|tomorrow|hitting|due|on its way|about to hit)|(didn.?t|didnt|did not) sound like a joke|not (a )?joke|wasn.?t joking|wasnt joking|bridge|help|now|urgent|emergency|911|999|112|ambulance|hospital|bleed(ing)? (badly|a lot|everywhere)|not breathing|unconscious|unresponsive|collapsed|swallowed|\bate\b|drank|bitten|stung|burned|burnt|hurt|injur|choking on|can.?t breathe|passed out|baby|toddler|child|kid|son|daughter|husband|wife|mum|mom|dad|nan|gran|bloods?|bleeding|spurt\w*|pumping|pouring|gushing|cut (my|his|her|their)|gash|wound|broke|broken|fell|pain|agony|screaming|kicked back|thigh|leg|arm|hand|finger)\b`)
 
