@@ -1193,3 +1193,33 @@ func TestTwentiethRoundWording(t *testing.T) {
 		}
 	}
 }
+
+func TestTwentyFirstRoundWording(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		n := titles(Notes(q))
+		if len(n) == 0 {
+			return ""
+		}
+		return n[0]
+	}
+	for q, title := range map[string]string{
+		"my wife is on lithium, been throwing up and the runs for 2 days, now shes shaky and wobbly walking":   "Lithium",
+		"uncle went into the slurry shed n collapsed, should i go in and drag him out":                         "grain bin",
+		"cow kicked me in the guts couple hrs ago, pain getting worse now and i feel faint n dizzy":            "Belly injury",
+		"fell off the ladder clearin the gutters, ankle is massive and purple and i cant put any weight on it": "Broken bones",
+		"went scuba diving yesterday, now achy joints and tingly arms. flying home tomorow, thats fine yeah?":  "After diving",
+		"my auntie's in a wheelchair and has a red sore on her bum that wont heal, skin looks broken now":      "Pressure sore",
+		"new mum here, 3 days after birth, soaking a pad every hour and passing clots size of a golf ball":     "after giving birth",
+	} {
+		if f := first(q); !strings.Contains(f, title) {
+			t.Errorf("%q: first %q, notes %v; want %q", q, f, titles(Notes(q)), title)
+		}
+	}
+	for _, n := range Notes("uncle went into the slurry shed n collapsed") {
+		if strings.Contains(n.Title, "Stroke") {
+			t.Error("slurry gas got the stroke note")
+		}
+	}
+}

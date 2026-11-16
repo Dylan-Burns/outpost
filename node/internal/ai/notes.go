@@ -302,6 +302,17 @@ Shut off any machinery or augers and lock them off. If you can, ventilate from o
 If you were ill, in the UK you can self-certify for up to 7 days, and a GP or NHS 111 can give a fit note after that; elsewhere, ask a doctor or pharmacist for a note, or ask your employer what they accept.`, ""},
 	{"Bee or wasp sting", "Bee or wasp sting", "NHS and Red Cross guidance", `Scrape a bee sting out sideways with a fingernail or the edge of a card as soon as you can; do not squeeze it with tweezers. Wash the area, hold a cold pack on it for 10 minutes and raise it; painkillers or an antihistamine can help.
 Call emergency services if there is swelling of the face, lips, tongue or throat, trouble breathing or swallowing, wheezing, dizziness or fainting, or many stings, and use an adrenaline auto-injector if the person has one.`, ""},
+	{"Medicine toxicity when ill", "Lithium and other medicines during sickness", "NHS and BNF guidance", `Vomiting, diarrhoea or not drinking can make some medicines build up to dangerous levels: lithium, digoxin, metformin, some blood pressure and water tablets (ACE inhibitors, ARBs, diuretics), and some diabetes medicines.
+Call emergency services if someone on lithium becomes shaky, unsteady, confused, very drowsy, has slurred speech, or has a fit: these are signs of lithium poisoning.
+Otherwise contact their doctor, pharmacist or NHS 111 today: they may need a blood test or to pause some tablets for a day or two (sick day rules). Keep sipping fluids. Do not stop or change lithium without advice.`, ""},
+	{"Decompression sickness", "After diving: joint pain, tingling or breathlessness", "Divers Alert Network and NHS guidance", `Joint pain, tingling or numbness, unusual tiredness, a rash, dizziness or breathlessness within 48 hours of scuba diving can be decompression sickness (the bends), even after a dive within limits.
+Do not fly or go up into mountains: lower air pressure makes it worse. Call emergency services or a diving emergency line (such as DAN) now; it is treated in a hyperbaric chamber.
+Lie them down, give 100% oxygen if a kit is available, give water to drink if they are fully awake, and keep a record of the dives.`, ""},
+	{"Pressure sore", "Pressure sore that will not heal", "NHS and NICE guidance", `Take the pressure off the sore: change position at least every 2 hours (or more often), use cushions or a pressure-relieving mattress, and avoid sitting or lying on the sore.
+Keep the skin clean and dry and cover broken skin with a clean dressing. Do not massage it. Contact a doctor, district nurse or nurse line soon: broken skin needs a nurse to assess it.
+Get urgent help the same day if the sore smells, oozes pus, has spreading redness or swelling, or the person has a fever, shivering or confusion, which can mean infection or sepsis.`, ""},
+	{"Bleeding after birth", "Heavy bleeding after giving birth", "NHS and RCOG guidance", `Call emergency services or the maternity unit now if, at any time in the weeks after birth, bleeding suddenly gets heavier, soaks a pad in an hour or less, or there are clots bigger than a 50p coin or a plum, or if she feels faint, dizzy, has a racing heart, or bleeding comes with fever, smelly discharge or tummy pain.
+While waiting, have her lie down with her feet raised, keep her warm, and keep the pads to show the medics. If she is breastfeeding or holding the baby, have someone else take the baby.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -573,39 +584,42 @@ var supersedes = map[string][]string{
 	// wooden; with a line on a car, everyone must stay clear and inside.
 	// The household shock note says to push the source away with wood:
 	// deadly near a power line.
-	"Downed power line":         {"Electrical injury"},
-	"Family reunification":      {"Finding a person"},
-	"Power line on vehicle":     {"Electrical injury", "Downed power line"},
-	"Nosebleed":                 {"Bleeding"},
-	"Shock":                     {"Fainting"},
-	"Toxic gas":                 {"Burn"},
-	"Generator":                 {"Power outage"},
-	"Carbon monoxide poisoning": {"Dehydration"},
-	"Wood stove smoke":          {"Starting a fire", "Smoke inhalation"},
-	"Seizure":                   {"Eye injury"},
-	"Snakebite":                 {"Bleeding"},
-	"Fever":                     {"Medicine safety"},
-	"Poisoning":                 {"Medicine safety"},
-	"Anaphylaxis":               {"Bee or wasp sting"},
-	"Mushroom poisoning":        {"Dehydration"},
-	"Stimulant overheating":     {"Heat stroke", "Poisoning", "Dehydration"},
-	"Confined space":            {"Cardiopulmonary resuscitation", "Recovery position"},
-	"Stab or gunshot":           {"Bleeding"},
-	"Severed body part":         {"Bleeding"},
-	"Ice rescue":                {"Drowning"},
-	"Thunderclap headache":      {"Head injury"},
-	"Vomiting blood":            {"Dehydration"},
-	"Seriously ill child":       {"Fever"},
-	"Poisonous plants":          {"Mushroom poisoning"},
-	"Bee swarm":                 {"Anaphylaxis", "Bee or wasp sting"},
-	"Sudden vision loss":        {"Eye injury"},
-	"Aortic dissection":         {"Myocardial infarction", "Severe belly pain"},
-	"Bulging fontanelle":        {"Fever"},
-	"Panic attack":              {"Anaphylaxis"},
-	"Pregnancy warning signs":   {"Anaphylaxis", "Meningitis", "Eye injury", "Severe belly pain"},
-	"Food safety":               {"Power outage"},
-	"Hypoglycemia":              {"Sudden confusion"},
-	"Winter car":                {"Winter heating"},
+	"Downed power line":          {"Electrical injury"},
+	"Family reunification":       {"Finding a person"},
+	"Power line on vehicle":      {"Electrical injury", "Downed power line"},
+	"Nosebleed":                  {"Bleeding"},
+	"Shock":                      {"Fainting"},
+	"Toxic gas":                  {"Burn"},
+	"Generator":                  {"Power outage"},
+	"Carbon monoxide poisoning":  {"Dehydration"},
+	"Wood stove smoke":           {"Starting a fire", "Smoke inhalation"},
+	"Seizure":                    {"Eye injury"},
+	"Medicine toxicity when ill": {"Dehydration"},
+	"Confined space":             {"Cardiopulmonary resuscitation", "Recovery position", "Stroke"},
+	"Belly injury":               {"Fainting"},
+	"Bleeding after birth":       {"Bleeding"},
+	"Snakebite":                  {"Bleeding"},
+	"Fever":                      {"Medicine safety"},
+	"Poisoning":                  {"Medicine safety"},
+	"Anaphylaxis":                {"Bee or wasp sting"},
+	"Mushroom poisoning":         {"Dehydration"},
+	"Stimulant overheating":      {"Heat stroke", "Poisoning", "Dehydration"},
+	"Stab or gunshot":            {"Bleeding"},
+	"Severed body part":          {"Bleeding"},
+	"Ice rescue":                 {"Drowning"},
+	"Thunderclap headache":       {"Head injury"},
+	"Vomiting blood":             {"Dehydration"},
+	"Seriously ill child":        {"Fever"},
+	"Poisonous plants":           {"Mushroom poisoning"},
+	"Bee swarm":                  {"Anaphylaxis", "Bee or wasp sting"},
+	"Sudden vision loss":         {"Eye injury"},
+	"Aortic dissection":          {"Myocardial infarction", "Severe belly pain"},
+	"Bulging fontanelle":         {"Fever"},
+	"Panic attack":               {"Anaphylaxis"},
+	"Pregnancy warning signs":    {"Anaphylaxis", "Meningitis", "Eye injury", "Severe belly pain"},
+	"Food safety":                {"Power outage"},
+	"Hypoglycemia":               {"Sudden confusion"},
+	"Winter car":                 {"Winter heating"},
 	// "boiling water went on her arm" is a scald, not drinking water.
 	"Burn": {"Water purification"},
 	// Being sick after a head injury is a warning sign of the injury.
