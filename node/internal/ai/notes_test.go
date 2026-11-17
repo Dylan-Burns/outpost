@@ -2380,3 +2380,35 @@ func TestFiftyFourthRound(t *testing.T) {
 		t.Errorf("fainting goats: %v", titles(n))
 	}
 }
+
+func TestFiftyFifthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"Is it ok to give my 9 yr old aspirin for chickenpox fever? only thing in the cupboard":                                     "Chickenpox",
+		"dog ate a bunch of the kids easter choc, hes a jack russell bout 7kg. he seems ok so far. induce vomitting with salt?":     "pet",
+		"found a baby bird on the ground under our tree, has feathers hopping about, kids want to bring it inside and feed it milk": "baby bird",
+		"cow's been trying to calve for ages, can see 1 leg poking out but nothing happening for over an hour, shes straining":      "vet now",
+		"my phone keeps flashing emergency alert test every monday at 11 is that normal, how do i turn the test ones off":           "emergency alerts",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{
+		"whats a good name for a rescue puppy, black lab, my kids want something survival themed",
+		"my kid wants to be a lifeguard or paramedic for halloween, easy costume ideas we can make at home?",
+	} {
+		if n := Notes(q); len(n) != 0 {
+			t.Errorf("%q: %v", q, titles(n))
+		}
+	}
+}
