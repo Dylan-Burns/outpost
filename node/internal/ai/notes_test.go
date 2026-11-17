@@ -2261,3 +2261,28 @@ func TestFiftiethRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFiftyFirstRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"best way to cook without power, all i got is a gas camping stove and candles. inside ok if i open window?": "Carbon monoxide",
+		"my dog got into the choccy easter eggs, a whole bag, hes a lab. he seems fine. is it a vet job":            "pet",
+		"my uncle keeps asking my 11yo to keep secrets and buys her stuff, she doesnt want to go to his anymore":    "child is being harmed",
+		"my phone keeps blasting emergency alert tests, how do i turn them off without missing real ones":           "emergency alerts",
+		"think my 2yo drank some of the dishwasher stuff, the liquid capsule thing. coughing a bit":                 "Swallowed poison",
+		"pipes froze, no heat, its -15 outside. got a camp stove, can i use it inside to warm the room":             "No heating",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
