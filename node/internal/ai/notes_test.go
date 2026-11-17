@@ -2316,3 +2316,38 @@ func TestFiftySecondRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFiftyThirdRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"wee one choking on a grape, cant cough or cry or breathe, shes 3":                                           "child over 1",
+		"my 2yo is choking on a sweet and cant breathe":                                                              "child over 1",
+		"my 4 month old is choking and cant cry":                                                                     "baby under 1",
+		"my mate took a heap of his mums pills, says he feels fine now. they were paracetamol i think":               "Swallowed poison",
+		"hit a kangaroo on the hwy, its alive in the ditch kicking. joey might be in pouch. what do i do":            "hitting an animal",
+		"run out of bottled water, got a creek nearby. best way to make it safe? no fire allowed cos total fire ban": "safe to drink",
+		"phone on 5% and power's out for who knows how long, how to make it last":                                    "phone battery",
+		"lost in the bush, phone on 9% no signal, sun going down. keep walking or stay put":                          "Lost",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"wee one choking on a grape, cant cough or cry or breathe, shes 3":                  "baby under 1",
+		"lost in the bush, phone on 9% no signal, sun going down. keep walking or stay put": "phone battery",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q", q, bad)
+		}
+	}
+}

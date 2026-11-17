@@ -41,6 +41,14 @@ var babyRE = regexp.MustCompile(`(?i)\b(baby|babies|infant|newborn|bub|bubs|bubb
 // notBabyRE undoes a "months" that is not a baby's age.
 var notBabyRE = regexp.MustCompile(`(?i)\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven) ?(months?|mths?) (ago|pregnant|along|since|later|back|of (the|this)|supply|worth)|months? (pregnant|along)`)
 
+// olderChildRE recognises a child given an age in years, or called a
+// toddler. Set 53: "wee one choking on a grape ... shes 3" got the steps for
+// a baby under 1 (a forearm hold and chest thrusts) from both models.
+var olderChildRE = regexp.MustCompile(`(?i)\b(\d{1,2} ?(yo|y/o|yrs?|years?)( old)?|(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)[- ](yr|year)s?[- ]old|(s?he'?s|she is|he is|they'?re|aged?) (\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten)\b|toddler|pre-?school\w*|kindy|kindergarten|nursery age|in reception)`)
+
+// babyAgeRE is an age in days, weeks or months.
+var babyAgeRE = regexp.MustCompile(`(?i)\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven)[- ]?(days?|weeks?|wks?|months?|mths?|mos?)\b|newborn`)
+
 // isBaby reports whether a question is about a baby under one year.
 func isBaby(q string) bool {
 	if !babyRE.MatchString(q) {
@@ -48,6 +56,11 @@ func isBaby(q string) bool {
 	}
 	// "my wife is 7 months pregnant", "2 months ago": the word "baby" or
 	// an age in days or weeks still counts.
+	// "shes 3", "my 3yo", "a toddler": an age in years is not a baby,
+	// unless an age in days, weeks or months is also given.
+	if olderChildRE.MatchString(q) && !babyAgeRE.MatchString(q) {
+		return false
+	}
 	if notBabyRE.MatchString(q) {
 		return regexp.MustCompile(`(?i)\b(baby|infant|newborn|bub|bubba|wee one|\d+[- ]?(day|week)s?[- ]old)\b`).MatchString(q)
 	}
@@ -454,6 +467,13 @@ An alert works without credit or mobile data, but the phone must be switched on 
 	{"Animal emergency", "An animal that needs a vet now", "RSPCA, PDSA, AVMA and agricultural vet guidance", `Call a vet now, day or night, for: a male cat straining in the litter tray with little or nothing coming out, or crying (a blocked bladder can kill within a day or two); a dog with a swollen, tight belly who is retching without bringing anything up (bloat); a cow, sheep or goat with a swollen left side after getting into grain or rich feed, or that is down and cannot get up; trouble breathing; a fit lasting more than a few minutes; heavy bleeding; being hit by a car even if it seems fine; collapse; or heat stroke (heavy panting, drooling, wobbliness in the heat).
 While you wait, keep the animal calm, warm or cool as needed, and still. Move an injured animal on a board or blanket, and muzzle a dog in pain gently unless it is vomiting or struggling to breathe; frightened animals can bite.
 Do not give human painkillers: ibuprofen, paracetamol and aspirin can kill pets. For heat stroke, cool with cool (not ice-cold) water and a fan on the way to the vet.`, ""},
+	{"Animal on the road", "After hitting an animal on the road", "Wildlife rescue (WIRES, RSPCA, state wildlife agencies) and road safety guidance", `Make yourself safe first: pull well off the road, put the hazard lights on, and watch for traffic. If the animal is a hazard on the road and you cannot move it safely, call the police.
+Do not go close to a large injured wild animal such as a kangaroo, deer or wombat: a frightened animal can kick, claw or bite and cause serious injuries. Never try first aid or CPR on it.
+Call a wildlife rescue service, a ranger, the police or a vet, and tell them exactly where the animal is. Marsupials can carry a living young in the pouch even after the mother dies; leave checking the pouch to a rescuer unless the mother is clearly dead and it is safe to do so. Keep a joey warm, quiet and dark, wrapped in a cloth, and give it nothing to eat or drink.
+For a pet you have hit, the law in many places says to report it; take the animal to a vet if it is safe to move, on a blanket or board.`, ""},
+	{"Phone battery", "Making a phone battery last", "FEMA and Ready.gov guidance", `Turn on low power (battery saver) mode, turn the screen brightness down, and close apps you are not using. Turn off Bluetooth, Wi-Fi and location when you do not need them; switch to aeroplane mode when there is no signal, because searching for a signal uses the battery fast.
+Send texts rather than calls: they need less power and get through more often. Turn the phone off between planned check-ins, keep it warm (in an inside pocket), and save the last few percent for an emergency call.
+To recharge: a car charger with the engine running outdoors, a power bank, or a solar or hand-crank charger. Do not take the phone apart or remove a built-in battery; a damaged lithium battery can catch fire.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
