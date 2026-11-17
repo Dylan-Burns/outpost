@@ -2175,3 +2175,40 @@ func TestFortySeventhRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortyEighthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"my da got his hand caught in the pto shaft on the tractor, fingers r mangled and its pissin blood":                     "Severe bleeding",
+		"wee one grabbed the hair straighteners, palm has gone all white n blistery, shes screamin. butter on it??":             "Burns",
+		"dropped a pot of boiling pasta water on my foot, got socks on stuck to it. take sock off fast?":                        "Burns",
+		"nephew 9 got hand stuck in the meat mincer at the deli, fingers squashed and hes pale n clammy":                        "trapped",
+		"nan in the care home been a bit off since yday, confused, keeps picking at the sheets":                                 "confusion",
+		"think i got a tick on me back of knee after hiking, been there maybe 2 days. can i burn it off with a match":           "tick",
+		"is it ok to drink pool water if water's off for days? we got a full pool out back":                                     "safe to drink",
+		"sailing solo, mast broke, drifting, have vhf and flares, what do i do first":                                           "rescuers",
+		"my heart is going so fast and i cant breathe, keep thinking ill die, its happened before and the docs said tests fine": "Panic",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"how to stop pasta water boiling over":                        "safe to drink",
+		"tick the box on the form for the flood grant":                "tick",
+		"crushing chest pain, docs said my tests were fine last year": "Panic",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q: %v", q, bad, titles(Notes(q)))
+		}
+	}
+}
