@@ -2442,3 +2442,28 @@ func TestFiftySixthRound(t *testing.T) {
 		t.Error("sudden confusion got the memory note")
 	}
 }
+
+func TestFiftySeventhRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"forgot my blood pressure tablet this morning, its 9pm now. take 2 tomoz to catch up?":            "missed dose",
+		"boy 4 got 39.4 fever, should i stick him in a cold bath or wrap him in blankets to sweat it out": "Fever in a child",
+		"horse keeps lying down n rolling, pawing the ground and lookin round at his belly":               "vet now",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	if has("took the whole packet of my tablets, i forgot how many", "missed dose") {
+		t.Error("an overdose got the missed dose note")
+	}
+}
