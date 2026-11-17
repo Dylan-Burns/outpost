@@ -2412,3 +2412,33 @@ func TestFiftyFifthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFiftySixthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"took 2 paracetamol every 2 hrs since yesterday for toothache feel ok tho, is that fine?":                       "Swallowed poison",
+		"found a hedgehog out in the daytime wobbling round the garden, should i give it some milk":                     "wild animal",
+		"power out and its 35 degrees, my dogs panting heaps and drooling and wobbly":                                   "vet now",
+		"chickens n goats need water but the pump is down with the power, how do i keep em going":                       "flood, fire or storm",
+		"can i drink from the stream if it looks clear, been hiking 2 days and run out":                                 "safe to drink",
+		"ice on the lake looks solid can we walk across to get to town quicker":                                         "frozen lake",
+		"evacuation centre, a man keeps following my kid to the toilets and giving him sweets, he says hes a volunteer": "child is being harmed",
+		"my dad keeps forgetting things, left the cooker on twice, wanders at night and got angry at me. hes 79":        "Memory problems",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	if has("mum suddenly confused since this morning, doesnt know where she is", "Memory problems") {
+		t.Error("sudden confusion got the memory note")
+	}
+}

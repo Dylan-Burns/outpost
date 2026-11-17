@@ -480,9 +480,16 @@ Make sure your smoke alarm works (it runs on a battery during a power cut), and 
 	{"Chickenpox", "Chickenpox", "NHS and CDC guidance", `Use paracetamol (acetaminophen) for pain or fever. Do not give aspirin to anyone under 16 (it can cause Reye's syndrome), and do not give ibuprofen to someone with chickenpox unless a doctor says so: it can lead to serious skin infections.
 Keep cool, drink plenty, use calamine or cooling gels for the itch, and keep nails short. Keep away from pregnant women, newborn babies and people with weak immune systems until all the spots have crusted over, usually about 5 days.
 Get urgent medical help if the skin around the spots becomes hot, red, swollen and painful, the person has trouble breathing, chest pain, a stiff neck, is confused or very drowsy, is dehydrated, or is a baby under 4 weeks, pregnant, or has a weak immune system.`, ""},
-	{"Wild animal found", "A baby bird or young wild animal on its own", "RSPCA, Audubon, Wildlife Rescue and state wildlife agency guidance", `A young bird with feathers that is hopping about on the ground (a fledgling) is usually fine: its parents are close by and still feeding it. Leave it where it is, keep children, cats and dogs away, and watch from a distance. Only put it on a nearby branch or in a bush if it is in danger.
+	{"Wild animal found", "A baby bird or other wild animal that needs help", "RSPCA, Audubon, Wildlife Rescue and state wildlife agency guidance", `A young bird with feathers that is hopping about on the ground (a fledgling) is usually fine: its parents are close by and still feeding it. Leave it where it is, keep children, cats and dogs away, and watch from a distance. Only put it on a nearby branch or in a bush if it is in danger.
 A bird with few or no feathers (a nestling) can be put back in its nest if you can do so safely. Young mammals are also often left alone by their mother for hours.
 Never give a wild animal milk, bread or water by mouth: milk can kill it and water can go into its lungs. If it is injured, cold, bleeding, caught by a cat, or truly orphaned, put it in a lined, ventilated box in a dark, quiet, warm place and call a wildlife rescue service, a vet or a ranger.`, ""},
+	{"Ice safety", "Walking on a frozen lake or river", "Canadian Red Cross, RNLI and US National Weather Service guidance", `You cannot tell how strong ice is by looking at it. Do not cross unless the ice has been measured: one person on foot needs at least 10 cm (4 inches) of clear, hard ice, and many agencies advise 15 cm. White, grey, slushy, cracked or wet ice is weaker, and so is ice near inlets, outlets, bridges, reeds or anywhere water moves underneath. River ice is never safe to trust.
+Take the long way round on land if there is one. If you must cross, go one at a time, spread out, carry ice picks or two screwdrivers and a rope, and tell someone your route.
+If you go through: keep calm, turn back the way you came, kick your legs, pull yourself flat onto the ice, then roll away. Do not walk on ice in a thaw or after rain.`, ""},
+	{"Memory problems", "Memory problems in an older person", "NHS, Alzheimer's Society and Alzheimer's Association guidance", `Forgetfulness that gets slowly worse over months, getting lost, leaving the cooker on, or changes in mood should be checked by a doctor: some causes can be treated, and it helps to plan early.
+Confusion that comes on suddenly, over hours or a day, is different: it needs urgent medical help the same day (often an infection, a stroke or a medicine).
+Make home safer: an automatic shut-off or isolation switch for the cooker, a smoke and gas alarm, door alarms or chimes if they wander at night, good lighting, and medicines kept locked and given from a weekly box. Keep a recent photo and an ID card or bracelet with your number.
+If they go missing, search nearby quickly and call the police straight away. Look after yourself too: carers' groups and dementia helplines can help.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -803,6 +810,7 @@ var supersedes = map[string][]string{
 	"Vomiting blood":               {"Dehydration"},
 	"Seriously ill child":          {"Fever"},
 	"Pet poisoning":                {"Poisoning"},
+	"Sudden confusion":             {"Memory problems"},
 	"Poisonous plants":             {"Mushroom poisoning"},
 	"Bee swarm":                    {"Anaphylaxis", "Bee or wasp sting"},
 	"Sudden vision loss":           {"Eye injury"},
