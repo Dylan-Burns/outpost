@@ -2239,3 +2239,25 @@ func TestFortyNinthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFiftiethRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"had 2 lemsips today, couple of co-codamol and some paracetamol for me cold, feel ok tho is that alright": "more than one product",
+		"took nyquil last night and tylenol this morning for the flu, is that too much":                           "more than one product",
+		"my mum had a siezure and now shes unconcious but breathing":                                              "Seizure",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}

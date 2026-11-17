@@ -442,6 +442,9 @@ Get help the same day, too, if someone is passing much less urine than usual, ha
 	{"Medicines without a fridge", "Keeping insulin and other medicines without a fridge", "CDC, FDA and NHS guidance", `Most insulin in use can be kept at room temperature, below about 25 to 30 °C (77 to 86 °F), for up to 28 days; check the leaflet, because some types last less. Unopened insulin is best kept cool, but do not let it freeze, and throw away insulin that has frozen or been very hot, or that looks cloudy when it should be clear.
 To keep it cool without power: an insulated bag or cool box with a cold pack wrapped in a cloth (never touching the insulin), or a clay-pot or evaporative cooling wallet. Keep it out of the sun and out of a hot car.
 If insulin may have spoiled and blood sugar is rising, or you are running out, get medical help early: many pharmacies and shelters can store or supply it in an emergency.`, ""},
+	{"Hidden paracetamol", "Taking paracetamol in more than one product", "NHS and US FDA guidance", `Many cold and flu remedies (Lemsip, Beechams, Night Nurse, DayQuil, NyQuil, Theraflu and others) and painkillers such as co-codamol contain paracetamol (acetaminophen). Taking them together, or with paracetamol tablets, easily goes over the safe amount.
+For most adults the maximum is 4 grams in 24 hours (eight 500 mg tablets), and less for people under 50 kg, who drink a lot of alcohol or have liver problems. Add up the paracetamol in everything taken, using the packets.
+If the total is more than that, get urgent medical advice now (NHS 111, a poison centre or an emergency department), even if you feel fine: paracetamol damages the liver without symptoms at first, and treatment works best early. Do not take any more paracetamol in the meantime.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -829,8 +832,52 @@ var textSpeakWords = map[string]string{"w/o": "without", "w/": "with ", "thru": 
 var textSpeakRE = regexp.MustCompile(`(?i)(\bw/o\b|\bw/|\b(?:thru|tho|u|ur|r|n|coz|cos|cuz|bc|wat|wot|wen|abt|b4|tonite|2nite|2day|pls|plz|ppl|dunno|gonna|wanna|gotta|luv|bf|gf|yr|yrs|hr|hrs|mins?|yday|yest|tmrw|tmr|2moro|nite|smth|sth)\b)`)
 
 func textSpeak(q string) string {
-	return textSpeakRE.ReplaceAllStringFunc(q, func(w string) string { return textSpeakWords[strings.ToLower(w)] })
+	q = textSpeakRE.ReplaceAllStringFunc(q, func(w string) string { return textSpeakWords[strings.ToLower(w)] })
+	return misspeltRE.ReplaceAllStringFunc(q, func(w string) string { return misspelt[strings.ToLower(w)] })
 }
+
+// misspelt are common misspellings of words the rules depend on, read as
+// the right word alongside the original ("hair straightners", "siezure").
+var misspelt = map[string]string{
+	"siezure": "seizure", "seizur": "seizure", "sezure": "seizure", "seazure": "seizure",
+	"unconcious": "unconscious", "unconscous": "unconscious", "unconsious": "unconscious", "unconsciuos": "unconscious",
+	"breathe": "breathe", "breth": "breath", "brething": "breathing", "breating": "breathing", "breathng": "breathing",
+	"asma": "asthma", "asthama": "asthma", "athsma": "asthma", "astma": "asthma", "ashtma": "asthma",
+	"anaphalaxis": "anaphylaxis", "anafylaxis": "anaphylaxis", "anaphylaxsis": "anaphylaxis", "anaphylactic": "anaphylactic",
+	"diabetik": "diabetic", "diabeties": "diabetes", "diabetis": "diabetes", "diabetec": "diabetic", "diebetic": "diabetic",
+	"insulen": "insulin", "insullin": "insulin", "insolin": "insulin",
+	"ambulence": "ambulance", "ambulanse": "ambulance", "ambulnce": "ambulance",
+	"hospitle": "hospital", "hosptial": "hospital", "hospial": "hospital",
+	"bleding": "bleeding", "bleedin": "bleeding", "bleading": "bleeding", "bledding": "bleeding",
+	"poisen": "poison", "poision": "poison", "posion": "poison", "poisoned": "poisoned", "posioned": "poisoned",
+	"overdoes": "overdose", "overdosed": "overdosed", "ovedose": "overdose", "overdos": "overdose",
+	"paracetemol": "paracetamol", "paracetomol": "paracetamol", "parcetamol": "paracetamol", "paracetamole": "paracetamol",
+	"ibuprofin": "ibuprofen", "ibuprophen": "ibuprofen", "iboprofen": "ibuprofen", "ibruprofen": "ibuprofen",
+	"nebulizor": "nebuliser", "nebuliser": "nebuliser", "nebulizer": "nebuliser", "nebuliza": "nebuliser",
+	"inhailer": "inhaler", "inhaller": "inhaler", "inhealer": "inhaler",
+	"choaking": "choking", "chocking": "choking", "chokeing": "choking",
+	"straightners": "straighteners", "straighners": "straighteners", "straightner": "straightener",
+	"temprature": "temperature", "tempreture": "temperature", "temperture": "temperature", "temp": "temp",
+	"feaver": "fever", "fevor": "fever", "fevar": "fever",
+	"vomitting": "vomiting", "vommiting": "vomiting", "vomitting.": "vomiting", "vomitin": "vomiting",
+	"diarrea": "diarrhoea", "diarhea": "diarrhoea", "diahrrea": "diarrhoea", "diarrhea": "diarrhoea", "diorrhea": "diarrhoea",
+	"dihydrated": "dehydrated", "dehidrated": "dehydrated", "dehydraited": "dehydrated",
+	"hypothermia": "hypothermia", "hypothermea": "hypothermia", "hyperthermia": "hyperthermia",
+	"frostbit": "frostbite", "frost bite": "frostbite",
+	"carbon monoxcide": "carbon monoxide", "monoxcide": "monoxide", "monoxide": "monoxide",
+	"genorator": "generator", "generater": "generator", "genarator": "generator",
+	"electricuted": "electrocuted", "electracuted": "electrocuted", "electocuted": "electrocuted",
+	"concusion": "concussion", "consussion": "concussion", "concusion.": "concussion",
+	"fractered": "fractured", "fracterd": "fractured", "fracture": "fracture",
+	"strok": "stroke", "storke": "stroke",
+	"miscarrage": "miscarriage", "miscariage": "miscarriage", "miscarage": "miscarriage",
+	"preganant": "pregnant", "pregnent": "pregnant", "pregant": "pregnant", "preggers": "pregnant",
+	"suicidle": "suicidal", "suicidel": "suicidal", "suiside": "suicide", "sucide": "suicide", "suiced": "suicide",
+	"tornadoe": "tornado", "hurricaine": "hurricane", "huricane": "hurricane", "earthqauke": "earthquake", "earthquack": "earthquake",
+	"flooding": "flooding", "floodin": "flooding",
+}
+
+var misspeltRE = regexp.MustCompile(`(?i)\b(siezure|seizur|sezure|seazure|unconcious|unconscous|unconsious|unconsciuos|breth|brething|breating|breathng|asma|asthama|athsma|astma|ashtma|anaphalaxis|anafylaxis|anaphylaxsis|diabetik|diabeties|diabetis|diabetec|diebetic|insulen|insullin|insolin|ambulence|ambulanse|ambulnce|hospitle|hosptial|hospial|bleding|bleading|bledding|poisen|poision|posion|posioned|overdoes|ovedose|overdos|paracetemol|paracetomol|parcetamol|paracetamole|ibuprofin|ibuprophen|iboprofen|ibruprofen|nebulizor|nebulizer|nebuliza|inhailer|inhaller|inhealer|choaking|chocking|chokeing|straightners|straighners|straightner|temprature|tempreture|temperture|feaver|fevor|fevar|vommiting|vomitting|diarrea|diarhea|diahrrea|diarrhea|diorrhea|dihydrated|dehidrated|dehydraited|hypothermea|frostbit|monoxcide|genorator|generater|genarator|electricuted|electracuted|electocuted|concusion|consussion|fractered|fracterd|strok|storke|miscarrage|miscariage|miscarage|preganant|pregnent|pregant|preggers|suicidle|suicidel|suiside|sucide|suiced|tornadoe|hurricaine|huricane|earthqauke|earthquack)\b`)
 
 // plainWords maps brand names and slang to the words the rules use:
 // "12 panadol" is paracetamol, "chundered" is vomiting, "keeled over" is
