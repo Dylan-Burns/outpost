@@ -2212,3 +2212,30 @@ func TestFortyEighthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortyNinthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"my 2yo grabbed the hair straightners off the bed, palm all red n blistering, she wont stop screaming": "Burns",
+		"baby 4 months floppy and hot, not had a wet nappy since this morn, wont feed":                         "Fever in a young baby",
+		"baby 7 weeks old feels hot 38.4 and not feeding much. is calpol ok n just keep an eye":                "Fever in a young baby",
+		"took 2 of my ibuprofen and 2 naproxen for my back cos one wasnt working, is that ok?":                 "Mixing",
+		"water is coming thru the street n into our front room, rising fast, do we drive out or stay?":         "Flood",
+		"stranded w car in the desert, no reception, how long can we last and shud we walk":                    "Stranded",
+		"how do u know if water from a stream is ok to drink, we run outta bottled":                            "safe to drink",
+		"teenager next door has bruises again and goes quiet when his stepdad is around":                       "child is being harmed",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
