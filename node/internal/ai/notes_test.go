@@ -2146,3 +2146,32 @@ func TestFortySixthRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFortySeventhRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	first := func(q string) string {
+		if ns := titles(Notes(q)); len(ns) > 0 {
+			return ns[0]
+		}
+		return ""
+	}
+	for q, want := range map[string]string{
+		"my mate keeps posting weird goodbye type stuff and not answering. hes got a gun at his place. what do i even say": "suicide",
+		"kid at my school said her stepdad comes in her room at night and she doesnt want to go home. shes 11":             "child is being harmed",
+		"burnt my hand on the woodstove pretty bad blisters, gran says put butter on it. also do i pop them":               "Burns",
+		"think i've got a kidney stone, pain in my side comes in waves. someone said drink loads of beer":                  "belly pain",
+		"loud roaring noise from the flue on my wood burner and the pipe is glowing red":                                   "Chimney fire",
+	} {
+		if f := first(q); !strings.Contains(f, want) {
+			t.Errorf("%q: first %q, notes %v", q, f, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{"woodburner keeps smoking back into the room when i light it", "best way to start a fire in the woodburner"} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "Burns and scalds") {
+				t.Errorf("%q got the burns note", q)
+			}
+		}
+	}
+}
