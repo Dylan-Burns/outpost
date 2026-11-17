@@ -2351,3 +2351,32 @@ func TestFiftyThirdRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFiftyFourthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"my 3 wk old feels hot n wont feed, sleepy all day, temp 38.2 under arm. power out cant reach gp. calpol?":         "young baby",
+		"toddler was eating grapes now cant talk or cry just making squeaky noise and going bit blue pls":                  "child over 1",
+		"lad (14mo) was playing w grandads pill box now hes all floppy n his breathin is slow n weird":                     "Swallowed poison",
+		"took a few extra panadol over the weekend for toothache prob 12 a day for 3 days, feel ok tho. is that a problem": "Swallowed poison",
+		"puttin my weight on my wrist when i fell, now its swollen n bent lookin. no ambo for hours cos storm":             "Broken bones",
+		"hens n goats need water during the flood, should i let them loose or keep em shut in":                             "flood, fire or storm",
+		"candles for light all night ok? kids room too":                                                                    "Candles",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	if n := Notes("fainting goats why do they fall over"); len(n) != 0 {
+		t.Errorf("fainting goats: %v", titles(n))
+	}
+}
