@@ -2286,3 +2286,33 @@ func TestFiftyFirstRound(t *testing.T) {
 		}
 	}
 }
+
+func TestFiftySecondRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"cat keeps going in n out the litter tray strainin but nothin coming out, crying. male cat":                          "vet now",
+		"one of our ewes got into the grain store and gorged, now her left side is blown up tight like a drum and shes down": "vet now",
+		"teen daughter has these neat lines on her upper arms, always wears long sleeves now even in summer":                 "self-harming",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+	for q, bad := range map[string]string{
+		"my cat keeps napping in the sun all day":            "vet now",
+		"wears long sleeves in summer because of her eczema": "self-harming",
+	} {
+		if has(q, bad) {
+			t.Errorf("%q got %q", q, bad)
+		}
+	}
+}
