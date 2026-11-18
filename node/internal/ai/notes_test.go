@@ -2467,3 +2467,32 @@ func TestFiftySeventhRound(t *testing.T) {
 		t.Error("an overdose got the missed dose note")
 	}
 }
+
+func TestFiftyEighthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"had shocking toothache so took paracetamol all day yesterday, prob 14-16 tabs total over the day. feel totally fine today":  "Swallowed poison",
+		"came off ladder yesterday n bumped me head, was alright. today headache way worse and been sick twice, prob just hungover":  "Head injury",
+		"bloke on site been on the roof all arvo, now his skins hot n red n dry and hes talkin rubbish, stumbling. give him panadol": "Heat stroke",
+		"out of water on the boat 2 days, can we drink seawater if we mix it half n half with the last bit of juice":                 "safe to drink",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	if has("came off ladder yesterday n bumped me head, was alright. today headache way worse and been sick twice", "Diarrhoea") {
+		t.Error("a head injury with vomiting got the dehydration note")
+	}
+	if n := Notes("can i gargle with salt water for a sore throat"); has("can i gargle with salt water for a sore throat", "safe to drink") {
+		t.Errorf("gargling: %v", titles(n))
+	}
+}

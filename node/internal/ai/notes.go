@@ -741,7 +741,8 @@ Check on neighbours who are older or rely on powered medical equipment. If someo
 	{"Water purification", "Making water safe to drink", "CDC guidance", `Boiling is the surest method: bring clear water to a rolling boil for 1 minute (3 minutes above 2,000 metres or 6,500 feet), then let it cool.
 If the water is cloudy, let it settle and filter it through a clean cloth first.
 Household bleach can disinfect water when boiling is not possible: use plain unscented bleach and check its strength on the label. For clear water, add 8 drops (1/8 teaspoon) of 6% bleach, or 6 drops of 8.25% bleach, per gallon (3.8 litres). Stir and wait at least 30 minutes before drinking; the water should smell slightly of chlorine. Double the amount for cloudy or very cold water.
-Filters remove germs only if they are rated for it, and most do not remove viruses; disinfect the water as well when you can.`, ""},
+Filters remove germs only if they are rated for it, and most do not remove viruses; disinfect the water as well when you can.
+Never drink seawater or urine, even mixed with fresh water or juice: the salt makes dehydration worse and can kill. Collect rain or dew instead, or use a solar still.`, ""},
 }
 
 // noteTopics adds rules for subjects that have a note but are not on the
@@ -816,6 +817,7 @@ var supersedes = map[string][]string{
 	"Vomiting blood":               {"Dehydration"},
 	"Seriously ill child":          {"Fever"},
 	"Pet poisoning":                {"Poisoning"},
+	"Head injury":                  {"Dehydration"},
 	"Sudden confusion":             {"Memory problems"},
 	"Poisonous plants":             {"Mushroom poisoning"},
 	"Bee swarm":                    {"Anaphylaxis", "Bee or wasp sting"},
@@ -829,7 +831,6 @@ var supersedes = map[string][]string{
 	// "boiling water went on her arm" is a scald, not drinking water.
 	"Burn": {"Water purification"},
 	// Being sick after a head injury is a warning sign of the injury.
-	"Head injury": {"Dehydration"},
 	// An unrousable drunk person needs the recovery position, not legs up.
 	"Alcohol poisoning": {"Fainting", "Dehydration"},
 	"Recovery position": {"Fainting"},
