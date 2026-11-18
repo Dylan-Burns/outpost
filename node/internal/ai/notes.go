@@ -728,7 +728,8 @@ Hives with swelling of the lips, tongue or throat, or trouble breathing, is an e
 	{"Water storage", "Storing drinking water", "FEMA and CDC guidance", `Store at least 4 litres (1 gallon) of water per person per day, for at least 3 days, and for 2 weeks if you can. Count pets too.
 Use food-grade containers: sealed bottled water, or clean plastic drink bottles such as soda bottles. Do not use milk or juice jugs: milk and sugar are hard to wash out, bacteria grow, and the thin plastic breaks down. Never use a container that held chemicals.
 Wash containers with soap and water, rinse, then swirl in a solution of 1 teaspoon of unscented bleach to 1 litre (1 quart) of water, and rinse again.
-Fill with tap water, close tightly, label with the date, store somewhere cool and dark, and replace every 6 months.`, ""},
+Fill with tap water, close tightly, label with the date, store somewhere cool and dark, and replace every 6 months.
+If water is running short, do not ration what you drink: drink what you need today and look for more tomorrow. Cut back on washing instead, and never drink water that may be unsafe without treating it.`, ""},
 	{"Batteries", "Batteries, inverters and what they will run", "US Department of Energy guidance", `Stored energy in watt-hours is the battery's amp-hours times its voltage: a 100 Ah 12 V battery holds about 1,200 Wh.
 You can safely use only part of it: about half for a lead-acid battery, about 80 to 90% for a lithium (LiFePO4) one. An inverter loses roughly another 10 to 15%.
 A fridge's watt rating is what it draws while the compressor runs, but it runs only part of the time. Its daily use is on its label as kWh per year: divide by 365. Many fridges use 1 to 2 kWh a day.
@@ -817,6 +818,7 @@ var supersedes = map[string][]string{
 	"Vomiting blood":               {"Dehydration"},
 	"Seriously ill child":          {"Fever"},
 	"Pet poisoning":                {"Poisoning"},
+	"Gas leak":                     {"Starting a fire", "Candle safety"},
 	"Head injury":                  {"Dehydration"},
 	"Sudden confusion":             {"Memory problems"},
 	"Poisonous plants":             {"Mushroom poisoning"},

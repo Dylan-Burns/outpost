@@ -2496,3 +2496,37 @@ func TestFiftyEighthRound(t *testing.T) {
 		t.Errorf("gargling: %v", titles(n))
 	}
 }
+
+func TestFiftyNinthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"sorted out who gets the dog n my guitar, wrote everyone letters, feel weirdly calm now tbh. anyway how do i cancel my phone contract": "suicide",
+		"smelling gas in the house after the earthquake, gonna light a candle to see whats goin on":                                            "Smell of gas",
+		"water main bust 3 days ago, rationing what we got, should i cut back on drinkin to make it last longer?":                              "drinking water",
+		"been shitting water for 3 days off dodgy chicken, now barely peeing n dizzy when i stand":                                             "dehydration",
+		"broke down on a dirt road in the outback, no reception, got water for a day, should we walk to the highway its like 60k":              "Stranded",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{
+		"writing thank you letters to everyone after the wedding, feel so calm now its over",
+	} {
+		if has(q, "suicide") || has(q, "Smell of gas") {
+			t.Errorf("decoy %q: %v", q, titles(Notes(q)))
+		}
+	}
+	if has("smelling gas in the house after the earthquake, gonna light a candle to see whats goin on", "Candles") {
+		t.Error("gas smell got the candle note")
+	}
+}
