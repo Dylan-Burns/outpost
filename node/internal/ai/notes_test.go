@@ -2530,3 +2530,43 @@ func TestFiftyNinthRound(t *testing.T) {
 		t.Error("gas smell got the candle note")
 	}
 }
+
+func TestSixtiethRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"car broke down in the heat, had to leave the dog in it for 20 min while i walked to get help. now shes pantin super hard, droolin, wobbly. gonna dunk her in the ice cold dam": "vet now",
+		"my 15 yo been chuckin up all nite, started as tummy ache round the belly button now its moved right down bottom right n hurts like mad when car goes over bumps":               "belly pain",
+		"at the evac centre with my partner. hes got my phone n bank card n says i cant talk to anyone without him. he pushed me last nite":                                             "Abuse",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	if has("car broke down in the heat, had to leave the dog in it for 20 min. now shes pantin super hard, droolin, wobbly. gonna dunk her in the ice cold dam", "Hypothermia") {
+		t.Error("a dog with heat stroke got the hypothermia note")
+	}
+}
+
+func TestRefusingHelpIsNotAbuse(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for _, q := range []string{
+		"husband all sweaty and grey says his chest feels like an elephant sitting on it, pain going up to his jaw. he says its just indigestion and wont let me call anyone",
+		"gran fell in the bathroom last night, hip sore and that leg looks shorter n turned out, she says its just bruised and wont let me call anyone",
+	} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "Abuse") {
+				t.Errorf("%q: %v", q, titles(Notes(q)))
+			}
+		}
+	}
+}

@@ -466,7 +466,7 @@ Tests are announced in advance and say they are tests. If an alert is not a test
 An alert works without credit or mobile data, but the phone must be switched on and in range of a mast.`, ""},
 	{"Animal emergency", "An animal that needs a vet now", "RSPCA, PDSA, AVMA and agricultural vet guidance", `Call a vet now, day or night, for: a male cat straining in the litter tray with little or nothing coming out, or crying (a blocked bladder can kill within a day or two); a dog with a swollen, tight belly who is retching without bringing anything up (bloat); a cow, sheep or goat with a swollen left side after getting into grain or rich feed, or that is down and cannot get up; a horse or donkey that keeps lying down and rolling, paws the ground, looks round at its belly or is sweating (colic: walk it gently while you wait, and give no food); a cow, ewe, goat or mare that has strained for 30 minutes to an hour without progress, or with only one leg, a head alone or a tail showing (do not pull hard or cut anything); trouble breathing; a fit lasting more than a few minutes; heavy bleeding; being hit by a car even if it seems fine; collapse; or heat stroke (heavy panting, drooling, wobbliness in the heat).
 While you wait, keep the animal calm, warm or cool as needed, and still. Move an injured animal on a board or blanket, and muzzle a dog in pain gently unless it is vomiting or struggling to breathe; frightened animals can bite.
-Do not give human painkillers: ibuprofen, paracetamol and aspirin can kill pets. For heat stroke, cool with cool (not ice-cold) water and a fan on the way to the vet.`, ""},
+Do not give human painkillers: ibuprofen, paracetamol and aspirin can kill pets. For heat stroke, move the animal into shade and cool it with cool (not ice-cold) water and a fan on the way to the vet; never plunge it into icy water.`, ""},
 	{"Animal on the road", "After hitting an animal on the road", "Wildlife rescue (WIRES, RSPCA, state wildlife agencies) and road safety guidance", `Make yourself safe first: pull well off the road, put the hazard lights on, and watch for traffic. If the animal is a hazard on the road and you cannot move it safely, call the police.
 Do not go close to a large injured wild animal such as a kangaroo, deer or wombat: a frightened animal can kick, claw or bite and cause serious injuries. Never try first aid or CPR on it.
 Call a wildlife rescue service, a ranger, the police or a vet, and tell them exactly where the animal is. Marsupials can carry a living young in the pouch even after the mother dies; leave checking the pouch to a rescuer unless the mother is clearly dead and it is safe to do so. Keep a joey warm, quiet and dark, wrapped in a cloth, and give it nothing to eat or drink.
@@ -818,6 +818,8 @@ var supersedes = map[string][]string{
 	"Vomiting blood":               {"Dehydration"},
 	"Seriously ill child":          {"Fever"},
 	"Pet poisoning":                {"Poisoning"},
+	"Exploitation":                 {"Abuse and threats"},
+	"Animal emergency":             {"Hypothermia", "Winter car"},
 	"Gas leak":                     {"Starting a fire", "Candle safety"},
 	"Head injury":                  {"Dehydration"},
 	"Sudden confusion":             {"Memory problems"},
