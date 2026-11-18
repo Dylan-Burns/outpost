@@ -342,6 +342,7 @@ If you are short of fuel, power or supplies in an emergency, ask neighbours open
 Call emergency services if you or they become very drowsy, confused, cannot stand, are sick and drowsy, have trouble breathing, or collapse; put an unconscious person who is breathing on their side.
 Report it to the police as soon as you can: some drugs only show up in urine or blood for a day or so, so ask for a test early.`, ""},
 	{"Abuse and threats", "Abuse, threats or being followed", "Police, Refuge and National Domestic Violence Hotline guidance", `If you are in danger now, call emergency services (in the UK, if you cannot speak, call 999 and then press 55 when asked). Go to a public place or somewhere with other people if you are being followed.
+Being held by the neck or strangled, even briefly and even if you feel fine, needs a medical check soon: injuries inside the neck can show up hours or days later, and it is one of the strongest warning signs of being killed by a partner.
 Keep evidence: messages, call logs, photos of injuries, dates and times. Tell someone you trust.
 Get help to plan how to leave safely, including for children: in the US, the National Domestic Violence Hotline (1-800-799-7233, or text START to 88788); in the UK, the Refuge helpline (0808 2000 247); elsewhere, the police or a local domestic abuse service. The police and courts can issue protection or restraining orders.`, ""},
 	{"Child protection", "If you are worried a child is being harmed", "NSPCC, Childhelp and police guidance", `If a child is in immediate danger, call emergency services now.
@@ -496,6 +497,10 @@ If you have missed several doses, feel unwell, or are running out because of a d
 	{"Child fever", "Fever in a child", "NHS and NICE guidance", `For a child over 3 months, a fever is usually the body fighting an infection. Give plenty of fluids, dress them in light clothes, and keep the room comfortably cool. You can give paracetamol or ibuprofen at the dose on the pack if they are distressed; do not give both at once unless a doctor says so, and never give aspirin to anyone under 16.
 Do not put them in a cold or ice bath, sponge them with cold water, or wrap them up in blankets to "sweat it out": these make them feel worse and do not bring the fever down safely.
 Get urgent help if they are floppy, hard to wake, breathing fast or with difficulty, have a rash that does not fade when a glass is pressed on it, have a fit, are not drinking or weeing, or if you are worried. A baby under 3 months with 38 °C or more needs urgent help.`, ""},
+	{"Home oxygen", "Home oxygen or a breathing machine in a power cut", "NHS, British Lung Foundation and US FEMA guidance", `Switch to the backup oxygen cylinder straight away and use the flow rate you were prescribed; do not turn it up. To estimate how long a cylinder lasts, divide the litres it holds (on the label or from the supplier) by the flow in litres per minute, and check the gauge often.
+Call the oxygen supplier's 24-hour emergency number now for more cylinders, and tell the electricity company that someone at home depends on power for medical equipment.
+Call emergency services if the person becomes more breathless, confused, very drowsy or blue around the lips, or if the backup will run out before help arrives. Going to a hospital or a shelter with power may be safest.
+Keep oxygen away from flames, candles, gas stoves and smoking, and never run a generator indoors.`, ""},
 	{"Drowning", "Drowning", "Red Cross and European Resuscitation Council guidance", `Do not put yourself in danger: reach or throw something to the person rather than going in, if you can.
 Once they are out, if they are not breathing normally, call emergency services, give 5 rescue breaths and then start CPR.
 If they are breathing, put them in the recovery position and keep them warm.
@@ -677,7 +682,7 @@ Reassure them that the attack will pass, usually within 20 minutes.
 Chest pain, trouble breathing and a racing heart can also be signs of a heart attack or another emergency: get medical help if it is their first attack, if there is chest pain, or if they do not settle.`, ""},
 	{"Heat stroke", "Hot weather and heat waves", "CDC and NHS guidance", `In a heat wave, a fan alone may not keep someone safe once it is hotter than about 32 to 35 °C (90 to 95 °F). Cool showers or baths, wet cloths on the skin, and spending the hottest hours somewhere air-conditioned (a library, shop or cooling centre) help more.
 Drink water regularly, before feeling thirsty. Keep curtains closed on sunny windows and avoid hard work in the hottest part of the day.
-Check on older people, babies and people who live alone at least twice a day.`, ""},
+Check on older people, babies and people who live alone at least twice a day. Do not give alcohol to cool down: it dehydrates.`, ""},
 	{"Foreign body", "Something stuck in the nose or ear", "NHS guidance", `Do not try to dig it out with a finger, cotton bud or tweezers: it can be pushed further in.
 Nose: ask the child to blow gently through that nostril while you press the other one closed. If it does not come out, get medical help.
 Ear: an insect can sometimes be floated out by tilting the head and pouring in a little warm (not hot) water. Do not do this if the ear is painful or has discharge, which may mean a damaged eardrum.
@@ -819,6 +824,7 @@ var supersedes = map[string][]string{
 	"Vomiting blood":               {"Dehydration"},
 	"Seriously ill child":          {"Fever"},
 	"Pet poisoning":                {"Poisoning"},
+	"Home oxygen":                  {"Food safety"},
 	"Heat stroke":                  {"Hypothermia", "Alcohol poisoning"},
 	"Exploitation":                 {"Abuse and threats"},
 	"Animal emergency":             {"Hypothermia", "Winter car"},

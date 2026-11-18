@@ -2667,3 +2667,73 @@ func TestSixtyThirdRound(t *testing.T) {
 		t.Error("heat stroke with cold beers got the hypothermia note")
 	}
 }
+
+// TestNewRulesNameNotes checks that the topics added by the rounds since
+// 1.4.40 each have a note: a rule that names a topic with no note gives
+// nothing (1.4.68's "Heart attack" rule did, for "Myocardial infarction").
+// Older rules also name reference articles on purpose, so this lists the
+// note topics those rounds rely on rather than checking every rule.
+func TestNewRulesNameNotes(t *testing.T) {
+	have := map[string]bool{}
+	for _, n := range notes {
+		have[n.topic] = true
+	}
+	for _, tp := range []string{"Myocardial infarction", "Home oxygen", "Medicines without a fridge", "Animal emergency", "Pet poisoning", "Wild animal found", "Gas leak", "Stranded with a vehicle", "Memory problems", "Ice safety", "Missed dose", "Child fever", "Chickenpox", "Candle safety", "Phone battery", "Animal on the road", "Emergency alerts", "Water storage", "Water purification", "Dehydration", "Sepsis", "Stroke", "Swallowed battery or magnets", "Postpartum psychosis", "Abuse and threats", "Child protection", "Suicide", "Head injury", "Heat stroke", "Burn", "Poisoning", "Bone fracture", "Severe belly pain"} {
+		if !have[tp] {
+			t.Errorf("no note has topic %q", tp)
+		}
+	}
+	for _, e := range emergencies {
+		for _, tp := range e.topics {
+			if tp == "Heart attack" {
+				t.Error(`a rule names "Heart attack"; the note's topic is "Myocardial infarction"`)
+			}
+		}
+	}
+}
+
+func TestSixtyFourthRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"abeg my oga dey sweat well well, im chest dey press am like say heavy load sidon on top, the pain dey go im left hand and jaw":                                               "Heart attack",
+		"me da fell off the ladder doin the gutters, says he's grand, walked around after, had a cup of tea. but now an hour later he's after gettin awful sleepy and got sick twice": "Head injury",
+		"our pug been out in the yard in this scorcher, now hes flopped out panting like crazy, gums bright red, wobbly on his legs. gonna dunk him in the ice bath":                  "vet now",
+		"mi tomcat keep going inna di litter tray an nutten come out, him a cry an strain, two days now, him belly hard":                                                              "vet now",
+		"no power and its 40 degrees, my old neighbour got no fan, was gonna tell her drink a few cold beers":                                                                         "Hot weather",
+		"power been out 10 hrs, dads oxygen concentrator stopped, hes got a small tank but dunno how long it lasts":                                                                   "Home oxygen",
+		"my husband dey vex every time, last night he hold my neck till i nearly black out, now my voice dey hoarse":                                                                  "Abuse",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{"how do i bench press more, chest feels tight after", "oven is at 40 degrees for proving bread is that right"} {
+		if has(q, "Heart attack") || has(q, "Hot weather") {
+			t.Errorf("decoy %q: %v", q, titles(Notes(q)))
+		}
+	}
+}
+
+func TestChokingIsNotStrangling(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	for _, q := range []string{
+		"husband at dinner grabbed his throat he cant speak or cough just making a squeaky noise",
+		"husband eating steak cant talk just grabbing his throat goin purple",
+	} {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, "Abuse") {
+				t.Errorf("%q: %v", q, titles(Notes(q)))
+			}
+		}
+	}
+}
