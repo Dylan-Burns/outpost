@@ -685,10 +685,12 @@ func TestTenthRoundWording(t *testing.T) {
 		"mates been on the cans all night now hes passed out snoring weird and wont wake, we just leave him to sleep it off yeah?": "Alcohol",
 		"son got hit in the head at rugby, now hes throwing up and keeps asking the same thing over and over":                      "Head injury",
 		"accidentally took my night pills twice, its the blood pressure ones":                                                      "Swallowed poison",
-		"toddler was holding a button battery from the remote and i cant find the other one":                                       "Swallowed poison",
-		"how do i get the woodstove going when everythings damp and theres no newspaper":                                           "Starting a fire",
-		"jellyfish got me on the leg at the beach, someone said pee on it":                                                         "Jellyfish",
-		"how do u know if a cut needs stitches, kitchen knife on my thumb gaping a bit":                                            "stitches",
+		// Since 1.4.68 this gets the button battery note, which supersedes the
+		// general poisoning note.
+		"toddler was holding a button battery from the remote and i cant find the other one": "button battery",
+		"how do i get the woodstove going when everythings damp and theres no newspaper":     "Starting a fire",
+		"jellyfish got me on the leg at the beach, someone said pee on it":                   "Jellyfish",
+		"how do u know if a cut needs stitches, kitchen knife on my thumb gaping a bit":      "stitches",
 	} {
 		ok := false
 		for _, n := range Notes(q) {
@@ -2634,5 +2636,34 @@ func TestSixtySecondRound(t *testing.T) {
 		if n := Notes(q); len(n) != 0 {
 			t.Errorf("decoy %q: %v", q, titles(n))
 		}
+	}
+}
+
+func TestSixtyThirdRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"mi granny a chat funny from mawnin, one side a har mout drop dung an she cyaan lift har cup wid dat hand":                                  "Stroke",
+		"my 2yo was playin with the tv remote n the battery cover was off, one of the little flat round silver ones is gone. shes totally fine tho": "button battery",
+		"been workin on the roof all day eh, now my buddy quit sweatin, skins hot n red n hes mumblin weird stuff. we gave him a couple cold beers": "Heat stroke",
+		"my sister just born 4 days ago, now she dey shiver with high fever, belle dey pain her and the discharge dey smell bad":                    "Sepsis",
+		"child having loose motion since morning like rice water, very many times, eyes gone sunken, not passing urine since":                       "dehydration",
+		"left the frenchie in the car 20 mins while i was in the shop, windows cracked. hes panting real heavy n drooling":                          "vet now",
+		"baby came 3 wks ago, my wife hardly sleeps, says the baby isnt really ours and that voices tell her things":                                "after giving birth",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	if has("been workin on the roof all day eh, now my buddy quit sweatin, skins hot n red n hes mumblin weird stuff. we gave him a couple cold beers", "Hypothermia") {
+		t.Error("heat stroke with cold beers got the hypothermia note")
 	}
 }

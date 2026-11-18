@@ -625,6 +625,7 @@ Note what the animal was and where it went, but do not try to catch it bare-hand
 See a doctor if the bite becomes red, swollen, hot or oozing, or you get a fever.`, ""},
 	{"Dehydration", "Diarrhoea, vomiting and dehydration", "WHO and NHS guidance", `Keep drinking: small sips often if you are being sick. Oral rehydration solution is best: use sachets if you have them, or make it with 6 level teaspoons of sugar and half a level teaspoon of salt in 1 litre of clean, safe water (WHO recipe).
 Babies: keep breastfeeding or giving formula, and offer extra fluids between feeds.
+Never stop fluids to settle the stomach, and do not give only milk, curd or food instead: the body needs the water and salt back. Very watery diarrhoea that looks like rice water, many times a day, can be cholera and needs urgent treatment.
 Signs of dehydration: thirst, dark yellow or little urine, dry mouth, dizziness; in a baby, fewer wet nappies, a sunken soft spot on the head, or no tears.
 Get medical help urgently for blood in the stool or vomit, a very sleepy, floppy or confused person, no urine all day, severe tummy pain, or a baby, young child or older person who cannot keep fluids down.`, ""},
 	{"Tooth avulsion", "Knocked-out tooth", "American Association of Endodontists and NHS guidance", `Pick the tooth up by the crown (the white part), not the root.
@@ -782,7 +783,7 @@ var supersedes = map[string][]string{
 	"Seizure":                      {"Eye injury"},
 	"Stroke":                       {"Bone fracture"},
 	"Myocardial infarction":        {"Dehydration", "Panic attack"},
-	"Sepsis":                       {"Panic attack", "Kidney infection"},
+	"Sepsis":                       {"Panic attack", "Kidney infection", "Dehydration"},
 	"Drowning":                     {"Rip current", "Asthma"},
 	"Severe belly pain":            {"Fainting"},
 	"Illegal request":              {"Weapons refusal"},
@@ -818,6 +819,7 @@ var supersedes = map[string][]string{
 	"Vomiting blood":               {"Dehydration"},
 	"Seriously ill child":          {"Fever"},
 	"Pet poisoning":                {"Poisoning"},
+	"Heat stroke":                  {"Hypothermia", "Alcohol poisoning"},
 	"Exploitation":                 {"Abuse and threats"},
 	"Animal emergency":             {"Hypothermia", "Winter car"},
 	"Gas leak":                     {"Starting a fire", "Candle safety"},
