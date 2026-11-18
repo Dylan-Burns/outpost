@@ -15,6 +15,8 @@ import (
 // change that loses recall, or matches a decoy, fails here first. Raise the
 // floor when recall improves.
 func TestParaphraseRecall(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
 	// The second set (450, regional voices, symptoms described but never
 	// named) was written after the rules were tuned on the first.
 	// The third (1.4.45; 492, three per note for all 164 notes) was written
@@ -22,13 +24,13 @@ func TestParaphraseRecall(t *testing.T) {
 	// fourth (1.4.46; 328, written hard throughout) measured how far that
 	// generalised: 165 of 328 before 1.4.45, 183 after.
 	for file, floor := range map[string]int{"paraphrases.json": 420, "paraphrases2.json": 328, "paraphrases3.json": 435, "paraphrases4.json": 300} {
-		t.Run(file, func(t *testing.T) { paraphraseRecall(t, file, floor) })
+		t.Run(file, func(t *testing.T) { t.Parallel(); paraphraseRecall(t, file, floor) })
 	}
 }
 
+// paraphraseRecall runs as a parallel subtest: the parent test sets
+// UseNotes, and the subtests only read it.
 func paraphraseRecall(t *testing.T, file string, floor int) {
-	defer func(was bool) { UseNotes = was }(UseNotes)
-	UseNotes = true
 	b, err := os.ReadFile("../../../eval/assistant/" + file)
 	if err != nil {
 		t.Fatal(err)
@@ -66,18 +68,18 @@ func paraphraseRecall(t *testing.T, file string, floor int) {
 // ("this traffic is killing me", "ending my lease"). Before this set the
 // rules caught 14 of the 60.
 func TestCrisisRecall(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
 	// Each set was written after the rules were tuned on the ones before
 	// it, and on first sight the rules caught 22, 26 and 36 of its 60
 	// (crisis2-4.json): wording finds about half of fresh crisis messages,
 	// so the assistant page also always shows a crisis line.
 	for _, f := range []string{"crisis.json", "crisis2.json", "crisis3.json", "crisis4.json"} {
-		t.Run(f, func(t *testing.T) { crisisRecall(t, f) })
+		t.Run(f, func(t *testing.T) { t.Parallel(); crisisRecall(t, f) })
 	}
 }
 
 func crisisRecall(t *testing.T, file string) {
-	defer func(was bool) { UseNotes = was }(UseNotes)
-	UseNotes = true
 	b, err := os.ReadFile("../../../eval/assistant/" + file)
 	if err != nil {
 		t.Fatal(err)
