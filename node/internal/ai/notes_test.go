@@ -2610,3 +2610,29 @@ func TestDoseQuestionIsNotCrisis(t *testing.T) {
 		}
 	}
 }
+
+func TestSixtySecondRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"mi pickney pull de pot a hot water pon himself, him chest an arm red an blisterin up bad. granny seh put butter an toothpaste pon it": "Burns",
+		"staffie scoffed half a pack of sugar free gum off the table, hes running round fine. need to worry?":                                  "pet",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{"how long do i steep a pot of tea for", "my lab loves chewing on sticks is that ok"} {
+		if n := Notes(q); len(n) != 0 {
+			t.Errorf("decoy %q: %v", q, titles(n))
+		}
+	}
+}
