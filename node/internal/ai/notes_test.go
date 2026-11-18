@@ -2570,3 +2570,43 @@ func TestRefusingHelpIsNotAbuse(t *testing.T) {
 		}
 	}
 }
+
+func TestSixtyFirstRound(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	has := func(q, want string) bool {
+		for _, n := range titles(Notes(q)) {
+			if strings.Contains(n, want) {
+				return true
+			}
+		}
+		return false
+	}
+	for q, want := range map[string]string{
+		"ive sorted my will and given my guitar to my brother. just wondering how many of my sleeping tablets it would take to sleep for a really long time": "suicide",
+		"the dog's after eating half a packet of sugar free chewing gum off the table, seems grand in himself. do i need to bother the vet its sunday":       "pet",
+	} {
+		if !has(q, want) {
+			t.Errorf("%q: want %q, got %v", q, want, titles(Notes(q)))
+		}
+	}
+	for _, q := range []string{
+		"how many sleeping tablets is a normal dose for an adult, doc gave me zopiclone",
+		"sorted my will with the solicitor and left my house to my kids, what else do i need to do",
+	} {
+		if has(q, "suicide") {
+			t.Errorf("decoy %q: %v", q, titles(Notes(q)))
+		}
+	}
+}
+
+func TestDoseQuestionIsNotCrisis(t *testing.T) {
+	defer func(was bool) { UseNotes = was }(UseNotes)
+	UseNotes = true
+	q := "how many paracetamol can my 16 yr old have hes about 70kg, toothache killing him"
+	for _, n := range titles(Notes(q)) {
+		if strings.Contains(n, "suicide") {
+			t.Errorf("%q: %v", q, titles(Notes(q)))
+		}
+	}
+}
